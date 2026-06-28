@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VEO 3 PRO STUDIO - Premium UGC Suite</title>
     
-    <!-- MENGGUNAKAN TAILWIND V3 STABIL UNTUK PRODUCTION RUNTIME TANPA COMPILER -->
+    <!-- CDN STABIL - Runtime Langsung Tanpa Compiler -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -13,29 +13,32 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* Memaksa background dasar gelap solid agar kontras tinggi */
         body { 
             background-color: #0b0f19 !important; 
-            color: #f8fafc !important; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            color: #f1f5f9 !important;
+            font-family: system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 0;
         }
-        /* Memastikan teks di dalam input box terlihat sangat jelas */
-        input, textarea, select {
+        /* Memastikan box input memiliki latar abu-abu gelap solid dan teks putih terang */
+        .custom-input {
+            background-color: #1e293b !important;
             color: #ffffff !important;
-            background-color: #070a13 !important;
+            border: 1px solid #334155 !important;
         }
-        input::placeholder {
-            color: #4b5563 !important;
+        .custom-input:focus {
+            border-color: #06b6d4 !important;
+            outline: none;
         }
     </style>
 </head>
 <body>
     <div id="root">
-        <!-- Loader Awal Aman -->
-        <div id="fallback-loader" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; background-color: #0b0f19;">
+        <!-- Fallback Loader Menunggu React Siap -->
+        <div id="fallback-loader" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #0b0f19;">
             <h2 style="color: #0ea5e9; font-family: sans-serif; margin-bottom: 8px; letter-spacing: 0.05em;">VEO 3 PRO STUDIO</h2>
-            <p style="color: #94a3b8; font-family: sans-serif; font-size: 14px;">Memuat Inisialisasi Engine AI...</p>
+            <p style="color: #94a3b8; font-family: sans-serif; font-size: 13px;">Memuat Engine UI Komersial...</p>
         </div>
     </div>
 
@@ -94,7 +97,7 @@
             if (line.startsWith('|')) {
               inTable = true;
               const cells = line.split('|').map(cell => cell.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-              const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':' && cell.endsWith(':'))));
+              const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':') && cell.endsWith(':')));
               if (isDivider) continue;
 
               if (currentTableHeaders.length === 0) {
@@ -106,14 +109,14 @@
             } else {
               if (inTable && currentTableHeaders.length > 0) {
                 elements.push(
-                  <div key={`table-${i}`} className="overflow-x-auto my-4 border border-cyan-500/30 rounded-xl">
-                    <table className="min-w-full divide-y divide-cyan-500/20 text-sm bg-slate-900 text-white">
-                      <thead className="bg-slate-800 text-cyan-300">
+                  <div key={`table-${i}`} className="overflow-x-auto my-4 border border-cyan-500 rounded-xl">
+                    <table className="min-w-full divide-y divide-slate-700 text-sm bg-slate-900 text-white">
+                      <thead className="bg-slate-800 text-cyan-400">
                         <tr>
                           {currentTableHeaders.map((hdr, hIdx) => <th key={hIdx} className="px-4 py-2 text-left text-xs uppercase font-bold">{hdr}</th>)}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-700">
+                      <tbody className="divide-y divide-slate-800">
                         {currentTableRows.map((row, rIdx) => (
                           <tr key={rIdx}>
                             {row.map((cell, cIdx) => <td key={cIdx} className="px-4 py-2 text-xs">{cell}</td>)}
@@ -188,14 +191,14 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  contents: [{ parts: [{ text: `Buatkan analisis komersial taktis ${activeTab} untuk produk: ${JSON.stringify(formData)}. Berikan langsung dalam format Markdown tanpa teks pembuka.` }] }]
+                  contents: [{ parts: [{ text: `Buatkan analisis komersial taktis ${activeTab} untuk produk bisnis berikut ini: ${JSON.stringify(formData)}. Berikan langsung dalam format Markdown terstruktur tanpa salam basa-basi.` }] }]
                 })
               });
               const data = await response.json();
-              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal memperoleh balasan data.";
+              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal memperoleh balasan data dari sistem AI.";
               setOutputs(prev => ({ ...prev, [activeTab]: text }));
             } catch (err) {
-              setOutputs(prev => ({ ...prev, [activeTab]: `Eror API: ${err.message}` }));
+              setOutputs(prev => ({ ...prev, [activeTab]: `Eror API Konten: ${err.message}` }));
             } finally {
               setIsLoading(false);
             }
@@ -204,11 +207,11 @@
           return (
             <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100">
               
-              {/* NAVIGATION HEADER */}
-              <header className="border-b sticky top-0 z-40 px-6 py-4 bg-[#0f172a] border-slate-800">
+              {/* HEADER */}
+              <header className="border-b border-slate-800 sticky top-0 z-40 px-6 py-4 bg-[#0f172a]">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                    <div className="p-2 bg-slate-800 rounded-xl border border-slate-700">
                       <SafeIcon className="w-5 h-5 text-cyan-400" name="Flame"/>
                     </div>
                     <div>
@@ -216,33 +219,32 @@
                       <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">Premium UGC Suite & Business Architect V3.5</p>
                     </div>
                   </div>
-                  <div className="text-xs font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-800/60 px-3 py-1.5 rounded-xl flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span>⚡ System Engine Gemini 2.5 Flash</span>
+                  <div className="text-xs font-mono text-cyan-400 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>⚡ Engine: Gemini 2.5 Flash</span>
                   </div>
                 </div>
               </header>
 
-              {/* MAIN CONTENT WORKSPACE */}
+              {/* DASHBOARD BODY */}
               <main className="max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
                 
-                {/* SIDEBAR PARAMETER INPUT */}
+                {/* SIDEBAR INPUT */}
                 <aside className="lg:col-span-4 space-y-4">
                   
-                  {/* API KEY BOX */}
+                  {/* API BOX */}
                   <div className="p-5 rounded-2xl border bg-[#0f172a] border-slate-800">
                     <div className="flex items-center gap-2 mb-2">
                       <SafeIcon className="w-4 h-4 text-cyan-400" name="Lock"/>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">Google Gemini API Key</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block">Google Gemini API Key</label>
                     </div>
-                    <p className="text-[11px] text-slate-400 mb-2">Masukkan kunci API Gemini resmi Anda. Seluruh pemrosesan dilakukan langsung di sisi klien.</p>
                     <div className="relative flex items-center">
                       <input 
                         type={showApiKey ? "text" : "password"} 
                         placeholder="Masukkan AIzaSy..." 
                         value={apiKey} 
                         onChange={(e) => handleSaveApiKey(e.target.value)}
-                        className="w-full border rounded-xl pl-4 pr-10 py-2.5 text-xs font-mono border-slate-800 focus:outline-none focus:border-cyan-500"
+                        className="w-full rounded-xl pl-4 pr-10 py-2.5 text-xs font-mono custom-input"
                       />
                       <button onClick={() => setShowApiKey(!showApiKey)} className="absolute right-3 text-slate-400 hover:text-cyan-400">
                         <SafeIcon className="w-4 h-4" name={showApiKey ? "EyeOff" : "Eye"}/>
@@ -251,67 +253,67 @@
                     {!apiKey && <p className="text-[10px] text-amber-400 mt-2 font-mono">⚠️ Menunggu Input Kunci API...</p>}
                   </div>
 
-                  {/* FORM PARAMETER */}
+                  {/* MAIN PARAMETERS */}
                   <div className="p-5 rounded-2xl border bg-[#0f172a] border-slate-800 space-y-3">
                     <div className="border-b border-slate-800 pb-2 flex items-center gap-2">
                       <SafeIcon className="w-4 h-4 text-purple-400" name="Briefcase"/>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Parameter Bisnis Global</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">Parameter Bisnis Global</h3>
                     </div>
                     
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nama Produk / Bisnis</label>
-                      <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
+                      <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input" />
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Deskripsi Singkat & Cara Kerja</label>
-                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
+                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input" />
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Keunggulan Utama / Karakter Fisik</label>
-                      <input type="text" value={formData.characteristics} onChange={(e) => setFormData({...formData, characteristics: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
+                      <input type="text" value={formData.characteristics} onChange={(e) => setFormData({...formData, characteristics: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Harga Jual (Rp)</label>
-                        <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none" />
+                        <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input" />
                       </div>
                       <div>
                         <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Target Omzet (Rp)</label>
-                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({...formData, targetOmzet: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none" />
+                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({...formData, targetOmzet: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input" />
                       </div>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Kategori Industri Makro</label>
-                      <select value={formData.industryCategory} onChange={(e) => setFormData({...formData, industryCategory: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
-                        {INDUSTRY_CATEGORIES.map(c => <option key={c.value} value={c.value} className="text-slate-800">{c.label}</option>)}
+                      <select value={formData.industryCategory} onChange={(e) => setFormData({...formData, industryCategory: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input text-white">
+                        {INDUSTRY_CATEGORIES.map(c => <option key={c.value} value={c.value} className="text-slate-900">{c.label}</option>)}
                       </select>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Strategi Marketing Angle</label>
-                      <select value={formData.marketingAngle} onChange={(e) => setFormData({...formData, marketingAngle: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
-                        {MARKETING_ANGLES.map(m => <option key={m.value} value={m.value} className="text-slate-800">{m.label}</option>)}
+                      <select value={formData.marketingAngle} onChange={(e) => setFormData({...formData, marketingAngle: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input text-white">
+                        {MARKETING_ANGLES.map(m => <option key={m.value} value={m.value} className="text-slate-900">{m.label}</option>)}
                       </select>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Viral Hook Style</label>
-                      <select value={formData.viralHookStyle} onChange={(e) => setFormData({...formData, viralHookStyle: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
-                        {VIRAL_HOOK_STYLES.map(h => <option key={h.value} value={h.value} className="text-slate-800">{h.label}</option>)}
+                      <select value={formData.viralHookStyle} onChange={(e) => setFormData({...formData, viralHookStyle: e.target.value})} className="w-full rounded-xl p-2.5 text-xs custom-input text-white">
+                        {VIRAL_HOOK_STYLES.map(h => <option key={h.value} value={h.value} className="text-slate-900">{h.label}</option>)}
                       </select>
                     </div>
                   </div>
                 </aside>
 
-                {/* WORKSPACE AREA */}
+                {/* WORKSPACE PREVIEW */}
                 <section className="lg:col-span-8 flex flex-col space-y-4">
                   
-                  {/* TAB MENU */}
-                  <div className="p-1.5 rounded-xl border flex gap-1 bg-[#0f172a] border-slate-800">
+                  {/* TABS */}
+                  <div className="p-1.5 rounded-xl border bg-[#0f172a] border-slate-800 flex gap-1">
                     {[
                       { id: 'planner', label: 'Perencana Bisnis' },
                       { id: 'calendar', label: 'Kalender Konten' },
@@ -321,15 +323,15 @@
                       <button 
                         key={tab.id} 
                         onClick={() => setActiveTab(tab.id)} 
-                        className={`flex-1 py-2.5 text-center text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === tab.id ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+                        className={`flex-1 py-2.5 text-center text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === tab.id ? 'bg-cyan-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
                       >
                         {tab.label}
                       </button>
                     ))}
                   </div>
 
-                  {/* OUTPUT TERMINAL CONSOLE */}
-                  <div className="p-6 rounded-2xl border min-h-[430px] flex flex-col justify-between bg-[#0f172a]/40 border-slate-800">
+                  {/* TERMINAL CONSOLE */}
+                  <div className="p-6 rounded-2xl border min-h-[460px] flex flex-col justify-between bg-[#111827] border-slate-800">
                     <div className="w-full">
                       <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
                         <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -337,7 +339,7 @@
                         </span>
                       </div>
 
-                      <div className="output-content">
+                      <div className="workspace-output">
                         {isLoading ? (
                           <div className="py-24 text-center space-y-3">
                             <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -349,7 +351,7 @@
                           <div className="py-20 text-center text-slate-500 space-y-3">
                             <SafeIcon className="w-8 h-8 mx-auto text-slate-600" name="Sparkles"/>
                             <p className="text-xs font-bold uppercase tracking-wide text-slate-300">Studio Siap Beroperasi</p>
-                            <p className="text-[11px] text-slate-400 max-w-xs mx-auto">Silakan lengkapi profil produk di sisi kiri, pilih tab fitur yang Anda inginkan, lalu masukkan API Key Anda untuk mulai mengoperasikan sistem.</p>
+                            <p className="text-[11px] text-slate-400 max-w-xs mx-auto">Silakan isi Google Gemini API Key Anda, sesuaikan parameter produk di panel kiri, lalu klik tombol kirim di bawah ini.</p>
                           </div>
                         )}
                       </div>
@@ -359,7 +361,7 @@
                       <button 
                         onClick={executeAction} 
                         disabled={isLoading || !apiKey} 
-                        className={`w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition-all duration-200 ${!apiKey ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50' : 'bg-gradient-to-r from-cyan-500 to-indigo-600 hover:shadow-lg hover:shadow-cyan-500/20 hover:brightness-110'}`}
+                        className={`w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition-all duration-200 ${!apiKey ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-gradient-to-r from-cyan-500 to-indigo-600 hover:shadow-lg hover:shadow-cyan-500/20'}`}
                       >
                         Kirim Perintah Ke AI
                       </button>
@@ -368,7 +370,7 @@
                 </section>
               </main>
 
-              <footer className="py-4 text-center text-[10px] font-mono border-t border-slate-800/40 text-slate-500">
+              <footer className="py-4 text-center text-[10px] font-mono border-t border-slate-800 text-slate-600">
                 <p>© 2026 Veo 3 Pro Studio Suite V3.5. Dirancang khusus untuk akselerasi pertumbuhan pasar digital Indonesia.</p>
               </footer>
             </div>
