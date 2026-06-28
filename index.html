@@ -8,42 +8,189 @@
     <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
-    <!-- React & ReactDOM (Versi Development agar error terlihat di konsol) -->
+    <!-- React & ReactDOM v18 (Development Version) -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
     <!-- Babel Compiler -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Lucide Icons untuk ikon-ikon di aplikasi -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* Mencegah layar putih berkedip saat memuat data */
         body {
-            background-color: #030712; /* Mencegah layar putih saat loading */
+            background-color: #030712;
             color: #f3f4f6;
+            font-family: sans-serif;
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- PENTING: type="text/babel" agar Babel menerjemahkan sintaks React -->
     <script type="text/babel">
-        // Buat pintasan ikon Lucide agar tidak error saat dipanggil di kode Anda
+        // Menyediakan ikon Lucide agar bisa langsung dipanggil di dalam komponen React Anda
         const { 
             Sparkles, Lock, Shield, Package, ShoppingBag, 
             ChevronRight, Download, Eye, Sun, Moon, RefreshCw,
-            Image, FileText, Video, Layers
+            Image, FileText, Video, Layers, CheckCircle2, AlertCircle
         } = window.lucide || {};
 
-        // === PASTE KODE ASLI RE-ACT ANDA DI BAWAH INI ===
-        // Tempelkan seluruh isi file panjang Anda di sini.
-        // PASTIKAN: Hapus baris "import ..." atau "export default ..." di bagian atas/bawah kode asli Anda jika ada.
-        
-        // Di bagian paling bawah kode Anda (setelah fungsi komponen utama selesai), 
-        // pastikan ada baris ini untuk merender aplikasinya ke layar:
-        // ReactDOM.createRoot(document.getElementById('root')).render(<NamaKomponenUtama Anda />);
+        // ==========================================
+        // KOMPONEN UTAMA APLIKASI (VEO 3 PRO STUDIO)
+        // ==========================================
+        function App() {
+            // State untuk Kunci API dan Parameter Bisnis
+            const [apiKey, setApiKey] = React.useState('');
+            const [productName, setProductName] = React.useState('Basreng Kaffir Jeruk Purut');
+            const [productDesc, setProductDesc] = React.useState('Keripik bakso goreng renyah dengan daun jeruk purut segar dengan limpahan cabai asli dan gurih umami tinggi.');
+            const [isDarkMode, setIsDarkMode] = React.useState(true);
+
+            return (
+                <div className={`min-h-screen ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'} transition-colors duration-300`}>
+                    
+                    {/* HEADER */}
+                    <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-cyan-400">
+                                <Sparkles className="w-6 h-6 animate-pulse" />
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-bold tracking-wider bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                                    VEO 3 PRO STUDIO
+                                </h1>
+                                <p className="text-xs text-gray-400 tracking-widest uppercase font-mono">
+                                    Premium UGC Suite & Business Architect v3.5
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => setIsDarkMode(!isDarkMode)} 
+                                className="p-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl border border-gray-700 text-gray-300 transition-all duration-200"
+                            >
+                                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                            </button>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl font-mono text-xs">
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-400" />
+                                <span>System Engine: Gemini 2.5 Flash</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* MAIN CONTENT CONTAINER */}
+                    <main className="max-w-7xl mx-auto p-6 space-y-8">
+                        
+                        {/* SECTION 1: GOOGLE GEMINI API KEY */}
+                        <section className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden shadow-xl shadow-black/40">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2.5">
+                                    <Lock className="w-5 h-5 text-cyan-400" />
+                                    <h3 className="text-sm font-semibold tracking-wider uppercase font-mono text-cyan-400">
+                                        Google Gemini API Key
+                                    </h3>
+                                </div>
+                                <Shield className="w-5 h-5 text-emerald-400" />
+                            </div>
+                            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+                                Masukkan kunci API Gemini resmi Anda. Seluruh pemrosesan dilakukan secara langsung di sisi klien dan tidak pernah dikirim ke server pihak ketiga.
+                            </p>
+                            <div className="relative">
+                                <input 
+                                    type="password" 
+                                    placeholder="AIzaSy..." 
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                    className="w-full bg-black/40 border border-gray-800 focus:border-cyan-500/50 rounded-xl px-4 py-3 text-sm font-mono tracking-wider text-gray-200 placeholder-gray-600 focus:outline-none transition-all duration-200"
+                                />
+                                <Eye className="w-4 h-4 text-gray-600 absolute right-4 top-3.5 cursor-pointer hover:text-gray-400" />
+                            </div>
+                            <div className="flex items-center gap-2 mt-3 text-xs text-rose-400 font-mono">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                <span>Menunggu Input Kunci API...</span>
+                            </div>
+                        </section>
+
+                        {/* SECTION 2: PARAMETER BISNIS GLOBAL */}
+                        <section className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 backdrop-blur-md shadow-xl shadow-black/40 space-y-6">
+                            <div className="flex items-center gap-2.5 border-b border-gray-800 pb-3">
+                                <Package className="w-5 h-5 text-purple-400" />
+                                <h3 className="text-sm font-semibold tracking-wider uppercase font-mono text-purple-400">
+                                    Parameter Bisnis Global
+                                </h3>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2">
+                                        $ Nama Produk / Bisnis
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        value={productName}
+                                        onChange={(e) => setProductName(e.target.value)}
+                                        className="w-full bg-black/40 border border-gray-800 focus:border-purple-500/50 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none transition-all"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2">
+                                        $ Deskripsi Singkat Produk & Keunggulan
+                                    </label>
+                                    <textarea 
+                                        rows="3"
+                                        value={productDesc}
+                                        onChange={(e) => setProductDesc(e.target.value)}
+                                        className="w-full bg-black/40 border border-gray-800 focus:border-purple-500/50 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none transition-all resize-none leading-relaxed"
+                                    />
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* QUICK PLACEHOLDER UNTUK MENU UTAMA STUDIO */}
+                        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20 rounded-xl flex items-center gap-4">
+                                <Video className="w-8 h-8 text-cyan-400" />
+                                <div>
+                                    <h4 className="font-semibold text-sm">UGC Video Script</h4>
+                                    <p className="text-xs text-gray-400">Skrip video viral Tiktok</p>
+                                </div>
+                            </div>
+                            <div className="p-5 bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 rounded-xl flex items-center gap-4">
+                                <Layers className="w-8 h-8 text-purple-400" />
+                                <div>
+                                    <h4 className="font-semibold text-sm">Carousel Architect</h4>
+                                    <p className="text-xs text-gray-400">Desain microblog kreatif</p>
+                                </div>
+                            </div>
+                            <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl flex items-center gap-4">
+                                <FileText className="w-8 h-8 text-emerald-400" />
+                                <div>
+                                    <h4 className="font-semibold text-sm">Copywriting Sales</h4>
+                                    <p className="text-xs text-gray-400">Gaya landing page & ads</p>
+                                </div>
+                            </div>
+                            <div className="p-5 bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 rounded-xl flex items-center gap-4">
+                                <ShoppingBag className="w-8 h-8 text-amber-400" />
+                                <div>
+                                    <h4 className="font-semibold text-sm">Market Strategy</h4>
+                                    <p className="text-xs text-gray-400">Analisa target audiens</p>
+                                </div>
+                            </div>
+                        </section>
+
+                    </main>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // EKSEKUSI RENDER REACT KE HTML DOM
+        // ==========================================
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(React.createElement(App));
     </script>
 </body>
 </html>
