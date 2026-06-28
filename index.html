@@ -4,27 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veo 3 Pro Studio</title>
-    <!-- Tailwind CSS untuk Desain -->
+    
+    <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel untuk membaca sintaksis React -->
+    
+    <!-- React & ReactDOM (Versi Development agar error terlihat di konsol) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- Babel Compiler -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons untuk ikon-ikon di aplikasi -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        @layer base {
-            body { @apply transition-colors duration-300; }
+        body {
+            background-color: #030712; /* Mencegah layar putih saat loading */
+            color: #f3f4f6;
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
+    <!-- PENTING: type="text/babel" agar Babel menerjemahkan sintaks React -->
     <script type="text/babel">
-        // === PASTE SELURUH ISI FILE KODE ANDA DI SINI ===
-        // Ganti baris ini dengan menyalin seluruh isi kode yang Anda kirimkan tadi, 
-        // lalu hapus baris "import ..." dan "export default ..." di dalam kode tersebut 
-        // karena di HTML kita menggunakan Lucide Icons langsung dari CDN jika diperlukan.
+        // Buat pintasan ikon Lucide agar tidak error saat dipanggil di kode Anda
+        const { 
+            Sparkles, Lock, Shield, Package, ShoppingBag, 
+            ChevronRight, Download, Eye, Sun, Moon, RefreshCw,
+            Image, FileText, Video, Layers
+        } = window.lucide || {};
+
+        // === PASTE KODE ASLI RE-ACT ANDA DI BAWAH INI ===
+        // Tempelkan seluruh isi file panjang Anda di sini.
+        // PASTIKAN: Hapus baris "import ..." atau "export default ..." di bagian atas/bawah kode asli Anda jika ada.
+        
+        // Di bagian paling bawah kode Anda (setelah fungsi komponen utama selesai), 
+        // pastikan ada baris ini untuk merender aplikasinya ke layar:
+        // ReactDOM.createRoot(document.getElementById('root')).render(<NamaKomponenUtama Anda />);
     </script>
 </body>
 </html>
