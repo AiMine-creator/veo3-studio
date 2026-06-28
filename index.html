@@ -13,7 +13,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Memaksa background dasar gelap solid agar kontras tinggi */
         body { 
             background-color: #0b0f19 !important; 
             color: #f1f5f9 !important;
@@ -21,7 +20,6 @@
             margin: 0;
             padding: 0;
         }
-        /* Memastikan box input memiliki latar abu-abu gelap solid dan teks putih terang */
         .custom-input {
             background-color: #1e293b !important;
             color: #ffffff !important;
@@ -45,18 +43,20 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Komponen Pengaman Ikon Lucide
+        // Komponen Pengaman Ikon Lucide - Mencegah Crash jika objek belum siap
         const SafeIcon = ({ name, className = "w-4 h-4", ...props }) => {
             useEffect(() => {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons();
                 }
-            });
+            }, [name]);
+
             const icons = window.lucide || {};
             const TargetIcon = icons[name];
             if (TargetIcon) {
                 return <TargetIcon className={className} {...props} />;
             }
+            // Fallback kotak kecil jika icon gagal dimuat sementara
             return <span className={`inline-block border border-current rounded-sm ${className}`} style={{ opacity: 0.5 }}></span>;
         };
 
@@ -83,71 +83,39 @@
           { value: "Bold Claim", label: "Bold Claim (Klaim Berani)" }
         ];
 
+        // Parser Sederhana dan Aman untuk Menghindari Fatal Crash UI
         const parseMarkdownToReact = (text) => {
           if (!text) return null;
-          const lines = text.split('\n');
-          const elements = [];
-          let currentTableHeaders = [];
-          let currentTableRows = [];
-          let inTable = false;
+          try {
+            const lines = text.split('\n');
+            const elements = [];
 
-          for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (line === '') continue;
 
-            if (line.startsWith('|')) {
-              inTable = true;
-              const cells = line.split('|').map(cell => cell.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-              const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':') && cell.endsWith(':')));
-              if (isDivider) continue;
-
-              if (currentTableHeaders.length === 0) {
-                currentTableHeaders = cells;
-              } else {
-                currentTableRows.push(cells);
+              // Abaikan baris tabel mentah agar tidak merusak rendering jika format AI tidak sempurna
+              if (line.startsWith('|')) {
+                continue; 
               }
-              continue;
-            } else {
-              if (inTable && currentTableHeaders.length > 0) {
-                elements.push(
-                  <div key={`table-${i}`} className="overflow-x-auto my-4 border border-cyan-500 rounded-xl">
-                    <table className="min-w-full divide-y divide-slate-700 text-sm bg-slate-900 text-white">
-                      <thead className="bg-slate-800 text-cyan-400">
-                        <tr>
-                          {currentTableHeaders.map((hdr, hIdx) => <th key={hIdx} className="px-4 py-2 text-left text-xs uppercase font-bold">{hdr}</th>)}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-800">
-                        {currentTableRows.map((row, rIdx) => (
-                          <tr key={rIdx}>
-                            {row.map((cell, cIdx) => <td key={cIdx} className="px-4 py-2 text-xs">{cell}</td>)}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                );
-                currentTableHeaders = [];
-                currentTableRows = [];
-                inTable = false;
+              if (line.startsWith('###')) {
+                elements.push(<h4 key={i} className="text-base font-bold text-cyan-400 mt-4 mb-2">{line.replace('###', '').trim()}</h4>);
+                continue;
               }
+              if (line.startsWith('##') || line.startsWith('#')) {
+                elements.push(<h3 key={i} className="text-lg font-black text-purple-400 mt-5 mb-3">{line.replace(/^#+\s*/, '').trim()}</h3>);
+                continue;
+              }
+              if (line.startsWith('-') || line.startsWith('*')) {
+                elements.push(<div key={i} className="text-sm pl-4 my-1 text-slate-300">• {line.replace(/^[-*]\s*/, '').trim()}</div>);
+                continue;
+              }
+              elements.push(<p key={i} className="text-sm text-slate-300 my-1">{line}</p>);
             }
-
-            if (line.startsWith('###')) {
-              elements.push(<h4 key={i} className="text-base font-bold text-cyan-400 mt-4 mb-2">{line.replace('###', '').trim()}</h4>);
-              continue;
-            }
-            if (line.startsWith('##') || line.startsWith('#')) {
-              elements.push(<h3 key={i} className="text-lg font-black text-purple-400 mt-5 mb-3">{line.replace(/^#+\s*/, '').trim()}</h3>);
-              continue;
-            }
-            if (line.startsWith('-') || line.startsWith('*')) {
-              elements.push(<div key={i} className="text-sm pl-4 my-1 text-slate-300">• {line.replace(/^[-*]\s*/, '').trim()}</div>);
-              continue;
-            }
-            if (line === '') continue;
-            elements.push(<p key={i} className="text-sm text-slate-300 my-1">{line}</p>);
+            return <div className="space-y-1">{elements}</div>;
+          } catch (e) {
+            return <p className="text-xs text-red-400">Gagal memproses format teks output.</p>;
           }
-          return <div className="space-y-1">{elements}</div>;
         };
 
         function App() {
@@ -186,12 +154,13 @@
             if (!apiKey) return;
             setIsLoading(true);
             try {
-              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+              // Menggunakan endpoint Gemini API yang stabil
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
               const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  contents: [{ parts: [{ text: `Buatkan analisis komersial taktis ${activeTab} untuk produk bisnis berikut ini: ${JSON.stringify(formData)}. Berikan langsung dalam format Markdown terstruktur tanpa salam basa-basi.` }] }]
+                  contents: [{ parts: [{ text: `Buatkan analisis komersial taktis untuk fitur/tab [${activeTab}] berdasarkan data produk berikut: ${JSON.stringify(formData)}. Tulis langsung poin-poinnya menggunakan format Markdown standar tanpa kalimat pembuka/penutup.` }] }]
                 })
               });
               const data = await response.json();
@@ -221,7 +190,7 @@
                   </div>
                   <div className="text-xs font-mono text-cyan-400 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <span>⚡ Engine: Gemini 2.5 Flash</span>
+                    <span>⚡ Engine: Gemini Pro</span>
                   </div>
                 </div>
               </header>
