@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VEO 3 PRO STUDIO - Premium UGC Suite</title>
     
-    <!-- Pustaka Utama Berbasis CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- MENGGUNAKAN TAILWIND V3 STABIL UNTUK PRODUCTION RUNTIME TANPA COMPILER -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Mengamankan tampilan dasar agar langsung gelap premium sejak awal render */
         body { 
             background-color: #0b0f19 !important; 
             color: #f8fafc !important; 
@@ -21,11 +20,19 @@
             margin: 0;
             padding: 0;
         }
+        /* Memastikan teks di dalam input box terlihat sangat jelas */
+        input, textarea, select {
+            color: #ffffff !important;
+            background-color: #070a13 !important;
+        }
+        input::placeholder {
+            color: #4b5563 !important;
+        }
     </style>
 </head>
 <body>
     <div id="root">
-        <!-- Fallback Loader murni sebelum diambil alih oleh React -->
+        <!-- Loader Awal Aman -->
         <div id="fallback-loader" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; background-color: #0b0f19;">
             <h2 style="color: #0ea5e9; font-family: sans-serif; margin-bottom: 8px; letter-spacing: 0.05em;">VEO 3 PRO STUDIO</h2>
             <p style="color: #94a3b8; font-family: sans-serif; font-size: 14px;">Memuat Inisialisasi Engine AI...</p>
@@ -35,7 +42,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Komponen Pengaman Ikon Lucide mencegah kegagalan render global
+        // Komponen Pengaman Ikon Lucide
         const SafeIcon = ({ name, className = "w-4 h-4", ...props }) => {
             useEffect(() => {
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -50,7 +57,6 @@
             return <span className={`inline-block border border-current rounded-sm ${className}`} style={{ opacity: 0.5 }}></span>;
         };
 
-        // Data Konfigurasi Opsi Dropdown
         const INDUSTRY_CATEGORIES = [
           { value: "food", label: "Culinary & Food (Kuliner Maknyus)" },
           { value: "beverage", label: "Beverage & Drinks (Minuman Kekinian)" },
@@ -74,7 +80,6 @@
           { value: "Bold Claim", label: "Bold Claim (Klaim Berani)" }
         ];
 
-        // Parser Markdown Sederhana ke Elemen React
         const parseMarkdownToReact = (text) => {
           if (!text) return null;
           const lines = text.split('\n');
@@ -89,7 +94,7 @@
             if (line.startsWith('|')) {
               inTable = true;
               const cells = line.split('|').map(cell => cell.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-              const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':') && cell.endsWith(':')));
+              const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':' && cell.endsWith(':'))));
               if (isDivider) continue;
 
               if (currentTableHeaders.length === 0) {
@@ -142,11 +147,9 @@
           return <div className="space-y-1">{elements}</div>;
         };
 
-        // Aplikasi Utama Ganda Mode Terjamin
         function App() {
           const [apiKey, setApiKey] = useState(() => localStorage.getItem('veo_studio_apikey') || '');
           const [showApiKey, setShowApiKey] = useState(false);
-          const [isDarkMode, setIsDarkMode] = useState(true);
 
           const [formData, setFormData] = useState({
             name: 'Basreng Kaffir Jeruk Purut',
@@ -167,7 +170,6 @@
           const [outputs, setOutputs] = useState({ planner: '', calendar: '', caption: '', generator: '' });
 
           useEffect(() => {
-            // Bersihkan loader mentah HTML begitu React siap sedia take-over DOM
             const loader = document.getElementById('fallback-loader');
             if (loader) loader.remove();
           }, []);
@@ -186,24 +188,24 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  contents: [{ parts: [{ text: `Bertindaklah sebagai UGC Content Strategy Expert. Buatkan konsep analisis komersial taktis ${activeTab} untuk produk berikut ini: ${JSON.stringify(formData)}. Berikan output langsung dalam format Markdown terstruktur tanpa teks pembuka/salam.` }] }]
+                  contents: [{ parts: [{ text: `Buatkan analisis komersial taktis ${activeTab} untuk produk: ${JSON.stringify(formData)}. Berikan langsung dalam format Markdown tanpa teks pembuka.` }] }]
                 })
               });
               const data = await response.json();
-              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal memperoleh balasan data dari sistem AI.";
+              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal memperoleh balasan data.";
               setOutputs(prev => ({ ...prev, [activeTab]: text }));
             } catch (err) {
-              setOutputs(prev => ({ ...prev, [activeTab]: `Eror API Konten: ${err.message}` }));
+              setOutputs(prev => ({ ...prev, [activeTab]: `Eror API: ${err.message}` }));
             } finally {
               setIsLoading(false);
             }
           };
 
           return (
-            <div className={`min-h-screen flex flex-col transition-colors duration-200 ${isDarkMode ? 'bg-[#0b0f19] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+            <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100">
               
               {/* NAVIGATION HEADER */}
-              <header className={`border-b sticky top-0 z-40 px-6 py-4 ${isDarkMode ? 'bg-[#0f172a]/90 border-slate-800/80 backdrop-blur-md' : 'bg-white border-slate-200 shadow-sm'}`}>
+              <header className="border-b sticky top-0 z-40 px-6 py-4 bg-[#0f172a] border-slate-800">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
@@ -214,47 +216,43 @@
                       <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">Premium UGC Suite & Business Architect V3.5</p>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => setIsDarkMode(!isDarkMode)}
-                    className={`p-2.5 rounded-xl border text-xs flex items-center gap-2 transition ${isDarkMode ? 'bg-slate-800/60 border-slate-700 text-yellow-400' : 'bg-slate-100 border-slate-200 text-slate-700'}`}
-                  >
-                    <SafeIcon className="w-4 h-4" name={isDarkMode ? "Sun" : "Moon"}/>
-                    <span className="hidden sm:inline font-medium">{isDarkMode ? "Mode Terang" : "Mode Gelap"}</span>
-                  </button>
+                  <div className="text-xs font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-800/60 px-3 py-1.5 rounded-xl flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>⚡ System Engine Gemini 2.5 Flash</span>
+                  </div>
                 </div>
               </header>
 
-              {/* DASHBOARD GRID SYSTEM */}
+              {/* MAIN CONTENT WORKSPACE */}
               <main className="max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
                 
-                {/* SIDEBAR PARAMETER */}
+                {/* SIDEBAR PARAMETER INPUT */}
                 <aside className="lg:col-span-4 space-y-4">
                   
-                  {/* CARD API KEY */}
-                  <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-[#0f172a] border-slate-800/80' : 'bg-white border-slate-200 shadow-sm'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <SafeIcon className="w-4 h-4 text-cyan-400" name="Lock"/>
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">Google Gemini API Key</label>
-                      </div>
+                  {/* API KEY BOX */}
+                  <div className="p-5 rounded-2xl border bg-[#0f172a] border-slate-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <SafeIcon className="w-4 h-4 text-cyan-400" name="Lock"/>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">Google Gemini API Key</label>
                     </div>
+                    <p className="text-[11px] text-slate-400 mb-2">Masukkan kunci API Gemini resmi Anda. Seluruh pemrosesan dilakukan langsung di sisi klien.</p>
                     <div className="relative flex items-center">
                       <input 
                         type={showApiKey ? "text" : "password"} 
                         placeholder="Masukkan AIzaSy..." 
                         value={apiKey} 
                         onChange={(e) => handleSaveApiKey(e.target.value)}
-                        className={`w-full border rounded-xl pl-4 pr-10 py-2 text-xs font-mono focus:outline-none focus:border-cyan-500 transition ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-cyan-400' : 'bg-slate-50 border-slate-200 text-slate-800'}`}
+                        className="w-full border rounded-xl pl-4 pr-10 py-2.5 text-xs font-mono border-slate-800 focus:outline-none focus:border-cyan-500"
                       />
-                      <button onClick={() => setShowApiKey(!showApiKey)} className="absolute right-3 text-slate-400 hover:text-cyan-400 transition">
+                      <button onClick={() => setShowApiKey(!showApiKey)} className="absolute right-3 text-slate-400 hover:text-cyan-400">
                         <SafeIcon className="w-4 h-4" name={showApiKey ? "EyeOff" : "Eye"}/>
                       </button>
                     </div>
-                    {!apiKey && <p className="text-[10px] text-amber-400 mt-2 font-mono flex items-center gap-1">⚠️ Menunggu Input Kunci API...</p>}
+                    {!apiKey && <p className="text-[10px] text-amber-400 mt-2 font-mono">⚠️ Menunggu Input Kunci API...</p>}
                   </div>
 
-                  {/* FORM INPUT UTAMA */}
-                  <div className={`p-5 rounded-2xl border space-y-3 ${isDarkMode ? 'bg-[#0f172a] border-slate-800/80' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  {/* FORM PARAMETER */}
+                  <div className="p-5 rounded-2xl border bg-[#0f172a] border-slate-800 space-y-3">
                     <div className="border-b border-slate-800 pb-2 flex items-center gap-2">
                       <SafeIcon className="w-4 h-4 text-purple-400" name="Briefcase"/>
                       <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Parameter Bisnis Global</h3>
@@ -262,58 +260,58 @@
                     
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nama Produk / Bisnis</label>
-                      <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className={`w-full border rounded-xl p-2 text-xs focus:outline-none focus:border-cyan-500 ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`} />
+                      <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Deskripsi & Cara Kerja</label>
-                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} className={`w-full border rounded-xl p-2 text-xs focus:outline-none focus:border-cyan-500 ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`} />
+                      <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Deskripsi Singkat & Cara Kerja</label>
+                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Karakter Fisik / Keunggulan</label>
-                      <input type="text" value={formData.characteristics} onChange={(e) => setFormData({...formData, characteristics: e.target.value})} className={`w-full border rounded-xl p-2 text-xs focus:outline-none focus:border-cyan-500 ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`} />
+                      <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Keunggulan Utama / Karakter Fisik</label>
+                      <input type="text" value={formData.characteristics} onChange={(e) => setFormData({...formData, characteristics: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none focus:border-cyan-500" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Harga Jual (Rp)</label>
-                        <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className={`w-full border rounded-xl p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`} />
+                        <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none" />
                       </div>
                       <div>
                         <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Target Omzet (Rp)</label>
-                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({...formData, targetOmzet: e.target.value})} className={`w-full border rounded-xl p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`} />
+                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({...formData, targetOmzet: e.target.value})} className="w-full border rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none" />
                       </div>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Kategori Industri Makro</label>
-                      <select value={formData.industryCategory} onChange={(e) => setFormData({...formData, industryCategory: e.target.value})} className={`w-full border rounded-xl p-2 text-xs text-slate-300 focus:outline-none ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`}>
+                      <select value={formData.industryCategory} onChange={(e) => setFormData({...formData, industryCategory: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
                         {INDUSTRY_CATEGORIES.map(c => <option key={c.value} value={c.value} className="text-slate-800">{c.label}</option>)}
                       </select>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Strategi Marketing Angle</label>
-                      <select value={formData.marketingAngle} onChange={(e) => setFormData({...formData, marketingAngle: e.target.value})} className={`w-full border rounded-xl p-2 text-xs text-slate-300 focus:outline-none ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`}>
+                      <select value={formData.marketingAngle} onChange={(e) => setFormData({...formData, marketingAngle: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
                         {MARKETING_ANGLES.map(m => <option key={m.value} value={m.value} className="text-slate-800">{m.label}</option>)}
                       </select>
                     </div>
 
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Viral Hook Style</label>
-                      <select value={formData.viralHookStyle} onChange={(e) => setFormData({...formData, viralHookStyle: e.target.value})} className={`w-full border rounded-xl p-2 text-xs text-slate-300 focus:outline-none ${isDarkMode ? 'bg-[#070a13] border-slate-800 text-white' : 'bg-slate-50 border-slate-200'}`}>
+                      <select value={formData.viralHookStyle} onChange={(e) => setFormData({...formData, viralHookStyle: e.target.value})} className="w-full border bg-[#070a13] text-white rounded-xl p-2.5 text-xs border-slate-800 focus:outline-none">
                         {VIRAL_HOOK_STYLES.map(h => <option key={h.value} value={h.value} className="text-slate-800">{h.label}</option>)}
                       </select>
                     </div>
                   </div>
                 </aside>
 
-                {/* AREA WORKSPACE UTAMA */}
+                {/* WORKSPACE AREA */}
                 <section className="lg:col-span-8 flex flex-col space-y-4">
                   
-                  {/* TAB SELECTION SYSTEM */}
-                  <div className={`p-1.5 rounded-xl border flex gap-1 ${isDarkMode ? 'bg-[#0f172a] border-slate-800/80' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  {/* TAB MENU */}
+                  <div className="p-1.5 rounded-xl border flex gap-1 bg-[#0f172a] border-slate-800">
                     {[
                       { id: 'planner', label: 'Perencana Bisnis' },
                       { id: 'calendar', label: 'Kalender Konten' },
@@ -323,15 +321,15 @@
                       <button 
                         key={tab.id} 
                         onClick={() => setActiveTab(tab.id)} 
-                        className={`flex-1 py-2.5 text-center text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === tab.id ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                        className={`flex-1 py-2.5 text-center text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === tab.id ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-slate-200'}`}
                       >
                         {tab.label}
                       </button>
                     ))}
                   </div>
 
-                  {/* KONSOL UTAMA PANEL OUTPUT */}
-                  <div className={`p-6 rounded-2xl border min-h-[420px] flex flex-col justify-between ${isDarkMode ? 'bg-[#0f172a]/40 border-slate-800/60 shadow-inner' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  {/* OUTPUT TERMINAL CONSOLE */}
+                  <div className="p-6 rounded-2xl border min-h-[430px] flex flex-col justify-between bg-[#0f172a]/40 border-slate-800">
                     <div className="w-full">
                       <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
                         <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -339,19 +337,19 @@
                         </span>
                       </div>
 
-                      <div className="output-screen-wrapper">
+                      <div className="output-content">
                         {isLoading ? (
                           <div className="py-24 text-center space-y-3">
                             <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs font-mono text-cyan-400 animate-pulse uppercase tracking-widest">Memproses Analisis Kecerdasan Buatan...</p>
+                            <p className="text-xs font-mono text-cyan-400 animate-pulse uppercase tracking-widest">Memproses Kompilasi Data AI...</p>
                           </div>
                         ) : outputs[activeTab] ? (
-                          <div className="prose max-w-none break-words text-slate-100">{parseMarkdownToReact(outputs[activeTab])}</div>
+                          <div className="prose max-w-none text-slate-100">{parseMarkdownToReact(outputs[activeTab])}</div>
                         ) : (
-                          <div className="py-20 text-center text-slate-500 space-y-2">
+                          <div className="py-20 text-center text-slate-500 space-y-3">
                             <SafeIcon className="w-8 h-8 mx-auto text-slate-600" name="Sparkles"/>
-                            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Studio Siap Beroperasi</p>
-                            <p className="text-[11px] text-slate-400 max-w-sm mx-auto">Silakan lengkapi profil produk di sisi kiri, pilih tab fitur yang Anda inginkan, lalu klik tombol jalankan di bawah ini.</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-slate-300">Studio Siap Beroperasi</p>
+                            <p className="text-[11px] text-slate-400 max-w-xs mx-auto">Silakan lengkapi profil produk di sisi kiri, pilih tab fitur yang Anda inginkan, lalu masukkan API Key Anda untuk mulai mengoperasikan sistem.</p>
                           </div>
                         )}
                       </div>
@@ -361,7 +359,7 @@
                       <button 
                         onClick={executeAction} 
                         disabled={isLoading || !apiKey} 
-                        className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition-all duration-200 ${!apiKey ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50' : 'bg-gradient-to-r from-cyan-500 to-indigo-600 hover:shadow-lg hover:shadow-cyan-500/20 hover:brightness-110 cursor-pointer'}`}
+                        className={`w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition-all duration-200 ${!apiKey ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50' : 'bg-gradient-to-r from-cyan-500 to-indigo-600 hover:shadow-lg hover:shadow-cyan-500/20 hover:brightness-110'}`}
                       >
                         Kirim Perintah Ke AI
                       </button>
@@ -377,7 +375,6 @@
           );
         }
 
-        // Render Bootstrap React 18
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App/>);
     </script>
