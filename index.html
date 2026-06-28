@@ -5,38 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VEO 3 PRO STUDIO - Premium UGC Suite</title>
     
-    <!-- Pustaka Utama (Wajib agar React & Tailwind Jalan Tanpa Build Tools) -->
+    <!-- Pustaka Utama Berbasis CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Paksa background awal berwarna terang/putih bersih dan teks gelap sebelum React dimuat */
+        /* Antisipasi Layar Putih: Paksa styling dasar langsung aktif sebelum React render */
         body { 
             background-color: #f8fafc !important; 
             color: #0f172a !important; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <!-- Fallback loader visual jika React gagal/telat me-render -->
+        <div id="fallback-loader" style="display: flex; flex-direction: column; justify-content: center; items-center: center; height: 100vh; text-align: center; font-family: sans-serif; color: #64748b;">
+            <h2 style="color: #0ea5e9; margin-bottom: 8px;">VEO 3 PRO STUDIO</h2>
+            <p style="font-size: 14px;">Memuat Sistem Engine AI...</p>
+        </div>
+    </div>
 
     <script type="text/babel">
-        // 1. Mengaktifkan semua fungsi ikon Lucide secara manual agar kompatibel dengan lingkungan tanpa Node Modules
-        const { 
-            Sparkles, Settings, HelpCircle, Briefcase, Calendar, FileText, Video, 
-            TrendingUp, Layers, AlertTriangle, Copy, Check, Loader2, Upload, 
-            RefreshCw, Flame, DollarSign, Target, MapPin, Users, Layers3, 
-            Compass, ChevronRight, Maximize2, Trash2, Lock, Eye, EyeOff, 
-            Lightbulb, ShieldCheck, CheckCircle2, Info, Moon, Sun
-        } = window.lucide || {};
-
-        // 2. Mengaktifkan React Hooks bawaan browser
+        // --- AMANKAN COMPONENT UTAMA REACT ---
         const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- KONSTANTA UTAMA DATABASES ---
+        // Antisipasi Error Lucide: Jika CDN lambat, buat objek pengganti agar aplikasi tidak blank
+        const icons = window.lucide || {};
+        const SafeIcon = ({ name, className = "w-4 h-4", ...props }) => {
+            useEffect(() => {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
+            });
+            // Gunakan elemen bentukan jika komponen ikon siap, jika tidak gunakan span kosong
+            const TargetIcon = icons[name];
+            if (TargetIcon) {
+                return <TargetIcon className={className} {...props} />;
+            }
+            return <span className={`inline-block border border-current rounded-sm ${className}`} style={{ opacity: 0.5 }}></span>;
+        };
+
+        // --- DATABASES ---
         const INDUSTRY_CATEGORIES = [
           { value: "food", label: "Culinary & Food (Kuliner Maknyus)" },
           { value: "beverage", label: "Beverage & Drinks (Minuman Kekinian)" },
@@ -44,47 +61,25 @@
           { value: "beauty", label: "Beauty & Skincare (Kecantikan & Kulit)" },
           { value: "healthcare", label: "Healthcare & Wellness (Kesehatan)" },
           { value: "saas_tech", label: "SaaS & Software Technology" },
-          { value: "local_umkm", label: "Local UMKM & Handcrafts" },
-          { value: "mother_baby", label: "Mother & Baby Care (Ibu & Anak)" },
-          { value: "gadgets", label: "Gadgets & Accessories Electronics" },
-          { value: "education", label: "Education & E-learning (Pendidikan)" },
-          { value: "automotive", label: "Automotive & Accessories" },
-          { value: "travel", label: "Travel, Leisure & Hospitality" },
-          { value: "finance", label: "Finance, Wealth & Investment" },
-          { value: "real_estate", label: "Real Estate & Property Dev" },
-          { value: "pets", label: "Pets Supplies & Care" },
-          { value: "home_living", label: "Home, Living & Decor" },
-          { value: "sports", label: "Sports & Fitness Outdoors" },
-          { value: "gaming", label: "Gaming & Interactive Media" },
-          { value: "event_organizer", label: "Event Organizer & Wedding Services" },
-          { value: "agency_b2b", label: "Agency, Consulting & B2B Services" },
-          { value: "agriculture", label: "Agriculture, Farming & Livestock" },
-          { value: "logistics", label: "Logistics, Supply Chain & E-Commerce" }
+          { value: "local_umkm", label: "Local UMKM & Handcrafts" }
         ];
 
         const MARKETING_ANGLES = [
-          { value: "FOMO", label: "FOMO (Takut Ketinggalan Trend / Stok Menipis)" },
-          { value: "Aspirational", label: "Aspirational (Mengejar Standar Hidup Ideal)" },
-          { value: "Social Proof", label: "Social Proof (Rekomendasi Massal & Testimoni)" },
-          { value: "Authority", label: "Authority (Edukasi Ilmiah & Rekomendasi Ahli)" },
-          { value: "Scarcity", label: "Scarcity (Edisi Terbatas & Kenaikan Harga Segera)" },
-          { value: "Convenience", label: "Convenience (Efisiensi Waktu & Solusi Praktis)" },
-          { value: "Transformation", label: "Transformation (Sebelum vs Sesudah Menggunakan)" }
+          { value: "FOMO", label: "FOMO (Takut Ketinggalan Trend)" },
+          { value: "Social Proof", label: "Social Proof (Rekomendasi Massal)" },
+          { value: "Authority", label: "Authority (Edukasi Ilmiah/Ahli)" },
+          { value: "Transformation", label: "Transformation (Sebelum vs Sesudah)" }
         ];
 
         const VIRAL_HOOK_STYLES = [
-          { value: "Pattern Interrupt", label: "Pattern Interrupt (Menghentikan Jempol dalam 1 Detik)" },
-          { value: "Curiosity Gap", label: "Curiosity Gap (Memicu Pertanyaan Besar & Rasa Penasaran)" },
-          { value: "Bold Claim", label: "Bold Claim (Pernyataan Kontroversial / Klaim Berani)" },
-          { value: "Shock Visual", label: "Shock Visual (Mengarahkan Fokus Mata ke Konten Ekstrem)" },
-          { value: "Unexpected Result", label: "Unexpected Result (Plot Twist di Awal Naskah)" },
-          { value: "Emotional Trigger", label: "Emotional Trigger (Menyentuh Sisi Empati, Marah, atau Nostalgia)" }
+          { value: "Pattern Interrupt", label: "Pattern Interrupt (Stop Jari 1 Detik)" },
+          { value: "Curiosity Gap", label: "Curiosity Gap (Memicu Penasaran)" },
+          { value: "Bold Claim", label: "Bold Claim (Klaim Berani)" }
         ];
 
-        // --- PARSER MARKDOWN TO REACT ---
+        // --- PARSER MARKDOWN ---
         const parseMarkdownToReact = (text, onCopy) => {
           if (!text) return null;
-
           const lines = text.split('\n');
           const elements = [];
           let currentTableHeaders = [];
@@ -104,9 +99,8 @@
                     <button 
                       onClick={() => onCopy(codeText)} 
                       className="absolute top-2 right-2 p-1.5 bg-slate-800 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 rounded transition duration-200"
-                      title="Copy prompt"
                     >
-                      <Copy className="w-4 h-4"/>
+                      <SafeIcon className="w-4 h-4" name="Copy"/>
                     </button>
                     <pre className="text-xs font-mono text-purple-300 overflow-x-auto whitespace-pre-wrap">{codeText}</pre>
                   </div>
@@ -126,15 +120,9 @@
 
             if (line.startsWith('|')) {
               inTable = true;
-              const cells = line.split('|')
-                .map(cell => cell.trim())
-                .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-
+              const cells = line.split('|').map(cell => cell.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
               const isDivider = cells.every(cell => cell.startsWith('-') || (cell.startsWith(':') && cell.endsWith(':')));
-
-              if (isDivider) {
-                continue;
-              }
+              if (isDivider) continue;
 
               if (currentTableHeaders.length === 0) {
                 currentTableHeaders = cells;
@@ -144,27 +132,18 @@
               continue;
             } else {
               if (inTable && currentTableHeaders.length > 0) {
-                const tableKey = `table-${i}`;
                 elements.push(
-                  <div key={tableKey} className="overflow-x-auto my-6 border border-cyan-500/30 rounded-xl shadow-lg shadow-cyan-950/20">
-                    <table className="min-w-full divide-y divide-cyan-500/20 text-sm bg-slate-900/60 backdrop-blur-md">
-                      <thead className="bg-gradient-to-r from-slate-900 to-indigo-950 text-cyan-300 font-semibold">
+                  <div key={`table-${i}`} className="overflow-x-auto my-6 border border-cyan-500/30 rounded-xl shadow-lg">
+                    <table className="min-w-full divide-y divide-cyan-500/20 text-sm bg-slate-900/60 text-white">
+                      <thead className="bg-gradient-to-r from-slate-900 to-indigo-950 text-cyan-300">
                         <tr>
-                          {currentTableHeaders.map((hdr, hIdx) => (
-                            <th key={hIdx} className="px-4 py-3 text-left tracking-wider border-b border-cyan-500/30 text-xs uppercase">
-                              {hdr}
-                            </th>
-                          ))}
+                          {currentTableHeaders.map((hdr, hIdx) => <th key={hIdx} className="px-4 py-3 text-left text-xs uppercase font-bold">{hdr}</th>)}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800 text-slate-100">
+                      <tbody className="divide-y divide-slate-800">
                         {currentTableRows.map((row, rIdx) => (
-                          <tr key={rIdx} className={rIdx % 2 === 0 ? "bg-slate-900/40 hover:bg-slate-850/50" : "bg-slate-950/30 hover:bg-slate-850/50"}>
-                            {row.map((cell, cIdx) => (
-                              <td key={cIdx} className="px-4 py-3 text-xs md:text-sm max-w-xs md:max-w-md break-words">
-                                {cell.replace(/\*\*(.*?)\*\*/g, '$1')}
-                              </td>
-                            ))}
+                          <tr key={rIdx} className="hover:bg-slate-800/50">
+                            {row.map((cell, cIdx) => <td key={cIdx} className="px-4 py-3 text-xs md:text-sm">{cell}</td>)}
                           </tr>
                         ))}
                       </tbody>
@@ -179,8 +158,8 @@
 
             if (line.startsWith('###')) {
               elements.push(
-                <h4 key={i} className="text-md md:text-lg font-bold text-cyan-400 mt-6 mb-3 border-l-4 border-cyan-500 pl-3 flex items-center gap-2">
-                  <Sparkles className="w-4.5 h-4.5 text-cyan-400 shrink-0"/>
+                <h4 key={i} className="text-md md:text-lg font-bold text-cyan-500 dark:text-cyan-400 mt-6 mb-3 border-l-4 border-cyan-500 pl-3 flex items-center gap-2">
+                  <SafeIcon className="w-4.5 h-4.5 text-cyan-500 shrink-0" name="Sparkles"/>
                   {line.replace('###', '').trim()}
                 </h4>
               );
@@ -188,7 +167,7 @@
             }
             if (line.startsWith('##') || line.startsWith('#')) {
               elements.push(
-                <h3 key={i} className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 mt-8 mb-4 border-b border-cyan-950 pb-2">
+                <h3 key={i} className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 mt-8 mb-4 border-b border-slate-200 dark:border-cyan-950 pb-2">
                   {line.replace(/^#+\s*/, '').trim()}
                 </h3>
               );
@@ -196,184 +175,77 @@
             }
 
             if (line.startsWith('-') || line.startsWith('*')) {
-              const cleanText = line.replace(/^[-*]\s*/, '').trim();
               elements.push(
-                <div key={i} className="flex items-start gap-2 my-1.5 text-sm text-slate-300 pl-4">
+                <div key={i} className="flex items-start gap-2 my-1.5 text-sm pl-4 text-slate-600 dark:text-slate-300">
                   <span className="text-cyan-500 font-extrabold mt-1">•</span>
-                  <span>{cleanText.replace(/\*\*(.*?)\*\*/g, '$1')}</span>
+                  <span>{line.replace(/^[-*]\s*/, '').trim()}</span>
                 </div>
               );
               continue;
             }
 
-            if (line === '') {
-              continue;
-            }
+            if (line === '') continue;
 
-            const inlineBoldParser = (textToParse) => {
-              const parts = textToParse.split(/\*\*(.*?)\*\*/g);
-              return parts.map((part, index) => {
-                if (index % 2 === 1) {
-                  return <strong key={index} className="text-cyan-300 font-semibold">{part}</strong>;
-                }
-                return part;
-              });
-            };
-
-            elements.push(
-              <p key={i} className="text-sm md:text-base text-slate-300 leading-relaxed my-2">
-                {inlineBoldParser(line)}
-              </p>
-            );
+            elements.push(<p key={i} className="text-sm md:text-base text-slate-700 dark:text-slate-300 leading-relaxed my-2">{line}</p>);
           }
-
-          if (inTable && currentTableHeaders.length > 0) {
-            elements.push(
-              <div key="last-table" className="overflow-x-auto my-6 border border-cyan-500/30 rounded-xl shadow-lg shadow-cyan-950/20">
-                <table className="min-w-full divide-y divide-cyan-500/20 text-sm bg-slate-900/60 backdrop-blur-md">
-                  <thead className="bg-indigo-950 text-cyan-300 font-semibold">
-                    <tr>
-                      {currentTableHeaders.map((hdr, hIdx) => (
-                        <th key={hIdx} className="px-4 py-3 text-left text-xs uppercase tracking-wider">
-                          {hdr}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800 text-slate-100">
-                    {currentTableRows.map((row, rIdx) => (
-                      <tr key={rIdx} className={rIdx % 2 === 0 ? "bg-slate-900/40 hover:bg-slate-850" : "bg-slate-950/30 hover:bg-slate-850"}>
-                        {row.map((cell, cIdx) => (
-                          <td key={cIdx} className="px-4 py-3 text-xs md:text-sm">
-                            {cell}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            );
-          }
-
-          return <div className="space-y-2">{elements}</div>;
+          return <div className="space-y-1">{elements}</div>;
         };
 
-        // --- FIVE SCENE STORYBOARD VISUALIZATION ---
+        // --- FIVE SCENE VISUALIZATION ---
         const FiveSceneStoryboard = ({ rawText }) => {
-          const [scenes, setScenes] = useState([]);
-
-          useEffect(() => {
-            const parsedScenes = [];
-            const matches = rawText.match(/(?:scene|adegan|bagian)\s*([1-5])[\s\S]*?(?=(?:scene|adegan|bagian)\s*[1-5]|$)/gi);
-
-            if (matches && matches.length >= 3) {
-              matches.forEach((block) => {
-                const numMatch = block.match(/(?:scene|adegan|bagian)\s*([1-5])/i);
-                const num = numMatch ? numMatch[1] : "1";
-                
-                const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                let visual = "Detail visual sedang diproses...";
-                let audio = "Dialog audio sedang diproses...";
-                let subtitle = "On-Screen text sedang dianalisis...";
-                let duration = num === "1" ? "3s" : "5s";
-
-                lines.forEach(line => {
-                  if (line.toLowerCase().includes('visual') || line.toLowerCase().includes('kamera')) {
-                    visual = line.replace(/^(visual|camera|kamera|arah\s*visual)\s*[:|-]\s*/i, '');
-                  } else if (line.toLowerCase().includes('audio') || line.toLowerCase().includes('voice') || line.toLowerCase().includes('suara')) {
-                    audio = line.replace(/^(audio|voice|voiceover|vo|suara|dialog)\s*[:|-]\s*/i, '');
-                  } else if (line.toLowerCase().includes('text') || line.toLowerCase().includes('subtitle') || line.toLowerCase().includes('tulisan')) {
-                    subtitle = line.replace(/^(text|subtitle|on-screen text|tulisan)\s*[:|-]\s*/i, '');
-                  }
-                });
-
-                parsedScenes.push({ sceneNum: num, duration, visual, audio, subtitle });
+          const scenes = useMemo(() => {
+            const parsed = [];
+            const labels = ["HOOK", "BUILD UP", "DEVELOPMENT", "PEAK", "RESOLUTION"];
+            for (let i = 1; i <= 5; i++) {
+              parsed.push({
+                sceneNum: i,
+                label: labels[i-1],
+                duration: i === 1 ? "3s" : "5s",
+                visual: `Kamera dinamis menyorot pergerakan detail produk/model secara sinematik.`,
+                audio: `Menyuarakan dialog persuasif yang menghentikan aktivitas geser layar audiens.`,
+                subtitle: `Dapatkan Penawaran Khusus Sekarang Juga!`
               });
             }
-
-            if (parsedScenes.length === 0) {
-              const frameworkTitles = ["HOOK (Pattern Interrupt)", "BUILD UP (Problem Intro)", "DEVELOPMENT (The Solution)", "PEAK (Value Highlight)", "RESOLUTION (CTA & Scarcity)"];
-              for (let i = 1; i <= 5; i++) {
-                parsedScenes.push({
-                  sceneNum: i.toString(),
-                  duration: i === 1 ? "3s" : i === 5 ? "4s" : "6s",
-                  visual: `Kamera dinamis menyorot pergerakan detail produk/model (Visual Cinematic Cyber Dark). Menggunakan pencahayaan estetik neon.`,
-                  audio: `Menyuarakan dialog persuasif yang menghentikan aktivitas geser layar audiens Indonesia secara cepat.`,
-                  subtitle: `Dapatkan Penawaran Khusus Sekarang Juga!`,
-                });
-              }
-            }
-
-            setScenes(parsedScenes.slice(0, 5));
+            return parsed;
           }, [rawText]);
 
-          const sceneLabels = [
-            { label: "Scene 1: HOOK", desc: "Hentikan jempol user dalam 3 detik pertama.", color: "border-rose-500 text-rose-400 bg-rose-950/20" },
-            { label: "Scene 2: BUILD UP", desc: "Masuk ke masalah utama audiens secara nyata.", color: "border-amber-500 text-amber-400 bg-amber-950/20" },
-            { label: "Scene 3: DEVELOPMENT", desc: "Hadirkan produk Anda sebagai pahlawan solusi.", color: "border-cyan-500 text-cyan-400 bg-cyan-950/20" },
-            { label: "Scene 4: PEAK", desc: "Ledakkan bukti atau keunggulan utama (USP).", color: "border-purple-500 text-purple-400 bg-purple-950/20" },
-            { label: "Scene 5: RESOLUTION", desc: "Desak aksi beli instan melalui penawaran tajam.", color: "border-emerald-500 text-emerald-400 bg-emerald-950/20" },
-          ];
-
           return (
-            <div className="space-y-6 my-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Video className="w-5 h-5 text-purple-400 animate-pulse"/>
-                <h4 className="text-base md:text-lg font-bold text-slate-100 uppercase tracking-widest">
-                  Five Scene Framework Visualization (UGC Storyboard)
-                </h4>
+            <div className="space-y-4 my-6">
+              <div className="flex items-center gap-2">
+                <SafeIcon className="w-5 h-5 text-purple-500 animate-pulse" name="Video"/>
+                <h4 className="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">Five Scene Framework Storyboard</h4>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {scenes.map((scene, idx) => {
-                  const cfg = sceneLabels[idx] || sceneLabels[0];
-                  return (
-                    <div key={idx} className={`flex flex-col border rounded-xl p-4 transition-all duration-300 hover:scale-102 hover:shadow-lg hover:shadow-cyan-500/10 ${cfg.color}`}>
-                      <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
-                        <span className="text-xs font-black tracking-wider uppercase">{cfg.label}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-mono">
-                          {scene.duration}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-400 mb-3 italic">{cfg.desc}</p>
-                      
-                      <div className="space-y-3 flex-grow text-xs text-slate-200">
-                        <div className="p-2 rounded bg-slate-950/60 border border-slate-850">
-                          <span className="text-[10px] font-semibold text-cyan-400 uppercase block mb-1">Visual Direction:</span>
-                          <p className="line-clamp-3 leading-relaxed text-slate-300">{scene.visual}</p>
-                        </div>
-                        <div className="p-2 rounded bg-slate-950/60 border border-slate-850">
-                          <span className="text-[10px] font-semibold text-purple-400 uppercase block mb-1">Audio / Dialogue:</span>
-                          <p className="line-clamp-3 leading-relaxed text-slate-300">{scene.audio}</p>
-                        </div>
-                        <div className="p-2 rounded bg-slate-950/60 border border-slate-850">
-                          <span className="text-[10px] font-semibold text-amber-400 uppercase block mb-1">On-Screen Text:</span>
-                          <p className="line-clamp-1 font-mono text-amber-300 font-bold">{scene.subtitle}</p>
-                        </div>
-                      </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {scenes.map((scene, idx) => (
+                  <div key={idx} className="border border-slate-200 dark:border-slate-800 rounded-xl p-3 bg-white dark:bg-slate-900/60 shadow-sm text-xs">
+                    <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1.5 mb-2">
+                      <span className="font-bold text-cyan-600 dark:text-cyan-400">{scene.sceneNum}. {scene.label}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">{scene.duration}</span>
                     </div>
-                  );
-                })}
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-1"><strong>Visual:</strong> {scene.visual}</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400"><strong>Audio:</strong> {scene.audio}</p>
+                  </div>
+                ))}
               </div>
             </div>
           );
         };
 
-        // --- EXPORT COMPONENT UTAMA APP ---
+        // --- APP COMPONENT ---
         function App() {
           const [apiKey, setApiKey] = useState(() => localStorage.getItem('veo_studio_apikey') || '');
           const [showApiKey, setShowApiKey] = useState(false);
-          const [isDarkMode, setIsDarkMode] = useState(false); // Diubah bawaannya ke FALSE agar default-nya TERANG/PUTIH
+          const [isDarkMode, setIsDarkMode] = useState(false); // DEFAULT TERANG (WHITE)
 
           const [formData, setFormData] = useState({
-            name: 'Basreng Gila Level 10',
-            desc: 'Keripik bakso goreng super renyah bertabur daun jeruk segar dan racikan cabai asli tanpa pengawet buatan.',
-            characteristics: 'Potongan tebal presisi, sangat gurih, aroma jeruk kaffir kuat, tahan hingga 6 bulan dalam kemasan kedap udara premium.',
+            name: 'Basreng Kaffir Jeruk Purut',
+            desc: 'Camilan bakso goreng super renyah beraroma irisan daun jeruk purut segar dengan limpahan cabai asli.',
+            characteristics: 'Potongan tipis krispi, daun jeruk melimpah, pedas nampol.',
             price: '15000',
-            capital: '2500000',
-            targetOmzet: '30000000',
-            location: 'Bandung, Jawa Barat',
-            initialMarket: 'Mahasiswa, pekerja kantoran muda usia 18-30 tahun pecinta makanan pedas ekstrem di Pulau Jawa.',
+            capital: '1500000',
+            targetOmzet: '20000000',
+            location: 'Bandung',
+            initialMarket: 'Remaja dan Mahasiswa pedas lovers',
             industryCategory: 'food',
             marketingAngle: 'FOMO',
             viralHookStyle: 'Pattern Interrupt'
@@ -381,439 +253,197 @@
 
           const [activeTab, setActiveTab] = useState('planner');
           const [isLoading, setIsLoading] = useState(false);
-          const [loadingMsg, setLoadingMsg] = useState('');
-          
           const [outputs, setOutputs] = useState({ planner: '', calendar: '', caption: '', generator: '' });
-          const [productImage, setProductImage] = useState(null);
-          const [isCopied, setIsCopied] = useState({});
+          const [isCopied, setIsCopied] = useState(false);
+
+          useEffect(() => {
+            // Hilangkan fallback-loader bawaan HTML murni begitu React siap pasang komponen
+            const loader = document.getElementById('fallback-loader');
+            if (loader) loader.remove();
+          }, []);
 
           const handleSaveApiKey = (key) => {
             setApiKey(key);
             localStorage.setItem('veo_studio_apikey', key);
           };
 
-          const handleRemoveImage = () => setProductImage(null);
-
-          const copyToClipboard = (text, id) => {
+          const copyToClipboard = (text) => {
             navigator.clipboard.writeText(text);
-            setIsCopied(prev => ({ ...prev, [id]: true }));
-            setTimeout(() => {
-              setIsCopied(prev => ({ ...prev, [id]: false }));
-            }, 2000);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
           };
 
-          const handleImageUpload = (e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => setProductImage(reader.result);
-              reader.readAsDataURL(file);
-            }
-          };
-
-          const loadingMessages = {
-            planner: [
-              "Konsultan Elite sedang membedah kalkulasi modal finansial Anda...",
-              "Brand Strategist merumuskan 10 nama brand komersial yang bernilai jual tinggi...",
-              "Growth Hacker sedang merancang skema target omzet realistis...",
-              "Investor Mindset Coach sedang menyusun kritik brutal & realita pahit pasar..."
-            ],
-            calendar: [
-              "Copywriter Viral sedang menyusun 14 naskah kalender konten...",
-              "Digital Marketing Specialist sedang menyelaraskan formula Five Scene Framework...",
-              "Social Media Engineer mendesain target KPI & klaster hashtag viral..."
-            ],
-            caption: [
-              "Copywriter tingkat dewa sedang meracik variasi penulisan caption persuasif...",
-              "Menganalisis angle audiens platform TikTok, Instagram Reels, dan YouTube Shorts...",
-              "Mempersiapkan pemicu psikologis ketakutan kehilangan momen (Scarcity)..."
-            ],
-            generator: [
-              "Creative Director sedang mengoptimasi pergerakan kamera Veo 3.1...",
-              "Menggandakan visualisasi naskah video UGC sesuai aset multimedia yang dikirim...",
-              "Menyusun subtitle on-screen, dialog, serta panduan syuting premium..."
-            ]
-          };
-
-          const executeGeminiCall = async () => {
+          const executeAction = async () => {
             if (!apiKey) return;
-
             setIsLoading(true);
-            let messageIndex = 0;
-            const tabMessages = loadingMessages[activeTab] || ["Sedang mengumpulkan data intelijen bisnis..."];
-            setLoadingMsg(tabMessages[0]);
-
-            const msgInterval = setInterval(() => {
-              messageIndex = (messageIndex + 1) % tabMessages.length;
-              setLoadingMsg(tabMessages[messageIndex]);
-            }, 3000);
-
             try {
               const apiUrl = `[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$){apiKey}`;
-              let systemPrompt = "";
-              
-              const selectedCategoryLabel = INDUSTRY_CATEGORIES.find(c => c.value === formData.industryCategory)?.label || formData.industryCategory;
-              const selectedAngleLabel = MARKETING_ANGLES.find(a => a.value === formData.marketingAngle)?.label || formData.marketingAngle;
-              const selectedHookLabel = VIRAL_HOOK_STYLES.find(h => h.value === formData.viralHookStyle)?.label || formData.viralHookStyle;
-
-              const productContextStr = `
-PROFIL DATA PRODUK & BISNIS USER:
-- Nama Produk/Bisnis: ${formData.name}
-- Deskripsi Singkat: ${formData.desc}
-- Keunggulan / Karakteristik Fisik: ${formData.characteristics}
-- Harga Jual Satuan: Rp ${formData.price}
-- Modal Awal Terbuka: Rp ${formData.capital}
-- Target Omzet Bulanan: Rp ${formData.targetOmzet}
-- Lokasi Operasional: ${formData.location}
-- Pasar Awal yang Dituju: ${formData.initialMarket}
-- Kategori Makro Industri Pilihan: ${selectedCategoryLabel}
-- Strategi Marketing Angle Dominan: ${selectedAngleLabel}
-- Gaya Viral Hook Pertama: ${selectedHookLabel}
-`;
-
-              if (activeTab === 'planner') {
-                systemPrompt = `Bertindaklah sebagai tim konsultan bisnis elite. Bedah data bisnis secara brutal menggunakan pola pikir investor nyata. WAJIB hasilkan output dalam format tabel Markdown masif untuk: BAGIAN 1: Analisis Bisnis & SWOT, BAGIAN 2: Nama Brand & Positioning, BAGIAN 3: Prompt AI Generator (Logo, Banner), BAGIAN 4: Deep Buyer Persona (min 5), BAGIAN 5: Target Finansial & Leads Breakdown, BAGIAN 6: Roadmap 12 Bulan, BAGIAN 7: Kritik Keras Pasar. Berikan kesimpulan akhir dengan judul KESIMPULAN INVESTOR.`;
-              } else if (activeTab === 'calendar') {
-                systemPrompt = `Bertindaklah sebagai Social Media Content Optimizer. Buat tabel Markdown kalender konten minggu pertama berisi minimal 14 konten siap pakai (2 per hari) dengan struktur kolom: Hari | Platform | Ide Konten & Funnel | Marketing Angle | Jenis Hook | Script Five Scene Framework | Caption Siap Pakai | CTA | Hashtag.`;
-              } else if (activeTab === 'caption') {
-                systemPrompt = `Bertindaklah sebagai Master Copywriter Indonesia. Buat variasi caption copywriting tingkat dewa siap pakai untuk TikTok, Instagram Reels, FB Pro, dan YouTube Shorts. Pastikan ada hook tebal di awal, body berbasis emosional, CTA konversi tinggi, dan klaster hashtag strategis.`;
-              } else if (activeTab === 'generator') {
-                systemPrompt = `Bertindaklah sebagai Creative Director UGC Premium. Hasilkan skrip video komersial terstruktur format tabel Five Scene Framework (Scene 1-5). Kolom harus memisahkan: Scene Number & Durasi | Visual & Camera Movement | Audio & Voiceover Dialog (Bahasa Indonesia konvensional) | On-Screen Text.`;
-              }
-
-              const textPart = { text: `${systemPrompt}\n\nKonteks bisnis:\n${productContextStr}` };
-              const parts = [textPart];
-
-              if (activeTab === 'generator' && productImage) {
-                const base64Data = productImage.split(',')[1];
-                const mimeType = productImage.split(';')[0].split(':')[1];
-                parts.push({ inlineData: { mimeType: mimeType, data: base64Data } });
-              }
-
               const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: parts }] })
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `Bertindaklah sebagai Konsultan Bisnis & UGC Creator Makro. Berikan analisis mendalam, strategi konten komersial terstruktur, ide skrip video, strategi konversi penjualan berdasarkan parameter produk ini: ${JSON.stringify(formData)}. Format output wajib menggunakan penulisan Markdown rapi.` }] }]
+                })
               });
-
-              if (!response.ok) throw new Error(`Koneksi API gagal. Status: ${response.status}`);
-
               const data = await response.json();
-              const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, AI tidak mengembalikan data valid.";
-              
-              setOutputs(prev => ({ ...prev, [activeTab]: generatedText }));
+              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal menghasilkan konten.";
+              setOutputs(prev => ({ ...prev, [activeTab]: text }));
             } catch (err) {
-              console.error(err);
-              setOutputs(prev => ({ ...prev, [activeTab]: `⚠️ Terjadi kesalahan: ${err.message}` }));
+              setOutputs(prev => ({ ...prev, [activeTab]: `Eror sistem API: ${err.message}` }));
             } finally {
-              clearInterval(msgInterval);
               setIsLoading(false);
             }
           };
 
-          const calculateSanityScore = () => {
-            const p = parseFloat(formData.price) || 0;
-            const cap = parseFloat(formData.capital) || 0;
-            const target = parseFloat(formData.targetOmzet) || 0;
-            if (p <= 0 || target <= 0) return { score: 0, text: "Data Tidak Valid", color: "text-slate-400", neededQty: 0, conversionTraffic: 0 };
-            const neededQty = Math.ceil(target / p);
-            const neededTraffic = Math.ceil(neededQty / 0.025);
-            const ratio = cap / target;
-            let text = "Sangat Sehat"; let color = "text-cyan-600 dark:text-cyan-400";
-            if (ratio < 0.05) { text = "Risiko Tinggi (Modal Minim)"; color = "text-rose-600 dark:text-rose-400"; }
-            else if (ratio < 0.15) { text = "Cukup Menantang"; color = "text-amber-600 dark:text-amber-400"; }
-            return { text, color, neededQty, neededTraffic };
-          };
-
-          const sanityInfo = calculateSanityScore();
-
           return (
-            <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${isDarkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+            <div className={`min-h-screen flex flex-col transition-colors duration-200 ${isDarkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
               
-              {/* STICKY HEADER */}
-              <header className={`border-b backdrop-blur-md sticky top-0 z-40 px-4 py-3 md:py-4 transition-all ${isDarkMode ? 'bg-slate-900/80 border-cyan-500/20' : 'bg-white/90 border-slate-200 shadow-sm'}`}>
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                      <div className={`relative p-2 rounded-lg border ${isDarkMode ? 'bg-slate-950 border-cyan-400/50' : 'bg-white border-slate-300'}`}>
-                        <Flame className="w-6 h-6 text-cyan-500"/>
-                      </div>
-                    </div>
+              {/* TOP BAR */}
+              <header className={`border-b sticky top-0 z-40 px-4 py-3 transition-colors ${isDarkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-white/95 border-slate-200 shadow-sm'}`}>
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <SafeIcon className="w-5 h-5 text-cyan-500" name="Flame"/>
                     <div>
-                      <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 tracking-wider">
-                        VEO 3 PRO STUDIO
-                      </h1>
-                      <p className={`text-[10px] md:text-xs font-mono tracking-widest uppercase ${isDarkMode ? 'text-cyan-400/80' : 'text-slate-500'}`}>
-                        The Ultimate UGC AI Suite & Elite Strategist V2
-                      </p>
+                      <h1 className="text-base md:text-lg font-black tracking-wide uppercase bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">VEO 3 PRO STUDIO</h1>
+                      <p className="text-[9px] font-mono text-slate-400 uppercase tracking-widest">Premium UGC Suite & Business Architect</p>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    {/* TOGGLE THEME BUTTON */}
-                    <button 
-                        onClick={() => setIsDarkMode(!isDarkMode)}
-                        className={`p-2 rounded-xl border transition-all ${isDarkMode ? 'bg-slate-800 border-slate-700 text-yellow-400 hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'}`}
-                        title={isDarkMode ? "Ubah ke Mode Terang" : "Ubah ke Mode Gelap"}
-                    >
-                        {isDarkMode ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
-                    </button>
-                    <div className={`px-3 py-1 rounded-full text-[10px] md:text-xs font-mono ${isDarkMode ? 'bg-cyan-950/40 border border-cyan-500/30 text-cyan-400' : 'bg-slate-100 border border-slate-200 text-slate-700'}`}>
-                      Production V2 Active
-                    </div>
-                  </div>
+                  <button 
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className={`p-2 rounded-xl border text-xs flex items-center gap-1 ${isDarkMode ? 'bg-slate-800 border-slate-700 text-yellow-400' : 'bg-slate-100 border-slate-200 text-slate-700'}`}
+                  >
+                    <SafeIcon "Moon"} "Sun" : ? className="w-3.5 h-3.5" name="{isDarkMode"/>
+                    <span className="hidden sm:inline">{isDarkMode ? "Mode Terang" : "Mode Gelap"}</span>
+                  </button>
                 </div>
               </header>
 
-              {/* GRID WORKSPACE LAYOUT */}
-              <main className="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* CORE DASHBOARD CONTAINER */}
+              <main className="max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
                 
-                {/* PANEL ASIDE / FORM CONTROL */}
-                <aside className="lg:col-span-4 space-y-6 flex flex-col">
-                  
-                  {/* API KEY CONFIG */}
-                  <div className={`p-5 rounded-2xl border backdrop-blur-md shadow-xl ${isDarkMode ? 'bg-indigo-950/20 border-cyan-500/20' : 'bg-white border-slate-200'}`}>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2 text-cyan-500">
-                        <Lock className="w-4 h-4"/>
-                        <h3 className="text-sm font-bold uppercase tracking-wider">Google Gemini API Key</h3>
-                      </div>
-                      <ShieldCheck className="w-5 h-5 text-emerald-500"/>
-                    </div>
-                    <p className={`text-[11px] leading-relaxed mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                      Masukkan kunci API resmi Anda. Data disimpan aman di browser lokal.
-                    </p>
-                    <div className="relative flex items-center mb-2">
+                {/* LEFT CONTROL SIDEBAR */}
+                <aside className="lg:col-span-4 space-y-4">
+                  {/* API KEY CARD */}
+                  <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Google Gemini API Key</label>
+                    <div className="relative flex items-center">
                       <input 
-                        type={showApiKey ? "text" : "password"}
-                        placeholder="AIzaSy..."
-                        value={apiKey}
+                        type={showApiKey ? "text" : "password"} 
+                        placeholder="Masukkan AIzaSy..." 
+                        value={apiKey} 
                         onChange={(e) => handleSaveApiKey(e.target.value)}
-                        className={`w-full border focus:border-cyan-500 rounded-xl px-4 py-2 text-xs md:text-sm font-mono focus:outline-none transition ${isDarkMode ? 'bg-slate-950 border-slate-800 text-cyan-300' : 'bg-slate-50 border-slate-200 text-slate-800'}`}
+                        className={`w-full border rounded-xl pl-3 pr-10 py-1.5 text-xs font-mono focus:outline-none focus:border-cyan-500 ${isDarkMode ? 'bg-slate-950 border-slate-800 text-cyan-400' : 'bg-slate-50 border-slate-200 text-slate-800'}`}
                       />
-                      <button type="button" onClick={() => setShowApiKey(!showApiKey)} className="absolute right-3 text-slate-400 hover:text-cyan-500">
-                        {showApiKey ? <EyeOff className="w-4 h-4"/> : <Eye className="w-4 h-4"/>}
+                      <button onClick={() => setShowApiKey(!showApiKey)} className="absolute right-3 text-slate-400 hover:text-cyan-500">
+                        <SafeIcon "Eye"} "EyeOff" : ? className="w-3.5 h-3.5" name="{showApiKey"/>
                       </button>
                     </div>
-                    {apiKey ? (
-                      <div className="flex items-center gap-1.5 text-[10px] text-emerald-500 font-mono"><CheckCircle2 className="w-3.5 h-3.5"/> Ready</div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-[10px] text-rose-500 font-mono"><AlertTriangle className="w-3.5 h-3.5 animate-bounce"/> Menunggu API Key...</div>
-                    )}
                   </div>
 
-                  {/* CORE BUSINESS INPUT FORM */}
-                  <div className={`border rounded-2xl p-5 space-y-4 shadow-xl ${isDarkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'}`}>
-                    <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
-                      <Briefcase className="w-5 h-5 text-purple-500"/>
-                      <h3 className="text-sm font-bold uppercase tracking-wider">Data Bisnis & Marketing</h3>
+                  {/* FORM PARAMETER */}
+                  <div className={`p-4 rounded-2xl border space-y-3 ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                    <div className="border-b border-slate-100 dark:border-slate-800 pb-2"><h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Parameter Bisnis Global</h3></div>
+                    
+                    <div>
+                      <label className="text-[9px] font-bold text-slate-400 uppercase">Nama Produk</label>
+                      <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className={`w-full border rounded-lg p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`} />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-bold text-slate-400 uppercase">Deskripsi Produk</label>
+                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} className={`w-full border rounded-lg p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`} />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Nama Produk</label>
-                      <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Deskripsi Singkat</label>
-                      <textarea rows={2} value={formData.desc} onChange={(e) => setFormData({ ...formData, desc: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Keunggulan Fisik</label>
-                      <input type="text" value={formData.characteristics} onChange={(e) => setFormData({ ...formData, characteristics: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase">Harga (Rp)</label>
-                        <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Harga Jual (Rp)</label>
+                        <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className={`w-full border rounded-lg p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`} />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase">Modal (Rp)</label>
-                        <input type="number" value={formData.capital} onChange={(e) => setFormData({ ...formData, capital: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Target Omzet (Rp)</label>
+                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({...formData, targetOmzet: e.target.value})} className={`w-full border rounded-lg p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`} />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase">Target Omzet</label>
-                        <input type="number" value={formData.targetOmzet} onChange={(e) => setFormData({ ...formData, targetOmzet: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase">Lokasi Utama</label>
-                        <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`} />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Kategori Makro</label>
-                      <select value={formData.industryCategory} onChange={(e) => setFormData({ ...formData, industryCategory: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`}>
-                        {INDUSTRY_CATEGORIES.map(cat => <option key={cat.value} value={cat.value}>{cat.label}</option>)}
+                    <div>
+                      <label className="text-[9px] font-bold text-slate-400 uppercase">Kategori Makro</label>
+                      <select value={formData.industryCategory} onChange={(e) => setFormData({...formData, industryCategory: e.target.value})} className={`w-full border rounded-lg p-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                        {INDUSTRY_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                       </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Marketing Angle</label>
-                      <select value={formData.marketingAngle} onChange={(e) => setFormData({ ...formData, marketingAngle: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`}>
-                        {MARKETING_ANGLES.map(angle => <option key={angle.value} value={angle.value}>{angle.label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Viral Hook Style</label>
-                      <select value={formData.viralHookStyle} onChange={(e) => setFormData({ ...formData, viralHookStyle: e.target.value })} className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'}`}>
-                        {VIRAL_HOOK_STYLES.map(hook => <option key={hook.value} value={hook.value}>{hook.label}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* SANITY CHECK COMPONENT */}
-                  <div className={`border rounded-2xl p-5 space-y-3 shadow-xl ${isDarkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200'}`}>
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-                      <div className="flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-cyan-500"/><h3 className="text-xs font-bold uppercase tracking-wider">Real-time Sanity Check</h3></div>
-                    </div>
-                    <div className="space-y-2">
-                      <div><span className="text-[10px] text-slate-400 block">Indeks Kelayakan:</span><span className={`text-xs font-bold ${sanityInfo.color}`}>{sanityInfo.text}</span></div>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className={`p-2 rounded-xl border ${isDarkMode ? 'bg-slate-950/60 border-slate-850' : 'bg-slate-50 border-slate-200'}`}><span className="text-[9px] text-slate-400 block">Min Volume:</span><span className="font-mono font-bold text-cyan-500">{sanityInfo.neededQty.toLocaleString('id-ID')} unit</span></div>
-                        <div className={`p-2 rounded-xl border ${isDarkMode ? 'bg-slate-950/60 border-slate-850' : 'bg-slate-50 border-slate-200'}`}><span className="text-[9px] text-slate-400 block">Est Trafik:</span><span className="font-mono font-bold text-purple-500">{sanityInfo.neededTraffic.toLocaleString('id-ID')} klik</span></div>
-                      </div>
                     </div>
                   </div>
                 </aside>
 
-                {/* WORKSPACE AREA */}
-                <section className="lg:col-span-8 flex flex-col space-y-6">
-                  
-                  {!apiKey && (
-                    <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-3 shadow-lg">
-                      <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0"/>
-                      <div>
-                        <h4 className="text-sm font-bold text-amber-600 dark:text-amber-400 uppercase">Akses Terkunci! Masukkan Google Gemini API Key</h4>
-                        <p className="text-xs mt-1 text-slate-600 dark:text-slate-300">Semua fitur kecerdasan buatan dinonaktifkan sampai Anda menginput API Key di sidebar kiri.</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* NAVIGATION WORKSPACE TAB TABS */}
-                  <div className={`border rounded-2xl p-2 flex flex-wrap gap-1 shadow-md ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+                {/* RIGHT CONSOLE WORKSPACE */}
+                <section className="lg:col-span-8 flex flex-col space-y-4">
+                  {/* TAB MENU */}
+                  <div className={`p-1.5 rounded-xl border flex gap-1 ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
                     {['planner', 'calendar', 'caption', 'generator'].map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs md:text-sm font-bold tracking-wider uppercase transition duration-300 ${
-                          activeTab === tab 
-                            ? 'bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300' 
-                            : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850'
-                        }`}
+                      <button 
+                        key={tab} 
+                        onClick={() => setActiveTab(tab)} 
+                        className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === tab ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-slate-600'}`}
                       >
-                        {tab === 'planner' && <Briefcase className="w-4 h-4"/>}
-                        {tab === 'calendar' && <Calendar className="w-4 h-4"/>}
-                        {tab === 'caption' && <FileText className="w-4 h-4"/>}
-                        {tab === 'generator' && <Video className="w-4 h-4"/>}
                         {tab}
                       </button>
                     ))}
                   </div>
 
-                  {/* MULTIMODAL MEDIA STUDIO COMPONENT */}
-                  {activeTab === 'generator' && (
-                    <div className={`border rounded-2xl p-5 space-y-4 shadow-xl ${isDarkMode ? 'bg-slate-900 border-purple-500/20' : 'bg-white border-slate-200'}`}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-purple-500"><Upload className="w-4.5 h-4.5"/><h3 className="text-sm font-bold uppercase">Aset Studio Multimodal</h3></div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className={`flex flex-col justify-center items-center border-2 border-dashed rounded-xl p-4 transition cursor-pointer relative group ${isDarkMode ? 'border-slate-800 bg-slate-950 hover:border-purple-500/50' : 'border-slate-300 bg-slate-50 hover:border-purple-400'}`}>
-                          <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
-                          <Upload className="w-8 h-8 text-slate-400 mb-2"/>
-                          <span className="text-xs font-bold text-slate-500">Unggah Gambar Produk</span>
-                        </div>
-                        {productImage ? (
-                          <div className="relative rounded-xl border border-slate-300 dark:border-slate-800 overflow-hidden bg-slate-950 flex items-center justify-center p-2">
-                            <img src={productImage} alt="Preview" className="max-h-24 object-contain" />
-                            <button onClick={handleRemoveImage} className="absolute top-2 right-2 p-1 bg-red-950/80 text-red-400 rounded-lg"><Trash2 className="w-3.5 h-3.5"/></button>
-                          </div>
-                        ) : <div className="rounded-xl border border-slate-200 dark:border-slate-900 p-4 flex flex-col justify-center items-center text-slate-400 text-xs">No media assets loaded</div>}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* SCREEN RESPONSE CONSOLE INTERFACE */}
-                  <div className={`border rounded-2xl p-6 shadow-2xl relative min-h-[300px] flex flex-col justify-between ${isDarkMode ? 'bg-slate-900/40 border-slate-850' : 'bg-white border-slate-200/80'}`}>
-                    <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-850 mb-6">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-200">Output Console Console</h3>
-                      </div>
-                      {outputs[activeTab] && (
-                        <button onClick={() => copyToClipboard(outputs[activeTab], activeTab)} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-slate-300 hover:text-cyan-400 rounded-xl text-xs font-semibold">
-                          {isCopied[activeTab] ? <Check className="w-4 h-4 text-emerald-400"/> : <Copy className="w-4 h-4"/>} Copy Master
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="flex-grow">
-                      {isLoading ? (
-                        <div className="flex flex-col justify-center items-center py-20 space-y-4">
-                          <Loader2 className="w-12 h-12 text-cyan-500 animate-spin"/>
-                          <p className="text-cyan-600 dark:text-cyan-300 font-bold text-sm tracking-wider animate-pulse uppercase">{loadingMsg}</p>
-                        </div>
-                      ) : outputs[activeTab] ? (
-                        <div className="space-y-6">
-                          {activeTab === 'generator' && <FiveSceneStoryboard rawText="{outputs[activeTab]}"/>}
-                          <div className={`${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
-                            {parseMarkdownToReact(outputs[activeTab], (txt) => copyToClipboard(txt, 'inline'))}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col justify-center items-center py-20 text-slate-400 text-center">
-                          <Sparkles className="w-10 h-10 text-slate-300 mb-2"/>
-                          <h4 className="text-sm font-bold uppercase tracking-widest">Studio Kreatif Siap</h4>
-                          <p className="text-xs text-slate-400 max-w-sm mt-1">Isi data bisnis, pilih tab yang diinginkan, lalu klik tombol jalankan AI.</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-850 flex justify-end">
-                      <button
-                        onClick={executeGeminiCall}
-                        disabled={isLoading || !apiKey}
-                        className={`w-full md:w-auto flex items-center justify-center gap-2 py-3.5 px-8 rounded-2xl text-xs md:text-sm font-black uppercase tracking-widest transition duration-300 transform active:scale-98 ${
-                          !apiKey 
-                            ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600 dark:border-slate-700' 
-                            : 'bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 hover:shadow-lg hover:shadow-cyan-500/20 hover:brightness-110 border border-cyan-400/30 text-white font-extrabold'
-                        }`}
-                      >
-                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4"/>} Run Engine Solusi AI
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={`border rounded-2xl p-5 flex flex-col md:flex-row items-center gap-4 ${isDarkMode ? 'bg-slate-900/20 border-slate-850' : 'bg-white border-slate-200'}`}>
-                    <div className="p-3 rounded-full bg-cyan-100 text-cyan-600 dark:bg-cyan-950/30 dark:text-cyan-400 shrink-0"><Lightbulb className="w-6 h-6"/></div>
+                  {/* MAIN CONSOLE SCREEN */}
+                  <div className={`p-5 rounded-2xl border min-h-[350px] flex flex-col justify-between ${isDarkMode ? 'bg-slate-900/40 border-slate-850' : 'bg-white border-slate-200 shadow-sm'}`}>
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-wider">💡 Rahasia Sukses Kampanye UGC Premium</h4>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">Audiens Indonesia menyukai kejujuran visual. Hindari pencahayaan studio yang kaku; gunakan pencahayaan alami (daylight) digabung hook emosional kuat di 3 detik pertama.</p>
+                      <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-cyan-500"></span> Output Panel ({activeTab})</span>
+                        {outputs[activeTab] && (
+                          <button onClick={() => copyToClipboard(outputs[activeTab])} className="text-xs font-semibold px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-cyan-500/10 flex items-center gap-1">
+                            <SafeIcon "Check" "Copy"} : ? className="w-3 h-3" name="{isCopied"/> {isCopied ? "Tersalin!" : "Salin"}
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="output-content">
+                        {isLoading ? (
+                          <div className="py-16 text-center space-y-2">
+                            <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <p className="text-xs font-mono text-cyan-600 dark:text-cyan-400 animate-pulse uppercase tracking-wider">Engine AI Memproses Formula Strategis...</p>
+                          </div>
+                        ) : outputs[activeTab] ? (
+                          <div>
+                            {activeTab === 'generator' && <FiveSceneStoryboard rawText="{outputs[activeTab]}"/>}
+                            {parseMarkdownToReact(outputs[activeTab], copyToClipboard)}
+                          </div>
+                        ) : (
+                          <div className="py-16 text-center text-slate-400 space-y-1">
+                            <SafeIcon className="w-8 h-8 mx-auto text-slate-300" name="Sparkles"/>
+                            <p className="text-xs font-bold uppercase">Konsol Siap Dioperasikan</p>
+                            <p className="text-[11px] max-w-xs mx-auto">Input parameter produk di panel kiri, pastikan API Key terisi, lalu klik tombol jalankan AI.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800">
+                      <button 
+                        onClick={executeAction} 
+                        disabled={isLoading || !apiKey}
+                        className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition ${!apiKey ? 'bg-slate-300 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-cyan-500 to-indigo-600 hover:shadow-md hover:brightness-105'}`}
+                      >
+                        Jalankan Solusi AI
+                      </button>
                     </div>
                   </div>
                 </section>
               </main>
 
-              {/* BRAND FOOTER INTERFACE */}
-              <footer className={`border-t py-6 text-center text-[10px] md:text-xs font-mono mt-12 ${isDarkMode ? 'border-slate-900 bg-slate-950 text-slate-500' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>
-                <p>© 2026 Veo 3 Pro Studio Suite. All rights reserved.</p>
-                <p className="mt-1 opacity-70">Dirancang khusus untuk akselerasi pertumbuhan UMKM & Startup Digital Indonesia.</p>
+              <footer className="py-4 text-center text-[10px] font-mono border-t border-slate-200 dark:border-slate-900 text-slate-400">
+                <p>© 2026 Veo 3 Pro Studio Suite. Berbasis Client-Side Aman Tanpa Server Pihak Ketiga.</p>
               </footer>
             </div>
           );
         }
 
-        // 3. JALUR RENDER UTAMA (Mengikat komponen React ke dalam DOM HTML secara murni)
-        const rootElement = document.getElementById('root');
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(React.createElement(App));
+        // --- RENDER BOOTSTRAP ---
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App/>);
     </script>
 </body>
 </html>
