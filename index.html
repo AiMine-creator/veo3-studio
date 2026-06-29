@@ -2,7 +2,7 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>Veo 3 Pro Studio</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -16,13 +16,13 @@
   --border:#1f2937;--cyan:#06b6d4;--purple:#a855f7;--pink:#ec4899;
   --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
   --txt:#f1f5f9;--txt2:#94a3b8;--txm:#475569;
-  --sw:300px;--bnav:64px;
+  --sw:300px;--bnav:60px;
 }
 [data-theme="light"]{
   --bg:#f0f4f8;--bg2:#e2e8f0;--card:#fff;--card2:#f8fafc;
   --border:#cbd5e1;--txt:#0f172a;--txt2:#334155;--txm:#64748b;
 }
-html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
@@ -32,107 +32,131 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',
 .glass{background:rgba(17,24,39,.75);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06)}
 [data-theme="light"] .glass{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.08)}
 
-/* LAYOUT */
+/* ── LAYOUT ── */
 .layout{display:flex;height:100vh;overflow:hidden;position:relative}
 .sidebar{
   width:var(--sw);flex-shrink:0;background:var(--bg2);
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   height:100vh;overflow-y:auto;
-  transition:transform .3s ease;
-  z-index:100;
+  z-index:300;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
 }
-.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.main-body{flex:1;overflow-y:auto;padding:20px 24px}
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
+.main-body{flex:1;overflow-y:auto;padding:16px 20px}
 
-/* MOBILE */
+/* ── MOBILE ── */
 @media(max-width:768px){
   .sidebar{
     position:fixed;top:0;left:0;height:100vh;
     transform:translateX(-100%);
+    box-shadow:none;
   }
-  .sidebar.open{transform:translateX(0);box-shadow:4px 0 30px rgba(0,0,0,.5)}
-  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+  .sidebar.open{
+    transform:translateX(0);
+    box-shadow:6px 0 40px rgba(0,0,0,.6);
+  }
+  .sidebar-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.55);z-index:299;
+    backdrop-filter:blur(2px);
+  }
   .sidebar-overlay.show{display:block}
   .main{padding-bottom:var(--bnav)}
-  .main-body{padding:14px 14px calc(var(--bnav) + 14px)}
+  .main-body{padding:12px 12px calc(var(--bnav) + 12px)}
   .bottom-nav{display:flex !important}
-  .desk-topbar{display:flex !important}
+  .mobile-topbar{display:flex !important}
+  .desktop-header{display:none}
 }
 @media(min-width:769px){
   .bottom-nav{display:none !important}
-  .hamburger{display:none !important}
-  .desk-topbar{display:none}
+  .mobile-topbar{display:none !important}
+  .hamburger-btn{display:none !important}
 }
 
-/* BOTTOM NAV */
+/* ── BOTTOM NAV ── */
 .bottom-nav{
   display:none;
   position:fixed;bottom:0;left:0;right:0;
-  height:var(--bnav);background:var(--card);
+  height:var(--bnav);
+  background:var(--card);
   border-top:1px solid var(--border);
   z-index:200;
+  safe-area-inset-bottom: env(safe-area-inset-bottom);
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 .bnav-item{
   flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:3px;cursor:pointer;
-  color:var(--txm);font-size:.6rem;font-weight:600;
-  transition:.2s;padding:4px;
+  justify-content:center;gap:2px;cursor:pointer;
+  color:var(--txm);font-size:.58rem;font-weight:600;
+  transition:.15s;padding:4px 2px;
   border:none;background:transparent;
+  -webkit-tap-highlight-color:transparent;
+  min-height:44px;
 }
 .bnav-item.active{color:var(--cyan)}
-.bnav-item svg{width:20px;height:20px}
+.bnav-item.active svg{filter:drop-shadow(0 0 6px rgba(6,182,212,.5))}
+.bnav-item svg{width:21px;height:21px;transition:.15s}
 
-/* DESK TOPBAR (mobile only) */
-.desk-topbar{
-  display:none;align-items:center;
-  padding:10px 14px;background:var(--bg2);
-  border-bottom:1px solid var(--border);gap:10px;
+/* ── MOBILE TOPBAR ── */
+.mobile-topbar{
+  display:none;
+  align-items:center;
+  padding:10px 12px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  gap:10px;
   flex-shrink:0;
+  min-height:50px;
 }
 
-/* SIDEBAR ITEMS */
+/* ── SIDEBAR ITEMS ── */
 .slink{
   display:flex;align-items:center;gap:10px;
-  padding:9px 13px;border-radius:10px;cursor:pointer;
-  transition:.2s;color:var(--txt2);font-size:.83rem;font-weight:500;
+  padding:10px 13px;border-radius:10px;cursor:pointer;
+  transition:.18s;color:var(--txt2);font-size:.83rem;font-weight:500;
   border:1px solid transparent;
+  min-height:44px;
 }
 .slink:hover{background:rgba(6,182,212,.08);color:var(--cyan);border-color:rgba(6,182,212,.15)}
 .slink.active{background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(168,85,247,.1));color:var(--cyan);border-color:rgba(6,182,212,.25)}
 
-/* INPUTS */
+/* ── INPUTS ── */
 .inp{
-  width:100%;padding:8px 12px;border-radius:8px;
+  width:100%;padding:9px 12px;border-radius:8px;
   border:1px solid var(--border);background:var(--bg2);
   color:var(--txt);font-size:.82rem;outline:none;
   transition:.2s;font-family:'Inter',sans-serif;
+  -webkit-appearance:none;
 }
 .inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.1)}
 .inp::placeholder{color:var(--txm)}
-textarea.inp{resize:vertical;min-height:72px}
+textarea.inp{resize:vertical;min-height:68px}
 select.inp option{background:var(--card)}
 
-/* BUTTONS */
+/* ── BUTTONS ── */
 .btn{
-  padding:8px 16px;border-radius:8px;font-size:.8rem;
-  font-weight:600;cursor:pointer;transition:.2s;border:none;
+  padding:9px 16px;border-radius:9px;font-size:.8rem;
+  font-weight:600;cursor:pointer;transition:.18s;border:none;
   display:inline-flex;align-items:center;gap:6px;
+  -webkit-tap-highlight-color:transparent;
+  min-height:40px;
 }
 .btn-c{background:linear-gradient(135deg,#0891b2,#6d28d9);color:#fff}
 .btn-c:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(6,182,212,.3)}
+.btn-c:active:not(:disabled){transform:translateY(0)}
 .btn-c:disabled{opacity:.4;cursor:not-allowed}
 .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--txt2)}
 .btn-g:hover{border-color:var(--cyan);color:var(--cyan)}
 .btn-r{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171}
 .btn-r:hover{background:rgba(239,68,68,.2)}
-.btn-sm{padding:4px 10px;font-size:.72rem}
+.btn-sm{padding:5px 11px;font-size:.72rem;min-height:32px}
 
-/* CARDS */
+/* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px}
 .card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
 
-/* BADGES */
+/* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:999px;font-size:.68rem;font-weight:600}
 .b-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
 .b-y{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
@@ -140,42 +164,56 @@ select.inp option{background:var(--card)}
 .b-c{background:rgba(6,182,212,.12);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
 .b-p{background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.2)}
 
-/* PROGRESS */
+/* ── PROGRESS ── */
 .pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
 .pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width .4s}
 
-/* ANIMATIONS */
+/* ── ANIMATIONS ── */
 .spin{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .pulse{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.fadein{animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* UPLOAD */
+/* ── UPLOAD ── */
 .upbox{
   border:2px dashed var(--border);border-radius:10px;
-  padding:20px;text-align:center;cursor:pointer;transition:.2s;
+  padding:20px 12px;text-align:center;cursor:pointer;transition:.2s;
 }
 .upbox:hover{border-color:var(--cyan);background:rgba(6,182,212,.04)}
 
-/* SCENE CARDS */
+/* ── SCENE CARDS ── */
 .scard{
   background:linear-gradient(135deg,var(--card),var(--card2));
-  border:1px solid var(--border);border-radius:13px;
-  overflow:hidden;transition:.25s;
+  border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;transition:.22s;
 }
-.scard:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 28px rgba(6,182,212,.1)}
+.scard:hover{border-color:var(--cyan);box-shadow:0 8px 28px rgba(6,182,212,.1)}
 
-/* IMAGE DISPLAY */
-.ai-img{width:100%;border-radius:8px;display:block;border:1px solid var(--border)}
-.img-placeholder{
-  width:100%;aspect-ratio:1;border-radius:8px;
+/* ── AI IMAGE ── */
+.ai-img{
+  width:100%;border-radius:10px;display:block;
+  border:1px solid var(--border);
+  aspect-ratio:1;object-fit:cover;
+}
+.img-skeleton{
+  width:100%;aspect-ratio:1;border-radius:10px;
   background:linear-gradient(135deg,var(--card2),var(--card));
-  border:1px solid var(--border);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:8px;color:var(--txm);
-  font-size:.75rem;text-align:center;padding:12px;
+  border:1px solid var(--border);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;color:var(--txm);font-size:.75rem;
+  text-align:center;padding:16px;position:relative;overflow:hidden;
 }
+.img-skeleton::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);
+  animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 
-/* MARKDOWN TABLES */
+/* ── MARKDOWN TABLES ── */
 .mdwrap{overflow-x:auto;margin-bottom:14px;border-radius:10px}
 .mdt{width:100%;border-collapse:collapse;font-size:.78rem}
 .mdt th{background:linear-gradient(135deg,rgba(6,182,212,.14),rgba(168,85,247,.08));color:var(--cyan);padding:9px 11px;text-align:left;border:1px solid rgba(6,182,212,.18);font-weight:600;white-space:nowrap}
@@ -183,42 +221,38 @@ select.inp option{background:var(--card)}
 .mdt tr:nth-child(even) td{background:rgba(255,255,255,.018)}
 .mdt tr:hover td{background:rgba(6,182,212,.03)}
 
-/* COPY TOAST */
+/* ── TOAST ── */
 .toast{
-  position:fixed;bottom:80px;right:16px;
-  background:#10b981;color:#fff;padding:8px 16px;
-  border-radius:8px;font-size:.8rem;font-weight:600;
-  z-index:9999;animation:toast .3s ease;
+  position:fixed;bottom:calc(var(--bnav) + 12px);right:16px;
+  background:linear-gradient(135deg,#059669,#0d9488);
+  color:#fff;padding:9px 18px;
+  border-radius:10px;font-size:.8rem;font-weight:600;
+  z-index:9999;animation:fadein .3s ease;
+  display:flex;align-items:center;gap:7px;
+  box-shadow:0 4px 16px rgba(16,185,129,.3);
 }
 @media(min-width:769px){.toast{bottom:20px;right:20px}}
-@keyframes toast{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* COPY PROMPT BOX */
+/* ── PROMPT BOX ── */
 .prompt-box{
   background:rgba(6,182,212,.05);
-  border:1px solid rgba(6,182,212,.18);
+  border:1px solid rgba(6,182,212,.2);
   border-radius:9px;padding:10px 12px;margin-top:8px;
 }
 .prompt-text{
   font-family:'JetBrains Mono',monospace;
-  font-size:.73rem;color:var(--txt2);line-height:1.6;
+  font-size:.72rem;color:var(--txt2);line-height:1.65;
   word-break:break-word;
 }
 
-/* CAROUSEL SLIDES */
-.carousel-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
-.carousel-wrap::-webkit-scrollbar{height:4px}
-.cslide{flex-shrink:0;width:240px;background:var(--card2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.cslide-img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-.cslide-info{padding:10px}
-
-/* GRADIENT THEMES */
-.gt-cyber{background:linear-gradient(135deg,#0f0c29,#302b63)}
-.gt-vapor{background:linear-gradient(135deg,#1a0533,#2d1b69)}
-.gt-emerald{background:linear-gradient(135deg,#0d1b2a,#1b4332)}
-.gt-dark{background:linear-gradient(135deg,#0a0a0a,#1a1a2e)}
-.gt-corp{background:linear-gradient(135deg,#1e3a5f,#0f172a)}
-.gt-rose{background:linear-gradient(135deg,#1a0010,#3d0024)}
+/* ── IMAGE GEN STATUS ── */
+.img-gen-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:8px;
+  background:rgba(6,182,212,.08);
+  border:1px solid rgba(6,182,212,.15);
+  font-size:.72rem;color:var(--cyan);margin-bottom:10px;
+}
 </style>
 </head>
 <body>
@@ -250,8 +284,8 @@ const I={
   chk:<Ic d={<polyline points="20 6 9 17 4 12"/>}/>,
   menu:<Ic d={<><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>}/>,
   x:<Ic d={<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>}/>,
-  img2:<Ic d={<><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></>}/>,
   refresh:<Ic d={<><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>}/>,
+  img2:<Ic d={<><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></>}/>,
 };
 
 /* ── CONSTANTS ── */
@@ -259,17 +293,17 @@ const INDUSTRIES=["Food (Culinary & Food)","Beverage","Fashion","Beauty","Health
 const ANGLES=["FOMO","Aspirational","Social Proof","Authority","Scarcity","Convenience","Transformation"];
 const HOOKS=["Pattern Interrupt","Curiosity Gap","Bold Claim","Shock Visual","Unexpected Result","Emotional Trigger"];
 const LOADING_MSGS={
-  planner:["Konsultan Bisnis merumuskan brand...","Menganalisis pasar Indonesia...","Menyusun roadmap 12 bulan...","Menghitung proyeksi finansial...","Memvalidasi strategi kompetitor..."],
-  calendar:["Content Strategist merancang konten...","Scriptwriter menyusun Five Scene Framework...","Copywriter memoles caption viral...","Memetakan funnel konversi..."],
+  planner:["Konsultan Bisnis merumuskan brand...","Menganalisis pasar Indonesia...","Menyusun roadmap 12 bulan...","Menghitung proyeksi finansial...","Memvalidasi strategi kompetitor...","Menyusun tabel SWOT & persona...","Finalisasi output — mohon tunggu..."],
+  calendar:["Content Strategist merancang konten...","Scriptwriter menyusun Five Scene Framework...","Copywriter memoles caption viral...","Memetakan funnel konversi...","Menyusun 14 konten lengkap...","Menambahkan hook viral tambahan..."],
   caption:["Copywriter meracik formula persuasi...","Menyesuaikan tone tiap platform...","Mengoptimalkan CTA konversi..."],
-  generator:["Creative Director merancang UGC script...","Menyusun Five Scene Framework...","Membuat Imagen Prompt sinematik...","Menyempurnakan arahan kamera..."],
+  generator:["Creative Director merancang UGC script...","Menyusun Five Scene Framework...","Membuat Imagen Prompt sinematik...","Menyempurnakan arahan kamera...","Finalisasi skrip 60 detik..."],
 };
 const SCENE_META=[
   {label:"Hook",color:"#ef4444",icon:"🎯",cam:"CLOSE-UP / MACRO",grad:"linear-gradient(135deg,#450a0a,#7f1d1d)"},
   {label:"Build Up",color:"#f59e0b",icon:"📈",cam:"MEDIUM SHOT / TRACKING",grad:"linear-gradient(135deg,#451a03,#78350f)"},
   {label:"Development",color:"#06b6d4",icon:"🎬",cam:"WIDE / ESTABLISHING",grad:"linear-gradient(135deg,#083344,#164e63)"},
   {label:"Peak",color:"#a855f7",icon:"✨",cam:"SLOW-MO / DOLLY",grad:"linear-gradient(135deg,#2e1065,#4a1d96)"},
-  {label:"Resolution",color:"#10b981",icon:"🎯",cam:"CLOSE-UP / CTA LOCK",grad:"linear-gradient(135deg,#052e16,#14532d)"},
+  {label:"Resolution",color:"#10b981",icon:"🏆",cam:"CLOSE-UP / CTA LOCK",grad:"linear-gradient(135deg,#052e16,#14532d)"},
 ];
 
 /* ── UTILS ── */
@@ -286,23 +320,54 @@ function calcSanity(cap,price,tgt){
   return{score,label,cls,qty:Math.ceil(qty),traffic:Math.ceil(traffic),ratio:(ratio*100).toFixed(1)};
 }
 
-/* ── MARKDOWN PARSER ── */
-function MdRender({text,onCopyPrompt}){
-  if(!text) return null;
-  const lines=text.split('\n');
-  const out=[];
-  let trows=[],inT=false,i=0;
+/* ── GENERATE IMAGE VIA GEMINI ── */
+async function generateImage(apiKey, prompt) {
+  const enhancedPrompt = `${prompt}, cinematic commercial photography, professional studio lighting, ultra-detailed, 4K quality, photorealistic, sharp focus`;
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        contents: [{parts: [{text: enhancedPrompt}]}],
+        generationConfig: {
+          responseModalities: ["IMAGE","TEXT"],
+          responseMimeType: "text/plain",
+        },
+      }),
+    }
+  );
+  if (!res.ok) {
+    const e = await res.json().catch(()=>({}));
+    throw new Error(e?.error?.message || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  for (const part of parts) {
+    if (part.inlineData?.data) {
+      return `data:${part.inlineData.mimeType||'image/png'};base64,${part.inlineData.data}`;
+    }
+  }
+  throw new Error('Tidak ada gambar dihasilkan. Prompt mungkin terlalu terbatas.');
+}
 
-  function flushT(){
-    if(!trows.length)return;
-    const hds=trows[0],body=trows.slice(1);
+/* ── MARKDOWN PARSER ── */
+function MdRender({text, onCopyPrompt}) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const out = [];
+  let trows = [], inT = false, i = 0;
+
+  function flushT() {
+    if (!trows.length) return;
+    const hds = trows[0], body = trows.slice(1);
     out.push(
       <div key={`tw${i}`} className="mdwrap">
         <table className="mdt">
           <thead><tr>{hds.map((h,hi)=><th key={hi}>{h.trim()}</th>)}</tr></thead>
           <tbody>{body.map((row,ri)=>(
             <tr key={ri}>{row.map((cell,ci)=>{
-              const html=cell.trim()
+              const html = cell.trim()
                 .replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>')
                 .replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:.75em">$1</code>');
               return <td key={ci}><span dangerouslySetInnerHTML={{__html:html}}/></td>;
@@ -311,295 +376,85 @@ function MdRender({text,onCopyPrompt}){
         </table>
       </div>
     );
-    trows=[];
+    trows = [];
   }
 
-  while(i<lines.length){
-    const line=lines[i],tr=line.trim();
-    if(tr.startsWith('|')){
-      const cols=tr.split('|').filter((_,idx,a)=>idx>0&&idx<a.length-1);
-      if(cols.every(c=>/^[-:\s]+$/.test(c))){i++;continue;}
-      if(!inT)inT=true;
-      trows.push(cols);i++;continue;
-    }else if(inT){inT=false;flushT();}
+  while (i < lines.length) {
+    const line = lines[i], tr = line.trim();
 
-    // detect prompt blocks for copy
-    const isPrompt=tr.toLowerCase().includes('prompt')&&tr.length>30&&!tr.startsWith('#')&&!tr.startsWith('|');
+    if (tr.startsWith('|')) {
+      const cols = tr.split('|').filter((_,idx,a)=>idx>0&&idx<a.length-1);
+      if (cols.every(c=>/^[-:\s]+$/.test(c))) { i++; continue; }
+      if (!inT) inT = true;
+      trows.push(cols); i++; continue;
+    } else if (inT) { inT = false; flushT(); }
 
-    if(/^### /.test(tr)){
+    // detect prompt-like text blocks
+    const isPromptLine = (
+      tr.length > 30 &&
+      !tr.startsWith('#') &&
+      !tr.startsWith('|') &&
+      (
+        /prompt/i.test(tr) ||
+        /(cinematic|photography|studio lighting|photorealistic|4K|shot|camera|lens|bokeh|depth of field)/i.test(tr)
+      )
+    );
+
+    if (/^### /.test(tr)) {
       out.push(<h3 key={i} className="gsk grad" style={{fontSize:'.95rem',fontWeight:700,marginTop:18,marginBottom:7}}>{tr.slice(4)}</h3>);
-    }else if(/^## /.test(tr)){
+    } else if (/^## /.test(tr)) {
       out.push(<h2 key={i} className="gsk" style={{fontSize:'1.08rem',fontWeight:700,marginTop:22,marginBottom:9,color:'var(--cyan)',borderBottom:'1px solid rgba(6,182,212,.2)',paddingBottom:5}}>{tr.slice(3)}</h2>);
-    }else if(/^# /.test(tr)){
+    } else if (/^# /.test(tr)) {
       out.push(<h1 key={i} className="gsk grad" style={{fontSize:'1.3rem',fontWeight:800,marginTop:24,marginBottom:10}}>{tr.slice(2)}</h1>);
-    }else if(/^[-*] /.test(tr)){
-      const content=tr.slice(2);
-      const hasPromptKw=content.toLowerCase().includes('prompt')&&content.length>40;
+    } else if (/^[-*] /.test(tr)) {
+      const content = tr.slice(2);
+      const isPromptBullet = content.length > 40 && /(prompt|cinematic|photography|studio|photorealistic)/i.test(content);
       out.push(
         <div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:6}}>
-          <span style={{color:'var(--cyan)',marginTop:2,flexShrink:0}}>▸</span>
+          <span style={{color:'var(--cyan)',marginTop:3,flexShrink:0,fontSize:'.75rem'}}>▸</span>
           <div style={{flex:1}}>
             <span style={{color:'var(--txt2)',fontSize:'.82rem'}} dangerouslySetInnerHTML={{__html:content.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>')}}/>
-            {hasPromptKw&&onCopyPrompt&&<CopyBtn text={content} onCopy={onCopyPrompt}/>}
+            {isPromptBullet && onCopyPrompt && (
+              <div style={{marginTop:4}}>
+                <button onClick={()=>onCopyPrompt(content)} className="btn btn-g btn-sm">
+                  {I.copy}<span>Copy Prompt</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       );
-    }else if(/^\d+\. /.test(tr)){
+    } else if (/^\d+\. /.test(tr)) {
       out.push(<div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:6}}><span style={{color:'var(--purple)',minWidth:18,fontSize:'.78rem',fontWeight:700}}>{tr.match(/^\d+/)[0]}.</span><span style={{color:'var(--txt2)',fontSize:'.82rem'}} dangerouslySetInnerHTML={{__html:tr.replace(/^\d+\. /,'').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>')}}/></div>);
-    }else if(tr==='---'){
+    } else if (tr === '---') {
       out.push(<hr key={i} style={{border:'none',borderTop:'1px solid var(--border)',margin:'14px 0'}}/>);
-    }else if(tr===''){
+    } else if (tr === '') {
       out.push(<div key={i} style={{height:5}}/>);
-    }else if(tr){
+    } else if (tr) {
       out.push(
         <div key={i} style={{marginBottom:5}}>
           <p style={{color:'var(--txt2)',fontSize:'.82rem',lineHeight:1.7}} dangerouslySetInnerHTML={{__html:tr.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>').replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:.75em">$1</code>')}}/>
-          {isPrompt&&onCopyPrompt&&<CopyBtn text={tr} onCopy={onCopyPrompt}/>}
+          {isPromptLine && onCopyPrompt && (
+            <div style={{marginTop:4}}>
+              <button onClick={()=>onCopyPrompt(tr)} className="btn btn-g btn-sm">
+                {I.copy}<span>Copy Prompt</span>
+              </button>
+            </div>
+          )}
         </div>
       );
     }
     i++;
   }
-  if(inT)flushT();
+  if (inT) flushT();
   return <>{out}</>;
 }
 
-function CopyBtn({text,onCopy,label="Copy Prompt"}){
-  return(
-    <button onClick={()=>onCopy(text)} className="btn btn-g btn-sm" style={{marginTop:5,display:'inline-flex'}}>
-      {I.copy}<span>{label}</span>
-    </button>
-  );
-}
-
-/* ── GEMINI IMAGE GENERATOR ── */
-async function generateImageFromGemini(apiKey,prompt){
-  // Use Imagen via Gemini multimodal
-  // Gemini 2.0 Flash image generation endpoint
-  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      contents:[{parts:[{text:prompt}]}],
-      generationConfig:{responseModalities:["IMAGE","TEXT"],responseMimeType:"text/plain"},
-    }),
-  });
-  if(!res.ok){
-    const e=await res.json().catch(()=>({}));
-    throw new Error(e?.error?.message||`HTTP ${res.status}`);
-  }
-  const data=await res.json();
-  const parts=data?.candidates?.[0]?.content?.parts||[];
-  for(const part of parts){
-    if(part.inlineData?.data){
-      return `data:${part.inlineData.mimeType||'image/png'};base64,${part.inlineData.data}`;
-    }
-  }
-  throw new Error('Tidak ada gambar dihasilkan. Coba refresh atau ganti prompt.');
-}
-
-/* ── SCENE IMAGE CARD ── */
-function SceneImageCard({scene,idx,apiKey,productName,onCopyPrompt,onToast}){
-  const meta=SCENE_META[idx]||SCENE_META[0];
-  const [imgSrc,setImgSrc]=useState(null);
-  const [loading,setLoading]=useState(false);
-  const [err,setErr]=useState('');
-
-  const buildPrompt=()=>{
-    const base=scene.imagenPrompt||scene.visual||`${meta.label} scene for ${productName} product commercial video`;
-    return `${base}, cinematic commercial photography, professional studio lighting, ultra-detailed, 4K quality, photorealistic`;
-  };
-
-  const generate=async()=>{
-    if(!apiKey){onToast('API Key diperlukan');return;}
-    setLoading(true);setErr('');
-    try{
-      const src=await generateImageFromGemini(apiKey,buildPrompt());
-      setImgSrc(src);
-    }catch(e){
-      setErr(e.message);
-    }finally{setLoading(false);}
-  };
-
-  const download=()=>{
-    if(!imgSrc)return;
-    const a=document.createElement('a');
-    a.href=imgSrc;a.download=`scene_${idx+1}_${meta.label.toLowerCase()}.png`;a.click();
-  };
-
-  return(
-    <div className="scard">
-      <div style={{padding:'12px 14px',borderBottom:'1px solid var(--border)',background:meta.grad}}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <CamSVG idx={idx}/>
-            <div>
-              <div className="gsk" style={{color:meta.color,fontWeight:700,fontSize:'.82rem'}}>{meta.icon} Scene {idx+1}: {meta.label}</div>
-              <div style={{fontSize:'.62rem',color:'rgba(255,255,255,.5)',fontFamily:'JetBrains Mono,monospace'}}>{meta.cam}</div>
-            </div>
-          </div>
-          <span style={{fontSize:'.62rem',color:meta.color,background:`${meta.color}22`,padding:'2px 8px',borderRadius:999,border:`1px solid ${meta.color}44`}}>{scene.scene||`Scene ${idx+1}`}</span>
-        </div>
-      </div>
-
-      <div style={{padding:12}}>
-        {/* Image area */}
-        <div style={{marginBottom:10}}>
-          {loading?(
-            <div className="img-placeholder">
-              <div className="spin" style={{color:'var(--cyan)'}}>{I.load}</div>
-              <div>Generating image...</div>
-            </div>
-          ):imgSrc?(
-            <img src={imgSrc} alt={`scene ${idx+1}`} className="ai-img"/>
-          ):(
-            <div className="img-placeholder">
-              <div style={{fontSize:28}}>{meta.icon}</div>
-              <div>Klik Generate Image</div>
-              {err&&<div style={{color:'var(--red)',fontSize:'.68rem',marginTop:4}}>{err}</div>}
-            </div>
-          )}
-        </div>
-
-        {/* Action buttons */}
-        <div style={{display:'flex',gap:6,marginBottom:10,flexWrap:'wrap'}}>
-          <button onClick={generate} disabled={loading||!apiKey} className="btn btn-c btn-sm" style={{flex:1}}>
-            {loading?<span className="spin">{I.load}</span>:I.img2}
-            {loading?'Generating...':'Generate Image'}
-          </button>
-          {imgSrc&&(
-            <button onClick={download} className="btn btn-g btn-sm">{I.dl}</button>
-          )}
-        </div>
-
-        {/* Scene details */}
-        {[
-          {label:'📷 Visual',content:scene.visual},
-          {label:'🎙 Audio',content:scene.audio},
-          {label:'📝 Subtitle',content:scene.subtitle},
-        ].map(s=>s.content&&(
-          <div key={s.label} style={{marginBottom:8}}>
-            <div style={{fontSize:'.65rem',color:'var(--txm)',marginBottom:2}}>{s.label}</div>
-            <div style={{fontSize:'.78rem',color:'var(--txt2)',background:'rgba(0,0,0,.2)',padding:'7px 9px',borderRadius:7,lineHeight:1.5}}>{s.content}</div>
-          </div>
-        ))}
-
-        {/* Imagen Prompt with copy */}
-        {scene.imagenPrompt&&(
-          <div className="prompt-box">
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:5}}>
-              <span style={{fontSize:'.65rem',color:'var(--cyan)',fontWeight:600}}>🖼 Imagen Prompt</span>
-              <button onClick={()=>{onCopyPrompt(scene.imagenPrompt);onToast('Prompt disalin!');}} className="btn btn-g btn-sm">{I.copy} Copy</button>
-            </div>
-            <div className="prompt-text">{scene.imagenPrompt}</div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ── CAROUSEL IMAGE EXPORTER ── */
-const GRAD_THEMES=[
-  {id:"cyber",label:"Cyber",cls:"gt-cyber",accent:"#00f5ff"},
-  {id:"vapor",label:"Vapor",cls:"gt-vapor",accent:"#ff71ce"},
-  {id:"emerald",label:"Emerald",cls:"gt-emerald",accent:"#34d399"},
-  {id:"dark",label:"Dark",cls:"gt-dark",accent:"#06b6d4"},
-  {id:"corp",label:"Corp",cls:"gt-corp",accent:"#60a5fa"},
-  {id:"rose",label:"Rose",cls:"gt-rose",accent:"#f43f5e"},
-];
-
-function CarouselExporter({scenes,apiKey,productName,onToast}){
-  const [theme,setTheme]=useState('cyber');
-  const [slideImgs,setSlideImgs]=useState({});
-  const [loadingIdx,setLoadingIdx]=useState(null);
-  const gt=GRAD_THEMES.find(g=>g.id===theme)||GRAD_THEMES[0];
-
-  const genSlideImage=async(idx)=>{
-    if(!apiKey){onToast('API Key diperlukan');return;}
-    const scene=scenes[idx];
-    if(!scene)return;
-    setLoadingIdx(idx);
-    const prompt=`Instagram carousel slide ${idx+1} of 5, ${SCENE_META[idx]?.label||''} scene, product: ${productName}, ${scene.visual||''}, ${scene.imagenPrompt||''}, clean graphic design, bold typography overlay, social media commercial style, square format, vibrant colors, professional brand content`;
-    try{
-      const src=await generateImageFromGemini(apiKey,prompt);
-      setSlideImgs(prev=>({...prev,[idx]:src}));
-    }catch(e){
-      onToast(e.message);
-    }finally{setLoadingIdx(null);}
-  };
-
-  const genAll=async()=>{
-    for(let i=0;i<Math.min(scenes.length,5);i++){
-      await genSlideImage(i);
-    }
-  };
-
-  const downloadSlide=(idx)=>{
-    const src=slideImgs[idx];if(!src)return;
-    const a=document.createElement('a');
-    a.href=src;a.download=`carousel_${idx+1}_${productName}.png`;a.click();
-  };
-
-  if(!scenes.length)return null;
-  return(
-    <div style={{marginTop:28}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12,flexWrap:'wrap',gap:8}}>
-        <div className="gsk" style={{color:'var(--cyan)',fontSize:'.9rem',fontWeight:700}}>🎨 Carousel Image Generator</div>
-        <div style={{display:'flex',gap:5,flexWrap:'wrap',alignItems:'center'}}>
-          {GRAD_THEMES.map(g=>(
-            <button key={g.id} onClick={()=>setTheme(g.id)} className={`btn btn-sm ${theme===g.id?'btn-c':'btn-g'}`}>{g.label}</button>
-          ))}
-          <button onClick={genAll} disabled={loadingIdx!==null||!apiKey} className="btn btn-c btn-sm">
-            {loadingIdx!==null?<span className="spin">{I.load}</span>:I.img2} Generate Semua
-          </button>
-        </div>
-      </div>
-      <div className="carousel-wrap">
-        {scenes.slice(0,5).map((scene,idx)=>{
-          const meta=SCENE_META[idx]||SCENE_META[0];
-          const src=slideImgs[idx];
-          const isLoading=loadingIdx===idx;
-          return(
-            <div key={idx} className="cslide">
-              <div style={{width:'100%',aspectRatio:'1',position:'relative',overflow:'hidden'}}>
-                {src?(
-                  <img src={src} alt={`slide ${idx+1}`} className="cslide-img"/>
-                ):(
-                  <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:6,background:meta.grad,cursor:'pointer'}} onClick={()=>genSlideImage(idx)}>
-                    {isLoading?(
-                      <><div className="spin" style={{color:'#fff'}}>{I.load}</div><div style={{color:'rgba(255,255,255,.7)',fontSize:'.7rem'}}>Generating...</div></>
-                    ):(
-                      <><div style={{fontSize:24}}>{meta.icon}</div><div style={{color:'rgba(255,255,255,.7)',fontSize:'.65rem',textAlign:'center',padding:'0 8px'}}>Klik generate<br/>Scene {idx+1}</div></>
-                    )}
-                  </div>
-                )}
-                {/* Scene number overlay */}
-                <div style={{position:'absolute',top:6,left:6,background:'rgba(0,0,0,.6)',borderRadius:6,padding:'2px 7px',fontSize:'.65rem',fontWeight:700,color:'#fff',fontFamily:'JetBrains Mono,monospace'}}>0{idx+1}</div>
-              </div>
-              <div className="cslide-info">
-                <div className="gsk" style={{color:meta.color,fontSize:'.75rem',fontWeight:700,marginBottom:4}}>{meta.icon} {meta.label}</div>
-                <div style={{fontSize:'.65rem',color:'var(--txm)',marginBottom:7,lineHeight:1.4}}>{(scene.subtitle||scene.audio||'').slice(0,60)}{(scene.subtitle||'').length>60?'...':''}</div>
-                <div style={{display:'flex',gap:5}}>
-                  <button onClick={()=>genSlideImage(idx)} disabled={isLoading||!apiKey} className="btn btn-c btn-sm" style={{flex:1,fontSize:'.65rem'}}>
-                    {isLoading?<span className="spin">{I.load}</span>:I.refresh}
-                  </button>
-                  {src&&<button onClick={()=>downloadSlide(idx)} className="btn btn-g btn-sm">{I.dl}</button>}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 /* ── CAMERA SVG ── */
-function CamSVG({idx}){
-  const cs=["#ef4444","#f59e0b","#06b6d4","#a855f7","#10b981"];
-  const c=cs[idx%5];
-  return(
+function CamSVG({idx}) {
+  const cs = ["#ef4444","#f59e0b","#06b6d4","#a855f7","#10b981"];
+  const c = cs[idx % 5];
+  return (
     <svg width="36" height="36" viewBox="0 0 60 60" fill="none">
       <circle cx="30" cy="30" r="28" stroke={c} strokeWidth="1" strokeDasharray="4 3" opacity=".4"/>
       <circle cx="30" cy="30" r="16" stroke={c} strokeWidth="1.2" opacity=".6"/>
@@ -613,26 +468,156 @@ function CamSVG({idx}){
   );
 }
 
+/* ── SCENE IMAGE CARD ── */
+function SceneImageCard({scene, idx, apiKey, productName, onToast, autoGenerate}) {
+  const meta = SCENE_META[idx] || SCENE_META[0];
+  const [imgSrc, setImgSrc] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
+  const [progress, setProgress] = useState('');
+  const hasAutoGeneratedRef = useRef(false);
+
+  const buildPrompt = () => {
+    const base = scene.imagenPrompt || scene.visual || `${meta.label} scene for ${productName} product commercial video`;
+    return base;
+  };
+
+  const gen = useCallback(async () => {
+    if (!apiKey || loading) return;
+    setLoading(true); setErr(''); setProgress('Memproses prompt...');
+    try {
+      setProgress('Menghubungi Gemini...');
+      const src = await generateImage(apiKey, buildPrompt());
+      setImgSrc(src);
+      setProgress('');
+    } catch(e) {
+      setErr(e.message);
+      setProgress('');
+    } finally {
+      setLoading(false);
+    }
+  }, [apiKey, scene, loading]);
+
+  // Auto-generate when component mounts if autoGenerate flag is set
+  useEffect(() => {
+    if (autoGenerate && apiKey && !hasAutoGeneratedRef.current && !imgSrc && !loading) {
+      hasAutoGeneratedRef.current = true;
+      // Stagger: scene index * 1.5s delay so we don't hammer the API
+      const timer = setTimeout(() => gen(), idx * 1600);
+      return () => clearTimeout(timer);
+    }
+  }, [autoGenerate]);
+
+  const download = () => {
+    if (!imgSrc) return;
+    const a = document.createElement('a');
+    a.href = imgSrc; a.download = `scene_${idx+1}_${meta.label.toLowerCase()}.png`; a.click();
+  };
+
+  const copyPrompt = () => {
+    const p = buildPrompt();
+    navigator.clipboard.writeText(p).then(() => onToast('Imagen Prompt disalin!'));
+  };
+
+  return (
+    <div className="scard fadein">
+      {/* Header */}
+      <div style={{padding:'11px 14px',borderBottom:'1px solid rgba(255,255,255,.06)',background:meta.grad}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <CamSVG idx={idx}/>
+            <div>
+              <div className="gsk" style={{color:meta.color,fontWeight:700,fontSize:'.82rem'}}>{meta.icon} Scene {idx+1}: {meta.label}</div>
+              <div style={{fontSize:'.6rem',color:'rgba(255,255,255,.45)',fontFamily:'JetBrains Mono,monospace'}}>{meta.cam}</div>
+            </div>
+          </div>
+          <span style={{fontSize:'.6rem',color:meta.color,background:`${meta.color}22`,padding:'2px 8px',borderRadius:999,border:`1px solid ${meta.color}44`}}>
+            {scene.scene || `Scene ${idx+1}`}
+          </span>
+        </div>
+      </div>
+
+      <div style={{padding:12}}>
+        {/* ── IMAGE AREA ── */}
+        {loading ? (
+          <div className="img-skeleton">
+            <div className="spin" style={{color:meta.color}}><Ic d={I.load.props.d} s={28}/></div>
+            <div style={{color:meta.color,fontSize:'.75rem',fontWeight:600}}>{progress || 'Generating image...'}</div>
+            <div style={{fontSize:'.65rem',color:'var(--txm)'}}>Mohon tunggu 10–20 detik</div>
+          </div>
+        ) : imgSrc ? (
+          <div style={{position:'relative'}}>
+            <img src={imgSrc} alt={`scene ${idx+1}`} className="ai-img fadein"/>
+            <div style={{position:'absolute',top:6,left:6,display:'flex',gap:5}}>
+              <span style={{background:'rgba(0,0,0,.7)',borderRadius:6,padding:'2px 7px',fontSize:'.62rem',fontWeight:700,color:meta.color,fontFamily:'JetBrains Mono,monospace'}}>S{idx+1}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="img-skeleton">
+            <div style={{fontSize:32}}>{meta.icon}</div>
+            <div style={{color:'var(--txt2)',fontSize:'.75rem'}}>Image akan di-generate otomatis</div>
+            {err && <div style={{color:'var(--red)',fontSize:'.68rem',textAlign:'center',marginTop:4,lineHeight:1.5}}>{err}</div>}
+          </div>
+        )}
+
+        {/* ── BUTTONS ROW ── */}
+        <div style={{display:'flex',gap:6,marginTop:9,marginBottom:11,flexWrap:'wrap'}}>
+          <button onClick={gen} disabled={loading || !apiKey} className="btn btn-c btn-sm" style={{flex:1}}>
+            {loading ? <span className="spin">{I.load}</span> : I.refresh}
+            {loading ? 'Generating...' : imgSrc ? 'Re-generate' : 'Generate Image'}
+          </button>
+          {imgSrc && (
+            <button onClick={download} className="btn btn-g btn-sm" title="Download">{I.dl}</button>
+          )}
+        </div>
+
+        {/* ── SCENE DETAILS ── */}
+        {[
+          {label:'📷 Visual', content: scene.visual},
+          {label:'🎙 Audio / VO', content: scene.audio},
+          {label:'📝 On-Screen Text', content: scene.subtitle},
+        ].map(s => s.content && (
+          <div key={s.label} style={{marginBottom:8}}>
+            <div style={{fontSize:'.63rem',color:'var(--txm)',marginBottom:3,fontWeight:600}}>{s.label}</div>
+            <div style={{fontSize:'.78rem',color:'var(--txt2)',background:'rgba(0,0,0,.2)',padding:'7px 9px',borderRadius:7,lineHeight:1.55}}>{s.content}</div>
+          </div>
+        ))}
+
+        {/* ── IMAGEN PROMPT + COPY ── */}
+        {scene.imagenPrompt && (
+          <div className="prompt-box">
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+              <span style={{fontSize:'.63rem',color:'var(--cyan)',fontWeight:700}}>🖼 Imagen Prompt</span>
+              <button onClick={copyPrompt} className="btn btn-g btn-sm">{I.copy} Copy</button>
+            </div>
+            <div className="prompt-text">{scene.imagenPrompt}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── IMAGE UPLOADER ── */
-function ImgUploader({label,value,onChange}){
-  const ref=useRef();
-  const handle=(e)=>{
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>onChange({data:ev.target.result.split(',')[1],mime:f.type,preview:ev.target.result});
+function ImgUploader({label, value, onChange}) {
+  const ref = useRef();
+  const handle = (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => onChange({data: ev.target.result.split(',')[1], mime: f.type, preview: ev.target.result});
     r.readAsDataURL(f);
   };
-  return(
+  return (
     <div>
       <p style={{fontSize:'.72rem',color:'var(--txm)',marginBottom:6}}>{label}</p>
-      {value?.preview?(
+      {value?.preview ? (
         <div style={{position:'relative',display:'inline-block'}}>
-          <img src={value.preview} style={{width:90,height:90,objectFit:'cover',borderRadius:8,border:'2px solid var(--cyan)'}}/>
-          <button onClick={()=>onChange(null)} className="btn btn-r" style={{position:'absolute',top:-6,right:-6,padding:'2px 5px',fontSize:'.65rem'}}>{I.trash}</button>
+          <img src={value.preview} style={{width:88,height:88,objectFit:'cover',borderRadius:9,border:'2px solid var(--cyan)'}}/>
+          <button onClick={()=>onChange(null)} className="btn btn-r" style={{position:'absolute',top:-7,right:-7,padding:'3px 6px',fontSize:'.65rem',minHeight:'auto'}}>{I.trash}</button>
         </div>
-      ):(
+      ) : (
         <div className="upbox" onClick={()=>ref.current.click()}>
-          <div style={{color:'var(--txm)',fontSize:'.75rem'}}>{I.img}<br/>Klik upload</div>
+          <div style={{color:'var(--txm)',fontSize:'.72rem'}}>{I.img}<br/>Tap upload</div>
         </div>
       )}
       <input ref={ref} type="file" accept="image/*" onChange={handle} style={{display:'none'}}/>
@@ -641,56 +626,133 @@ function ImgUploader({label,value,onChange}){
 }
 
 /* ── EXTRACT SCENES ── */
-function extractScenes(text){
-  if(!text)return[];
-  const rows=text.split('\n').filter(l=>l.includes('|'));
-  const dataRows=rows.filter(r=>{
-    const cols=r.split('|').filter((_,i,a)=>i>0&&i<a.length-1);
-    return cols.length>=2&&!/^[-:\s|]+$/.test(r)&&!/Scene.*Durasi|Scene.*Visual|Durasi.*Visual/i.test(r);
+function extractScenes(text) {
+  if (!text) return [];
+  const rows = text.split('\n').filter(l => l.includes('|'));
+  const dataRows = rows.filter(r => {
+    const cols = r.split('|').filter((_,i,a) => i>0 && i<a.length-1);
+    return (
+      cols.length >= 2 &&
+      !/^[-:\s|]+$/.test(r) &&
+      !/Scene.*Durasi|Scene.*Visual|Durasi.*Visual|Scene.*Camera|Hook.*Build/i.test(r) &&
+      !/^[\s|:-]+$/.test(r)
+    );
   });
-  return dataRows.slice(0,5).map((row,idx)=>{
-    const cols=row.split('|').filter((_,i,a)=>i>0&&i<a.length-1).map(c=>c.trim());
-    return{scene:cols[0]||`Scene ${idx+1}`,visual:cols[1]||"",audio:cols[2]||"",subtitle:cols[3]||"",imagenPrompt:cols[4]||""};
+  // Dedupe: take first 5 that look like actual scene rows
+  return dataRows.slice(0, 5).map((row, idx) => {
+    const cols = row.split('|').filter((_,i,a) => i>0 && i<a.length-1).map(c => c.trim());
+    return {
+      scene: cols[0] || `Scene ${idx+1}`,
+      visual: cols[1] || '',
+      audio: cols[2] || '',
+      subtitle: cols[3] || '',
+      imagenPrompt: cols[4] || '',
+    };
   });
 }
 
 /* ── SYSTEM PROMPTS ── */
-const SYS={
-  planner:`Bertindaklah sebagai tim konsultan bisnis elite. Bedah data produk secara brutal dan objektif menggunakan pola pikir investor nyata. Hasilkan output dalam format tabel Markdown masif untuk:
+const SYS = {
+  planner: `Bertindaklah sebagai tim konsultan bisnis elite Indonesia. Bedah data produk secara brutal dan objektif menggunakan pola pikir investor nyata. Hasilkan output komprehensif dalam format tabel Markdown untuk semua bagian berikut:
 
-BAGIAN 1: ANALISIS BISNIS & DETEKSI INDUSTRI (Auto Category Detection, Industry Trope, Tabel Analisis Faktor, Tabel SWOT dengan Matriks Skor 1-10).
-BAGIAN 2: BRANDING METRIC & POSITIONING (Tabel 10 nama brand komersial, handle sosmed, Slogan, Story Brand, Positioning, USP).
-BAGIAN 3: ARSITEKTUR DESAIN & PROMPT GENERATOR AI (Tabel Elemen Visual. Lalu PROMPT LOGO AI, PROMPT BANNER AI, PROMPT FOTO PROFIL AI dalam bahasa Inggris siap pakai).
-BAGIAN 4: DEEP BUYER PERSONA DATABASES (Tabel 5 Buyer Persona: Nama, Umur, Profesi, Penghasilan, Masalah, Ketakutan, Tujuan, Trigger, Platform).
-BAGIAN 5: ESTIMASI TARGET FINANSIAL & LEADS BREAKDOWN (Tabel omzet tahunan/bulanan/mingguan/harian, transaksi harian, leads, closing, Conversion Rate minimum).
-BAGIAN 6: ROADMAP 12 BULAN (Tabel 5 Fase: Validasi, Audiens, Monetisasi, Scale Up, Dominasi — kolom Target, KPI, Aktivitas, Risiko, Solusi).
-BAGIAN 7: KRITIK KERAS & REALITA PAHIT (Tabel kesalahan fatal, kebiasaan buruk, penyebab gagal, realita pasar Indonesia, aktivitas wajib harian).
+## BAGIAN 1: ANALISIS BISNIS & DETEKSI INDUSTRI
+Tabel: Auto Category Detection, Industry Trope, Analisis Faktor, Matriks SWOT (skor 1-10 tiap kuadran).
 
-FORMAT PENUTUP: KESIMPULAN INVESTOR — penilaian realistis target omzet, bagian bisnis paling lemah, peluang & ancaman terbesar, 3 aktivitas ROI tertinggi, rencana aksi 7 hari pertama.`,
+## BAGIAN 2: BRANDING METRIC & POSITIONING
+Tabel 10 nama brand komersial Indonesia (nama, handle sosmed, slogan, story brand, positioning statement, USP).
 
-  calendar:`Hasilkan KALENDER KONTEN VIRAL MINGGU PERTAMA (14 KONTEN UTUH & SIAP PAKAI). Buat tabel Markdown lengkap 14 konten (2/hari Senin-Minggu):
-| Hari | Platform | Ide Konten & Funnel | Marketing Angle | Jenis Hook | Script Singkat (Five Scene: Hook→Build Up→Development→Peak→Resolution + arahan kamera Veo 3.1) | Caption Copywriting SIAP PAKAI | CTA Spesifik | Hashtag Strategis |
-Tulis Caption secara lengkap, persuasif, emosional, memicu konversi, siap pakai untuk jualan di pasar Indonesia. Tambahkan Tabel Target KPI Minggu Pertama dan 10 Hook Viral Tambahan.`,
+## BAGIAN 3: ARSITEKTUR DESAIN & AI PROMPT GENERATOR
+Tabel elemen visual brand. Kemudian tulis 3 prompt siap pakai dalam bahasa Inggris:
+- LOGO AI PROMPT: ...
+- BANNER AI PROMPT: ...
+- FOTO PROFIL AI PROMPT: ...
 
-  caption:`Hasilkan variasi caption copywriting tingkat dewa untuk TikTok, Instagram Reels, Facebook Pro, YouTube Shorts. Output wajib: hook tebal baris pertama, bodi emosional/scarcity, CTA tajam, hashtag strategis. Sajikan dalam tabel perbandingan Markdown per platform. Gunakan bahasa kasual, persuasif, relatable pasar Indonesia.`,
+## BAGIAN 4: DEEP BUYER PERSONA DATABASE
+Tabel 5 buyer persona detail: Nama, Umur, Profesi, Penghasilan/bln, Masalah Utama, Ketakutan Terbesar, Tujuan, Trigger Beli, Platform Favorit.
 
-  generator:`Bertindaklah sebagai Creative Director & Scriptwriter UGC Premium. Hasilkan skrip video komersial 30-60 detik dalam format tabel Five Scene Framework WAJIB:
-| Scene & Durasi | Visual & Camera Direction | Audio & Voiceover | On-Screen Text / Subtitle | Imagen Prompt |
-Scene 1: Hook (0-8s) | Scene 2: Build Up (8-18s) | Scene 3: Development (18-30s) | Scene 4: Peak (30-45s) | Scene 5: Resolution (45-60s)
-Imagen Prompt: deskripsi visual bahasa Inggris sinematik lengkap, detail produk dan model, lighting, camera angle. Tambahkan panduan properti syuting.`,
+## BAGIAN 5: ESTIMASI TARGET FINANSIAL
+Tabel breakdown: Target Omzet (Tahunan/Bulanan/Mingguan/Harian), Jumlah Transaksi Harian, Leads Dibutuhkan, Closing Rate, Traffic Minimum.
+
+## BAGIAN 6: ROADMAP 12 BULAN
+Tabel 5 fase: Fase (Validasi/Audiens/Monetisasi/Scale Up/Dominasi), Bulan, Target, KPI, Aktivitas Utama, Risiko, Solusi.
+
+## BAGIAN 7: KRITIK KERAS & REALITA PAHIT
+Tabel: Kesalahan Fatal Umum, Kebiasaan Buruk UMKM, Penyebab Gagal di Pasar Indonesia, Aktivitas Wajib Harian ROI Tertinggi.
+
+## KESIMPULAN INVESTOR
+Penilaian realistis peluang bisnis ini, bagian paling lemah, 3 aktivitas ROI tertinggi, dan rencana aksi 7 hari pertama.
+
+PENTING: Tulis semua tabel secara LENGKAP dan DETAIL. Jangan skip atau ringkas bagian apapun.`,
+
+  calendar: `Hasilkan KALENDER KONTEN VIRAL MINGGU PERTAMA yang lengkap dan siap pakai. Output wajib mencakup:
+
+## KALENDER KONTEN 14 KONTEN (Senin–Minggu, 2 konten per hari)
+
+Buat tabel Markdown dengan kolom:
+| Hari | Platform | Ide Konten & Funnel Stage | Marketing Angle | Jenis Hook | Script Singkat (Five Scene: Hook→Build Up→Development→Peak→Resolution + arahan kamera Veo) | Caption LENGKAP & Siap Pakai | CTA Spesifik | Hashtag Strategis |
+
+PENTING untuk kolom Caption: Tulis caption secara PENUH, persuasif, emosional, memicu konversi, langsung bisa copy-paste untuk jualan di pasar Indonesia. Minimal 5–8 baris caption per konten. Gunakan bahasa kasual, relatable, dengan hook kuat di baris pertama.
+
+## TARGET KPI MINGGU PERTAMA
+Tabel KPI per hari: Views Target, Engagement Rate, DM Masuk, Leads Qualified, Closing Target.
+
+## 10 HOOK VIRAL TAMBAHAN
+Tabel 10 hook siap pakai untuk variasi konten berikutnya.
+
+## TEMPLATE CAPTION PER PLATFORM
+Tabel template caption khusus TikTok, Instagram, Facebook, YouTube Shorts.
+
+PENTING: Jangan ringkas. Tulis semua 14 baris konten secara LENGKAP.`,
+
+  caption: `Hasilkan variasi caption copywriting tingkat expert untuk semua platform digital. Output wajib dalam tabel Markdown perbandingan platform:
+
+| Platform | Hook Baris Pertama | Bodi Emosional (3-4 baris) | CTA Tajam | Hashtag (10-15 tag) | Emoji Style |
+
+Platform: TikTok, Instagram Reels, Instagram Feed, Facebook, YouTube Shorts, WhatsApp Status, Twitter/X.
+
+Kemudian buat 5 variasi caption LENGKAP (bukan tabel) untuk masing-masing platform yang paling potensial (TikTok & Instagram), dengan format:
+- Hook tebal di baris pertama
+- Bodi emosional/scarcity
+- Social proof
+- CTA tajam
+- Hashtag strategis
+
+Gunakan bahasa Indonesia kasual, persuasif, relatable pasar lokal.`,
+
+  generator: `Bertindaklah sebagai Creative Director & Scriptwriter UGC Premium Indonesia. Hasilkan skrip video komersial 30-60 detik yang siap produksi.
+
+OUTPUT WAJIB dalam format tabel Five Scene Framework:
+
+| Scene & Durasi | Visual & Camera Direction (Veo 3) | Audio & Voiceover Script | On-Screen Text / Subtitle | Imagen Prompt (English, cinematic) |
+|---|---|---|---|---|
+| Scene 1: Hook (0–8 detik) | ... | ... | ... | ... |
+| Scene 2: Build Up (8–18 detik) | ... | ... | ... | ... |
+| Scene 3: Development (18–30 detik) | ... | ... | ... | ... |
+| Scene 4: Peak / Climax (30–45 detik) | ... | ... | ... | ... |
+| Scene 5: Resolution / CTA (45–60 detik) | ... | ... | ... | ... |
+
+Kolom Imagen Prompt: Deskripsi visual bahasa Inggris yang sinematik, detail teknis (lighting, camera angle, lens, color grading, model description, product placement).
+
+Setelah tabel, tambahkan:
+## PANDUAN PRODUKSI
+- Properti wajib syuting
+- Referensi lighting setup
+- Tips editing & transisi
+- Music & SFX recommendation`,
 };
 
 /* ── SIDEBAR ── */
-function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setActiveTab,onClose}){
-  const [showKey,setShowKey]=useState(false);
-  const sanity=useMemo(()=>calcSanity(form.capital,form.price,form.targetOmzet),[form.capital,form.price,form.targetOmzet]);
-  const tabs=[
+function Sidebar({form, setForm, apiKey, setApiKey, theme, toggleTheme, activeTab, setActiveTab, isOpen, onClose}) {
+  const [showKey, setShowKey] = useState(false);
+  const sanity = useMemo(() => calcSanity(form.capital, form.price, form.targetOmzet), [form.capital, form.price, form.targetOmzet]);
+
+  const tabs = [
     {id:'planner',label:'Business Architect',icon:I.chart},
     {id:'calendar',label:'Kalender Konten',icon:I.cal},
     {id:'caption',label:'Caption Lab',icon:I.pen},
     {id:'generator',label:'UGC Generator',icon:I.vid},
   ];
-  const fields=[
+  const fields = [
     {k:'name',l:'Nama Produk',ph:'Basreng Kaffir Jeruk Purut'},
     {k:'desc',l:'Deskripsi',ph:'Camilan super renyah...',a:true},
     {k:'characteristics',l:'Karakteristik',ph:'Renyah, wangi...',a:true},
@@ -700,71 +762,94 @@ function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setA
     {k:'location',l:'Lokasi',ph:'Bandung, Jawa Barat'},
     {k:'initialMarket',l:'Target Pasar',ph:'Pecinta jajanan pedas...',a:true},
   ];
-  return(
-    <div className="sidebar">
+
+  return (
+    <div className={`sidebar${isOpen ? ' open' : ''}`}>
       {/* Logo + close */}
-      <div style={{padding:'16px 14px 10px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+      <div style={{padding:'14px 14px 10px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <div>
             <div className="gsk grad" style={{fontSize:'1rem',fontWeight:800}}>VEO 3 PRO</div>
-            <div style={{fontSize:'.6rem',color:'var(--txm)',fontFamily:'JetBrains Mono,monospace'}}>UGC AI Suite v3.5</div>
+            <div style={{fontSize:'.58rem',color:'var(--txm)',fontFamily:'JetBrains Mono,monospace',marginTop:1}}>UGC AI Suite v4.0</div>
           </div>
           <div style={{display:'flex',gap:6}}>
-            <button onClick={toggleTheme} className="btn btn-g" style={{padding:'5px 7px'}}>{theme==='dark'?I.sun:I.moon}</button>
-            <button onClick={onClose} className="btn btn-g hamburger" style={{padding:'5px 7px'}}>{I.x}</button>
+            <button onClick={toggleTheme} className="btn btn-g" style={{padding:'6px 8px'}}>{theme==='dark'?I.sun:I.moon}</button>
+            <button onClick={onClose} className="btn btn-g hamburger-btn" style={{padding:'6px 8px'}}>{I.x}</button>
           </div>
         </div>
       </div>
+
       {/* API Key */}
-      <div style={{padding:'12px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
-        <div style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:5,display:'flex',gap:4,alignItems:'center'}}>{I.key} GEMINI API KEY</div>
+      <div style={{padding:'11px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <div style={{fontSize:'.65rem',color:'var(--txm)',marginBottom:5,display:'flex',gap:4,alignItems:'center',fontWeight:600}}>{I.key} GEMINI API KEY</div>
         <div style={{display:'flex',gap:5}}>
-          <input type={showKey?'text':'password'} className="inp" value={apiKey} onChange={e=>{setApiKey(e.target.value);safeSet('veo_studio_apikey',e.target.value);}} placeholder="AIza..." style={{fontSize:'.75rem',flex:1}}/>
-          <button onClick={()=>setShowKey(v=>!v)} className="btn btn-g" style={{padding:'5px 7px',flexShrink:0}}>{showKey?I.eyeOff:I.eye}</button>
+          <input
+            type={showKey?'text':'password'}
+            className="inp"
+            value={apiKey}
+            onChange={e=>{setApiKey(e.target.value);safeSet('veo_studio_apikey',e.target.value);}}
+            placeholder="AIza..."
+            style={{fontSize:'.75rem',flex:1}}
+          />
+          <button onClick={()=>setShowKey(v=>!v)} className="btn btn-g" style={{padding:'6px 8px',flexShrink:0}}>{showKey?I.eyeOff:I.eye}</button>
         </div>
-        {!apiKey&&<div style={{marginTop:7,padding:'6px 9px',borderRadius:7,background:'rgba(245,158,11,.08)',border:'1px solid rgba(245,158,11,.2)',fontSize:'.68rem',color:'#fbbf24',display:'flex',gap:4,alignItems:'flex-start'}}>{I.warn} Masukkan API Key Gemini</div>}
+        {!apiKey && (
+          <div style={{marginTop:7,padding:'6px 9px',borderRadius:7,background:'rgba(245,158,11,.08)',border:'1px solid rgba(245,158,11,.2)',fontSize:'.65rem',color:'#fbbf24',display:'flex',gap:4,alignItems:'flex-start'}}>
+            {I.warn} Masukkan API Key Gemini untuk mulai
+          </div>
+        )}
+        {apiKey && (
+          <div style={{marginTop:5,display:'flex',alignItems:'center',gap:4,fontSize:'.65rem',color:'#34d399'}}>
+            {I.chk} API Key aktif
+          </div>
+        )}
       </div>
-      {/* Nav */}
+
+      {/* Nav tabs */}
       <div style={{padding:'10px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
-        <p style={{fontSize:'.62rem',color:'var(--txm)',marginBottom:6,textTransform:'uppercase',letterSpacing:.8}}>Menu</p>
-        {tabs.map(t=>(
-          <div key={t.id} className={`slink${activeTab===t.id?' active':''}`} onClick={()=>{setActiveTab(t.id);onClose&&onClose();}}>
+        <p style={{fontSize:'.6rem',color:'var(--txm)',marginBottom:6,textTransform:'uppercase',letterSpacing:.8,fontWeight:600}}>MENU</p>
+        {tabs.map(t => (
+          <div key={t.id} className={`slink${activeTab===t.id?' active':''}`}
+            onClick={()=>{setActiveTab(t.id);onClose();}}>
             {t.icon}<span>{t.label}</span>
           </div>
         ))}
       </div>
+
       {/* Form */}
       <div style={{padding:'10px 14px',flex:1,overflow:'auto'}}>
-        <p style={{fontSize:'.62rem',color:'var(--txm)',marginBottom:8,textTransform:'uppercase',letterSpacing:.8}}>Data Produk Global</p>
+        <p style={{fontSize:'.6rem',color:'var(--txm)',marginBottom:8,textTransform:'uppercase',letterSpacing:.8,fontWeight:600}}>DATA PRODUK GLOBAL</p>
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
-          {fields.map(f=>(
+          {fields.map(f => (
             <div key={f.k}>
-              <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>{f.l}</label>
+              <label style={{fontSize:'.67rem',color:'var(--txm)',marginBottom:3,display:'block',fontWeight:500}}>{f.l}</label>
               {f.a
-                ?<textarea className="inp" value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{minHeight:60,fontSize:'.75rem'}}/>
-                :<input className="inp" type={f.t||'text'} value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{fontSize:'.75rem'}}/>
+                ? <textarea className="inp" value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{minHeight:60,fontSize:'.78rem'}}/>
+                : <input className="inp" type={f.t||'text'} value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{fontSize:'.78rem'}}/>
               }
             </div>
           ))}
+
           {[
             {k:'industry',l:'Kategori Industri',opts:INDUSTRIES},
             {k:'angle',l:'Marketing Angle',opts:ANGLES},
             {k:'hook',l:'Viral Hook Style',opts:HOOKS},
-          ].map(f=>(
+          ].map(f => (
             <div key={f.k}>
-              <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>{f.l}</label>
-              <select className="inp" value={form[f.k]||f.opts[0]} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} style={{fontSize:'.75rem'}}>
+              <label style={{fontSize:'.67rem',color:'var(--txm)',marginBottom:3,display:'block',fontWeight:500}}>{f.l}</label>
+              <select className="inp" value={form[f.k]||f.opts[0]} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} style={{fontSize:'.78rem'}}>
                 {f.opts.map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
           ))}
+
           {/* Sanity Score */}
           <div className="card2" style={{marginTop:4}}>
             <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
-              <span style={{fontSize:'.68rem',color:'var(--txm)'}}>Sanity Check Finansial</span>
+              <span style={{fontSize:'.67rem',color:'var(--txm)',fontWeight:500}}>Sanity Check Finansial</span>
               <span className={`badge ${sanity.cls}`}>{sanity.score}/100</span>
             </div>
-            <div className="pbar" style={{marginBottom:5}}><div className="pfill" style={{width:`${sanity.score}%`}}/></div>
+            <div className="pbar" style={{marginBottom:6}}><div className="pfill" style={{width:`${sanity.score}%`}}/></div>
             <p style={{fontSize:'.65rem',color:'var(--txm)',lineHeight:1.5}}>{sanity.label}</p>
             <div style={{marginTop:5,fontSize:'.65rem',color:'var(--txm)'}}>
               Qty/bln: <b style={{color:'var(--txt)'}}>{sanity.qty.toLocaleString()}</b> · Traffic: <b style={{color:'var(--txt)'}}>{sanity.traffic.toLocaleString()}</b>
@@ -777,57 +862,64 @@ function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setA
 }
 
 /* ── MAIN CONTENT ── */
-function MainContent({tab,form,apiKey,ugcForm,setUgcForm,imgProduct,setImgProduct,imgModel,setImgModel,aiResult,loading,loadingMsg,scenes,onGenerate,onToast}){
-  const tabInfo={
-    planner:{title:'Business Architect',desc:'Analisis bisnis + roadmap 12 bulan',icon:'🏗️',color:'var(--cyan)'},
-    calendar:{title:'Kalender Konten',desc:'14 konten viral + Five Scene Framework',icon:'📅',color:'var(--purple)'},
-    caption:{title:'Viral Caption Lab',desc:'Caption TikTok · Reels · Shorts · Facebook',icon:'✍️',color:'var(--pink)'},
-    generator:{title:'UGC Generator',desc:'Skrip video + storyboard + gambar AI',icon:'🎬',color:'var(--green)'},
+function MainContent({tab, form, apiKey, ugcForm, setUgcForm, imgProduct, setImgProduct, imgModel, setImgModel, aiResult, loading, loadingMsg, loadingPct, scenes, autoGenImages, onGenerate, onToast}) {
+  const tabInfo = {
+    planner:{title:'Business Architect',desc:'Analisis bisnis komprehensif + roadmap 12 bulan',icon:'🏗️'},
+    calendar:{title:'Kalender Konten Viral',desc:'14 konten siap pakai + Five Scene Framework',icon:'📅'},
+    caption:{title:'Viral Caption Lab',desc:'Caption TikTok · Reels · Shorts · Facebook',icon:'✍️'},
+    generator:{title:'UGC Video Generator',desc:'Skrip lengkap + storyboard + gambar AI per scene',icon:'🎬'},
   };
-  const info=tabInfo[tab]||tabInfo.planner;
+  const info = tabInfo[tab] || tabInfo.planner;
 
-  const copyAll=()=>{
-    if(!aiResult)return;
+  const copyAll = () => {
+    if (!aiResult) return;
     navigator.clipboard.writeText(aiResult).then(()=>onToast('Semua output disalin!'));
   };
-  const copyPromptCb=(t)=>{
+  const copyPromptCb = (t) => {
     navigator.clipboard.writeText(t).then(()=>onToast('Prompt disalin!'));
   };
 
-  return(
+  return (
     <div style={{flex:1,display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
-      {/* Topbar (desktop) */}
-      <div style={{padding:'16px 24px 0',flexShrink:0,display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
-        <div>
-          <div className="gsk" style={{fontSize:'1.15rem',fontWeight:800}}>{info.icon} {info.title}</div>
-          <div style={{fontSize:'.8rem',color:'var(--txm)',marginTop:2}}>{info.desc}</div>
+
+      {/* Desktop header */}
+      <div className="desktop-header" style={{padding:'16px 22px 0',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
+          <div>
+            <div className="gsk" style={{fontSize:'1.15rem',fontWeight:800}}>{info.icon} {info.title}</div>
+            <div style={{fontSize:'.78rem',color:'var(--txm)',marginTop:2}}>{info.desc}</div>
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
+            {aiResult && <button onClick={copyAll} className="btn btn-g btn-sm">{I.copy} Salin Semua</button>}
+            <button onClick={onGenerate} disabled={!apiKey||loading} className="btn btn-c" style={{padding:'10px 22px'}}>
+              {loading ? <><span className="spin">{I.load}</span>Generating...</> : <>{I.spark} Generate AI</>}
+            </button>
+          </div>
         </div>
-        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
-          {aiResult&&<button onClick={copyAll} className="btn btn-g btn-sm">{I.copy} Salin Semua</button>}
-          <button onClick={onGenerate} disabled={!apiKey||loading} className="btn btn-c" style={{padding:'10px 20px'}}>
-            {loading?<><span className="spin">{I.load}</span>Generating...</>:<>{I.spark} Generate AI</>}
-          </button>
-        </div>
-        {!apiKey&&<div style={{width:'100%',padding:'6px 10px',borderRadius:7,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.2)',fontSize:'.75rem',color:'#f87171',display:'flex',gap:5,alignItems:'center'}}>{I.warn} Isi API Key Gemini di panel kiri terlebih dahulu</div>}
+        {!apiKey && (
+          <div style={{marginTop:10,padding:'7px 11px',borderRadius:8,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.2)',fontSize:'.75rem',color:'#f87171',display:'flex',gap:5,alignItems:'center'}}>
+            {I.warn} Isi API Key Gemini di panel kiri terlebih dahulu
+          </div>
+        )}
       </div>
 
-      {/* UGC Extra */}
-      {tab==='generator'&&(
-        <div style={{padding:'12px 24px 0',flexShrink:0}}>
+      {/* UGC Extra form */}
+      {tab === 'generator' && (
+        <div style={{padding:'10px 22px 0',flexShrink:0}}>
           <div className="card2">
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
-              <input type="checkbox" id="ugcauto" checked={ugcForm.useAutonomous} onChange={e=>setUgcForm(p=>({...p,useAutonomous:e.target.checked}))} style={{accentColor:'var(--cyan)',width:14,height:14}}/>
+              <input type="checkbox" id="ugcauto" checked={ugcForm.useAutonomous} onChange={e=>setUgcForm(p=>({...p,useAutonomous:e.target.checked}))} style={{accentColor:'var(--cyan)',width:15,height:15}}/>
               <label htmlFor="ugcauto" style={{fontSize:'.8rem',color:'var(--txt2)',cursor:'pointer'}}>Gunakan Data Produk Khusus UGC</label>
             </div>
-            {ugcForm.useAutonomous&&(
+            {ugcForm.useAutonomous && (
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:12}}>
                 <div>
-                  <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Nama UGC</label>
-                  <input className="inp" value={ugcForm.name} onChange={e=>setUgcForm(p=>({...p,name:e.target.value}))} placeholder="Nama produk UGC..." style={{fontSize:'.78rem'}}/>
+                  <label style={{fontSize:'.67rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Nama UGC</label>
+                  <input className="inp" value={ugcForm.name} onChange={e=>setUgcForm(p=>({...p,name:e.target.value}))} placeholder="Nama produk..." style={{fontSize:'.78rem'}}/>
                 </div>
                 <div>
-                  <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Deskripsi UGC</label>
-                  <input className="inp" value={ugcForm.desc} onChange={e=>setUgcForm(p=>({...p,desc:e.target.value}))} placeholder="Deskripsi UGC..." style={{fontSize:'.78rem'}}/>
+                  <label style={{fontSize:'.67rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Deskripsi UGC</label>
+                  <input className="inp" value={ugcForm.desc} onChange={e=>setUgcForm(p=>({...p,desc:e.target.value}))} placeholder="Deskripsi..." style={{fontSize:'.78rem'}}/>
                 </div>
               </div>
             )}
@@ -839,34 +931,87 @@ function MainContent({tab,form,apiKey,ugcForm,setUgcForm,imgProduct,setImgProduc
         </div>
       )}
 
-      {/* Main output scroll area */}
-      <div className="main-body" style={{flex:1,overflow:'auto',padding:'16px 24px'}}>
-        {loading?(
-          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'50vh',gap:16}}>
-            <div className="spin" style={{color:'var(--cyan)'}}><Ic d={I.load.props.d} s={40}/></div>
-            <p className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:600}}>{loadingMsg}</p>
-            <div style={{display:'flex',gap:5}}>{[0,1,2].map(i=><div key={i} className="pulse" style={{width:7,height:7,borderRadius:'50%',background:'var(--purple)',animationDelay:`${i*.3}s`}}/>)}</div>
+      {/* Mobile generate bar */}
+      <div style={{display:'flex',gap:8,padding:'10px 12px 0',flexShrink:0}} className="mobile-topbar" style2="display:none">
+        {aiResult && <button onClick={copyAll} className="btn btn-g btn-sm">{I.copy}</button>}
+        <button onClick={onGenerate} disabled={!apiKey||loading} className="btn btn-c" style={{flex:1,justifyContent:'center'}}>
+          {loading ? <><span className="spin">{I.load}</span>Generating...</> : <>{I.spark} Generate AI</>}
+        </button>
+      </div>
+
+      {/* ── SCROLL CONTENT ── */}
+      <div className="main-body">
+        {loading ? (
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'55vh',gap:16}}>
+            <div className="spin" style={{color:'var(--cyan)'}}><Ic d={I.load.props.d} s={44}/></div>
+            <p className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:600,textAlign:'center',maxWidth:280}}>{loadingMsg}</p>
+            {/* progress bar */}
+            <div style={{width:220,height:4,background:'var(--border)',borderRadius:3,overflow:'hidden'}}>
+              <div className="pfill" style={{width:`${loadingPct}%`,transition:'width .6s'}}/>
+            </div>
+            <div style={{display:'flex',gap:6}}>
+              {[0,1,2].map(i=>(
+                <div key={i} className="pulse" style={{width:7,height:7,borderRadius:'50%',background:'var(--purple)',animationDelay:`${i*.3}s`}}/>
+              ))}
+            </div>
+            <p style={{fontSize:'.72rem',color:'var(--txm)',textAlign:'center',maxWidth:240,lineHeight:1.5}}>
+              Output bisa berukuran besar — mohon tunggu hingga selesai
+            </p>
           </div>
-        ):!aiResult?(
-          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'50vh',gap:12,color:'var(--txm)'}}>
-            <div style={{fontSize:52}}>🚀</div>
-            <p className="gsk" style={{fontSize:'1rem',color:'var(--txt2)'}}>Siap untuk Generate</p>
-            <p style={{fontSize:'.8rem',textAlign:'center',maxWidth:380,lineHeight:1.6}}>Isi data produk di sidebar, pastikan API Key Gemini terisi, lalu klik tombol <b style={{color:'var(--cyan)'}}>Generate AI</b>.</p>
+        ) : !aiResult ? (
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'55vh',gap:12,color:'var(--txm)'}}>
+            <div style={{fontSize:54}}>🚀</div>
+            <p className="gsk" style={{fontSize:'1rem',color:'var(--txt2)',fontWeight:600}}>Siap Generate</p>
+            <p style={{fontSize:'.8rem',textAlign:'center',maxWidth:360,lineHeight:1.65,color:'var(--txm)'}}>
+              Isi data produk di sidebar, pastikan API Key Gemini terisi, lalu tekan tombol <b style={{color:'var(--cyan)'}}>Generate AI</b>.
+            </p>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8,maxWidth:320}}>
+              {[
+                {icon:'🏗️',label:'Business Architect',desc:'Analisis SWOT + roadmap'},
+                {icon:'📅',label:'Kalender Konten',desc:'14 konten siap posting'},
+                {icon:'✍️',label:'Caption Lab',desc:'Copywriting per platform'},
+                {icon:'🎬',label:'UGC Generator',desc:'Script + gambar AI'},
+              ].map(f=>(
+                <div key={f.label} className="card2" style={{padding:10}}>
+                  <div style={{fontSize:20,marginBottom:4}}>{f.icon}</div>
+                  <div style={{fontSize:'.72rem',color:'var(--txt2)',fontWeight:600}}>{f.label}</div>
+                  <div style={{fontSize:'.65rem',color:'var(--txm)',marginTop:2}}>{f.desc}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        ):(
-          <div>
+        ) : (
+          <div className="fadein">
             <MdRender text={aiResult} onCopyPrompt={copyPromptCb}/>
-            {/* Five Scene Storyboard */}
-            {tab==='generator'&&scenes.length>0&&(
+
+            {/* ── FIVE SCENE STORYBOARD ── */}
+            {tab === 'generator' && scenes.length > 0 && (
               <div style={{marginTop:28}}>
-                <div className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:700,marginBottom:14}}>🎬 Five Scene Storyboard — Generate Image per Scene</div>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12}}>
-                  {scenes.map((scene,idx)=>(
-                    <SceneImageCard key={idx} scene={scene} idx={idx} apiKey={apiKey} productName={form.name||'Product'} onCopyPrompt={copyPromptCb} onToast={onToast}/>
+                <div style={{marginBottom:12}}>
+                  <div className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:700,marginBottom:4}}>🎬 Five Scene Storyboard</div>
+                  {autoGenImages && (
+                    <div className="img-gen-bar">
+                      <span className="spin">{I.load}</span>
+                      <span>Auto-generating images per scene — scene diproses satu per satu dengan jeda 1.6 detik</span>
+                    </div>
+                  )}
+                  <p style={{fontSize:'.75rem',color:'var(--txm)'}}>
+                    Setiap scene menghasilkan 1 gambar AI. Klik <b style={{color:'var(--cyan)'}}>Re-generate</b> untuk variasi baru.
+                  </p>
+                </div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(290px,1fr))',gap:14}}>
+                  {scenes.map((scene, idx) => (
+                    <SceneImageCard
+                      key={idx}
+                      scene={scene}
+                      idx={idx}
+                      apiKey={apiKey}
+                      productName={form.name || 'Product'}
+                      onToast={onToast}
+                      autoGenerate={autoGenImages}
+                    />
                   ))}
                 </div>
-                {/* Carousel */}
-                <CarouselExporter scenes={scenes} apiKey={apiKey} productName={form.name||'Product'} onToast={onToast}/>
               </div>
             )}
           </div>
@@ -876,14 +1021,14 @@ function MainContent({tab,form,apiKey,ugcForm,setUgcForm,imgProduct,setImgProduc
   );
 }
 
-/* ── APP ── */
-function AppContent(){
-  const [theme,setTheme]=useState(()=>safeGet('veo_theme','dark'));
-  const [apiKey,setApiKey]=useState(()=>safeGet('veo_studio_apikey',''));
-  const [activeTab,setActiveTab]=useState('planner');
-  const [sidebarOpen,setSidebarOpen]=useState(false);
-  const [toast,setToast]=useState('');
-  const [form,setForm]=useState({
+/* ── APP ROOT ── */
+function AppContent() {
+  const [theme, setTheme] = useState(()=>safeGet('veo_theme','dark'));
+  const [apiKey, setApiKey] = useState(()=>safeGet('veo_studio_apikey',''));
+  const [activeTab, setActiveTab] = useState('planner');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [toast, setToast] = useState('');
+  const [form, setForm] = useState({
     name:"Basreng Kaffir Jeruk Purut",
     desc:"Camilan bakso goreng super renyah beraroma irisan daun jeruk purut segar dengan limpahan cabai asli dan gurih umami tinggi.",
     characteristics:"Renyah empuk tidak keras, potongan presisi, wangi jeruk melimpah, rasa pedas berlevel tahan 6 bulan.",
@@ -892,142 +1037,230 @@ function AppContent(){
     initialMarket:"Pecinta jajanan pedas instan usia remaja hingga dewasa (15-35 tahun) di media sosial Indonesia.",
     industry:"Food (Culinary & Food)",angle:"FOMO",hook:"Pattern Interrupt",
   });
-  const [ugcForm,setUgcForm]=useState({useAutonomous:false,name:'',desc:''});
-  const [imgProduct,setImgProduct]=useState(null);
-  const [imgModel,setImgModel]=useState(null);
-  const [aiResult,setAiResult]=useState('');
-  const [loading,setLoading]=useState(false);
-  const [loadingMsg,setLoadingMsg]=useState('');
-  const [scenes,setScenes]=useState([]);
-  const msgRef=useRef(null);
+  const [ugcForm, setUgcForm] = useState({useAutonomous:false,name:'',desc:''});
+  const [imgProduct, setImgProduct] = useState(null);
+  const [imgModel, setImgModel] = useState(null);
+  const [aiResult, setAiResult] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState('');
+  const [loadingPct, setLoadingPct] = useState(0);
+  const [scenes, setScenes] = useState([]);
+  const [autoGenImages, setAutoGenImages] = useState(false);
+  const msgRef = useRef(null);
+  const pctRef = useRef(null);
 
-  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);safeSet('veo_theme',theme);},[theme]);
-  const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark');
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    safeSet('veo_theme', theme);
+  }, [theme]);
 
-  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(''),2500);};
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+  const showToast = (msg) => { setToast(msg); setTimeout(()=>setToast(''), 2800); };
 
-  const buildPrompt=()=>{
-    const ctx=ugcForm.useAutonomous&&ugcForm.name
-      ?`Nama Produk: ${ugcForm.name}\nDeskripsi: ${ugcForm.desc}`
-      :`Nama Produk: ${form.name}\nDeskripsi: ${form.desc}\nKarakteristik: ${form.characteristics}\nHarga Jual: Rp ${parseInt(form.price||0).toLocaleString('id')}\nModal Awal: Rp ${parseInt(form.capital||0).toLocaleString('id')}\nTarget Omzet/Bulan: Rp ${parseInt(form.targetOmzet||0).toLocaleString('id')}\nLokasi: ${form.location}\nTarget Pasar: ${form.initialMarket}\nKategori Industri: ${form.industry}\nMarketing Angle: ${form.angle}\nHook Style: ${form.hook}`;
+  const buildPrompt = () => {
+    const ctx = ugcForm.useAutonomous && ugcForm.name
+      ? `Nama Produk: ${ugcForm.name}\nDeskripsi: ${ugcForm.desc}`
+      : `Nama Produk: ${form.name}
+Deskripsi: ${form.desc}
+Karakteristik: ${form.characteristics}
+Harga Jual: Rp ${parseInt(form.price||0).toLocaleString('id')}
+Modal Awal: Rp ${parseInt(form.capital||0).toLocaleString('id')}
+Target Omzet/Bulan: Rp ${parseInt(form.targetOmzet||0).toLocaleString('id')}
+Lokasi: ${form.location}
+Target Pasar: ${form.initialMarket}
+Kategori Industri: ${form.industry}
+Marketing Angle: ${form.angle}
+Hook Style: ${form.hook}`;
     return ctx;
   };
 
-  const buildMessages=()=>{
-    const parts=[];
-    if(activeTab==='generator'){
-      if(imgProduct?.data)parts.push({inlineData:{mimeType:imgProduct.mime,data:imgProduct.data}});
-      if(imgModel?.data)parts.push({inlineData:{mimeType:imgModel.mime,data:imgModel.data}});
+  const buildMessages = () => {
+    const parts = [];
+    if (activeTab === 'generator') {
+      if (imgProduct?.data) parts.push({inlineData:{mimeType:imgProduct.mime,data:imgProduct.data}});
+      if (imgModel?.data) parts.push({inlineData:{mimeType:imgModel.mime,data:imgModel.data}});
     }
-    parts.push({text:buildPrompt()});
-    return[{role:'user',parts}];
+    parts.push({text: buildPrompt()});
+    return [{role:'user', parts}];
   };
 
-  const startLoader=(tab)=>{
-    const msgs=LOADING_MSGS[tab]||LOADING_MSGS.planner;
-    let idx=0;setLoadingMsg(msgs[0]);
-    msgRef.current=setInterval(()=>{idx=(idx+1)%msgs.length;setLoadingMsg(msgs[idx]);},2200);
+  const startLoader = (tab) => {
+    const msgs = LOADING_MSGS[tab] || LOADING_MSGS.planner;
+    let idx = 0;
+    setLoadingMsg(msgs[0]);
+    setLoadingPct(5);
+    msgRef.current = setInterval(() => {
+      idx = (idx + 1) % msgs.length;
+      setLoadingMsg(msgs[idx]);
+    }, 2400);
+    pctRef.current = setInterval(() => {
+      setLoadingPct(p => Math.min(p + Math.random() * 8, 88));
+    }, 800);
   };
 
-  const generate=async()=>{
-    if(!apiKey)return;
-    setLoading(true);setAiResult('');setScenes([]);
+  const generate = async () => {
+    if (!apiKey) return;
+    setLoading(true);
+    setAiResult('');
+    setScenes([]);
+    setAutoGenImages(false);
+    setLoadingPct(0);
     startLoader(activeTab);
-    try{
-      const payload={
-        system_instruction:{parts:[{text:SYS[activeTab]||SYS.planner}]},
-        contents:buildMessages(),
-        generationConfig:{temperature:0.9,maxOutputTokens:8192},
+
+    try {
+      const payload = {
+        system_instruction: {parts: [{text: SYS[activeTab] || SYS.planner}]},
+        contents: buildMessages(),
+        generationConfig: {
+          temperature: 0.9,
+          maxOutputTokens: 65536,  // FIX: was 8192 — too small for planner/calendar
+        },
       };
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),
-      });
-      if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e?.error?.message||`HTTP ${res.status}`);}
-      const data=await res.json();
-      const text=data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
-      if(!text)throw new Error('Respons AI kosong. Coba lagi.');
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}
+      );
+
+      if (!res.ok) {
+        const e = await res.json().catch(()=>({}));
+        throw new Error(e?.error?.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Handle safety blocks / finish reason
+      const candidate = data?.candidates?.[0];
+      if (!candidate) throw new Error('Tidak ada respons dari AI. Coba lagi.');
+      if (candidate.finishReason === 'SAFETY') throw new Error('Konten diblokir oleh filter keamanan Gemini. Sesuaikan deskripsi produk.');
+
+      const text = candidate?.content?.parts?.map(p => p.text || '').join('') || '';
+      if (!text) throw new Error('Respons AI kosong. Pastikan API Key valid dan coba lagi.');
+
       setAiResult(text);
-      if(activeTab==='generator')setScenes(extractScenes(text));
-    }catch(err){
-      setAiResult(`## ❌ Error\n\n**${err.message}**\n\n- Pastikan API Key Gemini valid\n- Periksa koneksi internet\n- Model gemini-2.5-flash harus tersedia di akun Anda`);
-    }finally{
-      clearInterval(msgRef.current);setLoading(false);
+      setLoadingPct(100);
+
+      if (activeTab === 'generator') {
+        const extracted = extractScenes(text);
+        setScenes(extracted);
+        if (extracted.length > 0 && apiKey) {
+          // Auto-trigger image generation
+          setTimeout(() => setAutoGenImages(true), 500);
+        }
+      }
+    } catch(err) {
+      setAiResult(
+        `## ❌ Error\n\n**${err.message}**\n\n**Langkah debug:**\n\n- Pastikan API Key Gemini valid di Google AI Studio\n- Periksa koneksi internet\n- Coba kembali dalam beberapa detik\n- Model: gemini-2.5-flash harus tersedia di akun Anda`
+      );
+    } finally {
+      clearInterval(msgRef.current);
+      clearInterval(pctRef.current);
+      setLoading(false);
     }
   };
 
-  const TABS_NAV=[
-    {id:'planner',label:'Bisnis',icon:I.chart},
-    {id:'calendar',label:'Kalender',icon:I.cal},
-    {id:'caption',label:'Caption',icon:I.pen},
-    {id:'generator',label:'UGC',icon:I.vid},
+  const TABS_NAV = [
+    {id:'planner', label:'Bisnis', icon:I.chart},
+    {id:'calendar', label:'Kalender', icon:I.cal},
+    {id:'caption', label:'Caption', icon:I.pen},
+    {id:'generator', label:'UGC', icon:I.vid},
   ];
 
-  return(
+  return (
     <div className="layout">
-      {/* Sidebar overlay (mobile) */}
-      <div className={`sidebar-overlay${sidebarOpen?' show':''}`} onClick={()=>setSidebarOpen(false)}/>
+      {/* Sidebar overlay */}
+      <div
+        className={`sidebar-overlay${sidebarOpen?' show':''}`}
+        onClick={()=>setSidebarOpen(false)}
+      />
+
       {/* Sidebar */}
       <Sidebar
         form={form} setForm={setForm}
         apiKey={apiKey} setApiKey={setApiKey}
         theme={theme} toggleTheme={toggleTheme}
         activeTab={activeTab} setActiveTab={setActiveTab}
+        isOpen={sidebarOpen}
         onClose={()=>setSidebarOpen(false)}
-        className={sidebarOpen?'open':''}
       />
-      {/* override sidebar class for mobile open */}
-      <style>{`.sidebar{${sidebarOpen?'transform:translateX(0)!important;box-shadow:4px 0 30px rgba(0,0,0,.5)':''}}`}</style>
 
       {/* Main */}
       <div className="main">
         {/* Mobile topbar */}
-        <div className="desk-topbar">
-          <button onClick={()=>setSidebarOpen(v=>!v)} className="btn btn-g" style={{padding:'7px 9px'}}>{I.menu}</button>
-          <div className="gsk grad" style={{fontSize:'.9rem',fontWeight:800,flex:1}}>VEO 3 PRO</div>
-          <button onClick={toggleTheme} className="btn btn-g" style={{padding:'7px 9px'}}>{theme==='dark'?I.sun:I.moon}</button>
+        <div className="mobile-topbar">
+          <button onClick={()=>setSidebarOpen(v=>!v)} className="btn btn-g" style={{padding:'7px 9px',flexShrink:0}}>{I.menu}</button>
+          <div className="gsk grad" style={{fontSize:'.92rem',fontWeight:800,flex:1}}>VEO 3 PRO</div>
+          <button onClick={toggleTheme} className="btn btn-g" style={{padding:'7px 9px',flexShrink:0}}>{theme==='dark'?I.sun:I.moon}</button>
+          <button onClick={generate} disabled={!apiKey||loading} className="btn btn-c btn-sm" style={{flexShrink:0,padding:'7px 12px'}}>
+            {loading ? <span className="spin">{I.load}</span> : I.spark}
+            {loading ? '' : 'Run'}
+          </button>
         </div>
 
         <MainContent
-          tab={activeTab} form={form} apiKey={apiKey}
+          tab={activeTab}
+          form={form}
+          apiKey={apiKey}
           ugcForm={ugcForm} setUgcForm={setUgcForm}
           imgProduct={imgProduct} setImgProduct={setImgProduct}
           imgModel={imgModel} setImgModel={setImgModel}
-          aiResult={aiResult} loading={loading} loadingMsg={loadingMsg}
-          scenes={scenes} onGenerate={generate} onToast={showToast}
+          aiResult={aiResult}
+          loading={loading}
+          loadingMsg={loadingMsg}
+          loadingPct={loadingPct}
+          scenes={scenes}
+          autoGenImages={autoGenImages}
+          onGenerate={generate}
+          onToast={showToast}
         />
       </div>
 
-      {/* Bottom Nav (mobile) */}
+      {/* Bottom Nav */}
       <nav className="bottom-nav">
-        {TABS_NAV.map(t=>(
-          <button key={t.id} className={`bnav-item${activeTab===t.id?' active':''}`} onClick={()=>setActiveTab(t.id)}>
-            {t.icon}<span>{t.label}</span>
+        {TABS_NAV.map(t => (
+          <button
+            key={t.id}
+            className={`bnav-item${activeTab===t.id?' active':''}`}
+            onClick={()=>setActiveTab(t.id)}
+          >
+            {t.icon}
+            <span>{t.label}</span>
           </button>
         ))}
-        <button className="bnav-item" onClick={()=>setSidebarOpen(v=>!v)}>
-          {I.menu}<span>Menu</span>
+        <button
+          className={`bnav-item${sidebarOpen?' active':''}`}
+          onClick={()=>setSidebarOpen(v=>!v)}
+        >
+          {I.menu}
+          <span>Menu</span>
         </button>
       </nav>
 
       {/* Toast */}
-      {toast&&<div className="toast">{I.chk} {toast}</div>}
+      {toast && (
+        <div className="toast">
+          {I.chk} {toast}
+        </div>
+      )}
     </div>
   );
 }
 
-class ErrorBoundary extends React.Component{
-  constructor(p){super(p);this.state={err:null}}
-  static getDerivedStateFromError(e){return{err:e}}
-  handleReset(){try{localStorage.clear();}catch{}window.location.reload();}
-  render(){
-    if(!this.state.err)return this.props.children;
-    return(
+/* ── ERROR BOUNDARY ── */
+class ErrorBoundary extends React.Component {
+  constructor(p) { super(p); this.state = {err: null}; }
+  static getDerivedStateFromError(e) { return {err: e}; }
+  handleReset() { try{localStorage.clear();}catch{} window.location.reload(); }
+  render() {
+    if (!this.state.err) return this.props.children;
+    return (
       <div style={{minHeight:'100vh',background:'#030712',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
         <div style={{maxWidth:500,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.25)',borderRadius:16,padding:28,textAlign:'center'}}>
           <div style={{fontSize:44,marginBottom:12}}>⚠️</div>
           <h2 style={{color:'#f87171',fontSize:'1.2rem',marginBottom:10,fontFamily:"'Space Grotesk',sans-serif"}}>Error Aplikasi</h2>
           <p style={{color:'#94a3b8',fontSize:'.78rem',marginBottom:18,fontFamily:'monospace',background:'rgba(0,0,0,.3)',padding:10,borderRadius:7,textAlign:'left',whiteSpace:'pre-wrap'}}>{this.state.err?.toString()}</p>
-          <button onClick={()=>this.handleReset()} style={{background:'linear-gradient(135deg,#0891b2,#6d28d9)',color:'#fff',border:'none',padding:'10px 22px',borderRadius:9,cursor:'pointer',fontWeight:600}}>🔄 Reset & Muat Ulang</button>
+          <button onClick={()=>this.handleReset()} style={{background:'linear-gradient(135deg,#0891b2,#6d28d9)',color:'#fff',border:'none',padding:'10px 22px',borderRadius:9,cursor:'pointer',fontWeight:600}}>
+            🔄 Reset & Muat Ulang
+          </button>
         </div>
       </div>
     );
