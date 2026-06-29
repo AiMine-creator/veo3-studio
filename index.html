@@ -2,91 +2,223 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Veo 3 Pro Studio — UGC AI Suite</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Veo 3 Pro Studio</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg-primary:#030712;--bg-secondary:#0d1117;--bg-card:#111827;--bg-card2:#161f2e;
-  --border:#1f2937;--border-glow:#06b6d4;
-  --text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#475569;
-  --cyan:#06b6d4;--purple:#a855f7;--pink:#ec4899;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;
-  --sidebar-w:300px;
+  --bg:#030712;--bg2:#0d1117;--card:#111827;--card2:#161f2e;
+  --border:#1f2937;--cyan:#06b6d4;--purple:#a855f7;--pink:#ec4899;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --txt:#f1f5f9;--txt2:#94a3b8;--txm:#475569;
+  --sw:300px;--bnav:64px;
 }
 [data-theme="light"]{
-  --bg-primary:#f0f4f8;--bg-secondary:#e2e8f0;--bg-card:#ffffff;--bg-card2:#f8fafc;
-  --border:#cbd5e1;--border-glow:#0891b2;
-  --text-primary:#0f172a;--text-secondary:#334155;--text-muted:#64748b;
+  --bg:#f0f4f8;--bg2:#e2e8f0;--card:#fff;--card2:#f8fafc;
+  --border:#cbd5e1;--txt:#0f172a;--txt2:#334155;--txm:#64748b;
 }
-html,body{height:100%;background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg-secondary)}
-::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
 .mono{font-family:'JetBrains Mono',monospace}
-.grotesk{font-family:'Space Grotesk',sans-serif}
-.grad-text{background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.neon-border{border:1px solid var(--border-glow);box-shadow:0 0 12px rgba(6,182,212,.15)}
-.glass{background:rgba(17,24,39,.7);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06)}
-[data-theme="light"] .glass{background:rgba(255,255,255,.8);border-color:rgba(0,0,0,.08)}
-.glow-cyan{box-shadow:0 0 20px rgba(6,182,212,.2)}
-.glow-purple{box-shadow:0 0 20px rgba(168,85,247,.2)}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:.2s;color:var(--text-secondary);font-size:.85rem;font-weight:500;border:1px solid transparent}
-.sidebar-link:hover{background:rgba(6,182,212,.08);color:var(--cyan);border-color:rgba(6,182,212,.15)}
-.sidebar-link.active{background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(168,85,247,.1));color:var(--cyan);border-color:rgba(6,182,212,.25)}
-.tab-btn{padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;border:1px solid var(--border);background:transparent;color:var(--text-muted)}
-.tab-btn.active{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;border-color:transparent;box-shadow:0 4px 15px rgba(6,182,212,.3)}
-.tab-btn:hover:not(.active){border-color:var(--cyan);color:var(--cyan)}
-.inp{width:100%;padding:9px 13px;border-radius:9px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:.85rem;outline:none;transition:.2s;font-family:'Inter',sans-serif}
-.inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.12)}
-.inp::placeholder{color:var(--text-muted)}
-select.inp option{background:var(--bg-card)}
-textarea.inp{resize:vertical;min-height:80px}
-.btn{padding:9px 18px;border-radius:9px;font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s;border:none;display:inline-flex;align-items:center;gap:7px}
-.btn-cyan{background:linear-gradient(135deg,#0891b2,#6d28d9);color:#fff}
-.btn-cyan:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(6,182,212,.35)}
-.btn-cyan:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text-secondary)}
-.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
-.btn-red{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171}
-.btn-red:hover{background:rgba(239,68,68,.25)}
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px}
-.card2{background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:14px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:600}
-.badge-green{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.25)}
-.badge-yellow{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
-.badge-red{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25)}
-.badge-cyan{background:rgba(6,182,212,.15);color:var(--cyan);border:1px solid rgba(6,182,212,.25)}
-.badge-purple{background:rgba(168,85,247,.15);color:#c084fc;border:1px solid rgba(168,85,247,.25)}
+.gsk{font-family:'Space Grotesk',sans-serif}
+.grad{background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.glass{background:rgba(17,24,39,.75);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06)}
+[data-theme="light"] .glass{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.08)}
+
+/* LAYOUT */
+.layout{display:flex;height:100vh;overflow:hidden;position:relative}
+.sidebar{
+  width:var(--sw);flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;
+  transition:transform .3s ease;
+  z-index:100;
+}
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.main-body{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{
+    position:fixed;top:0;left:0;height:100vh;
+    transform:translateX(-100%);
+  }
+  .sidebar.open{transform:translateX(0);box-shadow:4px 0 30px rgba(0,0,0,.5)}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+  .sidebar-overlay.show{display:block}
+  .main{padding-bottom:var(--bnav)}
+  .main-body{padding:14px 14px calc(var(--bnav) + 14px)}
+  .bottom-nav{display:flex !important}
+  .desk-topbar{display:flex !important}
+}
+@media(min-width:769px){
+  .bottom-nav{display:none !important}
+  .hamburger{display:none !important}
+  .desk-topbar{display:none}
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  height:var(--bnav);background:var(--card);
+  border-top:1px solid var(--border);
+  z-index:200;
+}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;cursor:pointer;
+  color:var(--txm);font-size:.6rem;font-weight:600;
+  transition:.2s;padding:4px;
+  border:none;background:transparent;
+}
+.bnav-item.active{color:var(--cyan)}
+.bnav-item svg{width:20px;height:20px}
+
+/* DESK TOPBAR (mobile only) */
+.desk-topbar{
+  display:none;align-items:center;
+  padding:10px 14px;background:var(--bg2);
+  border-bottom:1px solid var(--border);gap:10px;
+  flex-shrink:0;
+}
+
+/* SIDEBAR ITEMS */
+.slink{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 13px;border-radius:10px;cursor:pointer;
+  transition:.2s;color:var(--txt2);font-size:.83rem;font-weight:500;
+  border:1px solid transparent;
+}
+.slink:hover{background:rgba(6,182,212,.08);color:var(--cyan);border-color:rgba(6,182,212,.15)}
+.slink.active{background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(168,85,247,.1));color:var(--cyan);border-color:rgba(6,182,212,.25)}
+
+/* INPUTS */
+.inp{
+  width:100%;padding:8px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg2);
+  color:var(--txt);font-size:.82rem;outline:none;
+  transition:.2s;font-family:'Inter',sans-serif;
+}
+.inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.1)}
+.inp::placeholder{color:var(--txm)}
+textarea.inp{resize:vertical;min-height:72px}
+select.inp option{background:var(--card)}
+
+/* BUTTONS */
+.btn{
+  padding:8px 16px;border-radius:8px;font-size:.8rem;
+  font-weight:600;cursor:pointer;transition:.2s;border:none;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-c{background:linear-gradient(135deg,#0891b2,#6d28d9);color:#fff}
+.btn-c:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(6,182,212,.3)}
+.btn-c:disabled{opacity:.4;cursor:not-allowed}
+.btn-g{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--txt2)}
+.btn-g:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-r{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171}
+.btn-r:hover{background:rgba(239,68,68,.2)}
+.btn-sm{padding:4px 10px;font-size:.72rem}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px}
+.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:999px;font-size:.68rem;font-weight:600}
+.b-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.b-y{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.b-r{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.b-c{background:rgba(6,182,212,.12);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
+.b-p{background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.2)}
+
+/* PROGRESS */
+.pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width .4s}
+
+/* ANIMATIONS */
 .spin{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .pulse{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.scene-card{background:linear-gradient(135deg,var(--bg-card),var(--bg-card2));border:1px solid var(--border);border-radius:14px;padding:16px;transition:.25s;position:relative;overflow:hidden}
-.scene-card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 30px rgba(6,182,212,.12)}
-.md-table{width:100%;border-collapse:collapse;font-size:.8rem}
-.md-table th{background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(168,85,247,.1));color:var(--cyan);padding:10px 12px;text-align:left;border:1px solid rgba(6,182,212,.2);font-weight:600}
-.md-table td{padding:8px 12px;border:1px solid var(--border);color:var(--text-secondary);vertical-align:top}
-.md-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
-.md-table tr:hover td{background:rgba(6,182,212,.04)}
-.gradient-slide-1{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e)}
-.gradient-slide-2{background:linear-gradient(135deg,#0a0a0a,#1a1a2e,#16213e)}
-.gradient-slide-3{background:linear-gradient(135deg,#0d1b2a,#1b4332,#081c15)}
-.gradient-slide-4{background:linear-gradient(135deg,#1a0533,#2d1b69,#11998e)}
-.gradient-slide-5{background:linear-gradient(135deg,#1a1a1a,#2d2d2d,#1a1a1a)}
-.main-scroll{height:100vh;overflow-y:auto}
-.sidebar-scroll{height:100vh;overflow-y:auto}
-.progress-bar-wrap{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width .4s}
-.img-upload-box{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:.2s}
-.img-upload-box:hover{border-color:var(--cyan);background:rgba(6,182,212,.04)}
-.copy-toast{position:fixed;bottom:24px;right:24px;background:#10b981;color:#fff;padding:10px 18px;border-radius:8px;font-size:.82rem;font-weight:600;z-index:9999;animation:slideup .3s ease}
-@keyframes slideup{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* UPLOAD */
+.upbox{
+  border:2px dashed var(--border);border-radius:10px;
+  padding:20px;text-align:center;cursor:pointer;transition:.2s;
+}
+.upbox:hover{border-color:var(--cyan);background:rgba(6,182,212,.04)}
+
+/* SCENE CARDS */
+.scard{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;transition:.25s;
+}
+.scard:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 28px rgba(6,182,212,.1)}
+
+/* IMAGE DISPLAY */
+.ai-img{width:100%;border-radius:8px;display:block;border:1px solid var(--border)}
+.img-placeholder{
+  width:100%;aspect-ratio:1;border-radius:8px;
+  background:linear-gradient(135deg,var(--card2),var(--card));
+  border:1px solid var(--border);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;color:var(--txm);
+  font-size:.75rem;text-align:center;padding:12px;
+}
+
+/* MARKDOWN TABLES */
+.mdwrap{overflow-x:auto;margin-bottom:14px;border-radius:10px}
+.mdt{width:100%;border-collapse:collapse;font-size:.78rem}
+.mdt th{background:linear-gradient(135deg,rgba(6,182,212,.14),rgba(168,85,247,.08));color:var(--cyan);padding:9px 11px;text-align:left;border:1px solid rgba(6,182,212,.18);font-weight:600;white-space:nowrap}
+.mdt td{padding:7px 11px;border:1px solid var(--border);color:var(--txt2);vertical-align:top;min-width:80px}
+.mdt tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+.mdt tr:hover td{background:rgba(6,182,212,.03)}
+
+/* COPY TOAST */
+.toast{
+  position:fixed;bottom:80px;right:16px;
+  background:#10b981;color:#fff;padding:8px 16px;
+  border-radius:8px;font-size:.8rem;font-weight:600;
+  z-index:9999;animation:toast .3s ease;
+}
+@media(min-width:769px){.toast{bottom:20px;right:20px}}
+@keyframes toast{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* COPY PROMPT BOX */
+.prompt-box{
+  background:rgba(6,182,212,.05);
+  border:1px solid rgba(6,182,212,.18);
+  border-radius:9px;padding:10px 12px;margin-top:8px;
+}
+.prompt-text{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.73rem;color:var(--txt2);line-height:1.6;
+  word-break:break-word;
+}
+
+/* CAROUSEL SLIDES */
+.carousel-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+.carousel-wrap::-webkit-scrollbar{height:4px}
+.cslide{flex-shrink:0;width:240px;background:var(--card2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.cslide-img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.cslide-info{padding:10px}
+
+/* GRADIENT THEMES */
+.gt-cyber{background:linear-gradient(135deg,#0f0c29,#302b63)}
+.gt-vapor{background:linear-gradient(135deg,#1a0533,#2d1b69)}
+.gt-emerald{background:linear-gradient(135deg,#0d1b2a,#1b4332)}
+.gt-dark{background:linear-gradient(135deg,#0a0a0a,#1a1a2e)}
+.gt-corp{background:linear-gradient(135deg,#1e3a5f,#0f172a)}
+.gt-rose{background:linear-gradient(135deg,#1a0010,#3d0024)}
 </style>
 </head>
 <body>
@@ -94,463 +226,548 @@ textarea.inp{resize:vertical;min-height:80px}
 <script type="text/babel">
 const {useState,useEffect,useRef,useCallback,useMemo} = React;
 
-// ─── SVG ICONS ───────────────────────────────────────────────
-const Ic = ({p,s=16,sw=1.8,f="none"}) => (
-  <svg width={s} height={s} viewBox="0 0 24 24" fill={f} stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">{p}</svg>
+/* ── ICONS ── */
+const Ic=({d,s=16,sw=1.8})=>(
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">{d}</svg>
 );
-const icons = {
-  eye:      <Ic p={<><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></>}/>,
-  eyeOff:   <Ic p={<><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></>}/>,
-  key:      <Ic p={<><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></>}/>,
-  sparkles: <Ic p={<><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></>}/>,
-  chart:    <Ic p={<><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>}/>,
-  calendar: <Ic p={<><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>}/>,
-  copy:     <Ic p={<><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>}/>,
-  video:    <Ic p={<><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></>}/>,
-  pen:      <Ic p={<><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></>}/>,
-  sun:      <Ic p={<><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></>}/>,
-  moon:     <Ic p={<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>}/>,
-  loader:   <Ic p={<><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></>}/>,
-  img:      <Ic p={<><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" f="currentColor"/><path d="m21 15-5-5L5 21"/></>}/>,
-  trash:    <Ic p={<><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>}/>,
-  download: <Ic p={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>}/>,
-  warn:     <Ic p={<><path d="m10.29 3.86-8.66 15A1 1 0 0 0 2.5 20.5h19a1 1 0 0 0 .87-1.5l-8.66-15a1 1 0 0 0-1.74 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>}/>,
-  check:    <Ic p={<polyline points="20 6 9 17 4 12"/>}/>,
-  refresh:  <Ic p={<><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>}/>,
-  info:     <Ic p={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>}/>,
+const I={
+  eye:<Ic d={<><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7"/><circle cx="12" cy="12" r="3"/></>}/>,
+  eyeOff:<Ic d={<><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></>}/>,
+  key:<Ic d={<><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></>}/>,
+  spark:<Ic d={<><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></>}/>,
+  chart:<Ic d={<><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>}/>,
+  cal:<Ic d={<><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>}/>,
+  copy:<Ic d={<><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>}/>,
+  vid:<Ic d={<><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></>}/>,
+  pen:<Ic d={<><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></>}/>,
+  sun:<Ic d={<><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></>}/>,
+  moon:<Ic d={<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>}/>,
+  load:<Ic d={<><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></>}/>,
+  img:<Ic d={<><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></>}/>,
+  trash:<Ic d={<><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>}/>,
+  dl:<Ic d={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>}/>,
+  warn:<Ic d={<><path d="m10.29 3.86-8.66 15A1 1 0 0 0 2.5 20.5h19a1 1 0 0 0 .87-1.5l-8.66-15a1 1 0 0 0-1.74 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>}/>,
+  chk:<Ic d={<polyline points="20 6 9 17 4 12"/>}/>,
+  menu:<Ic d={<><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>}/>,
+  x:<Ic d={<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>}/>,
+  img2:<Ic d={<><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></>}/>,
+  refresh:<Ic d={<><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>}/>,
 };
 
-// ─── CONSTANTS ───────────────────────────────────────────────
-const INDUSTRIES = ["Food (Culinary & Food)","Beverage","Fashion","Beauty","Healthcare","SaaS/Tech","Local UMKM","Mother/Baby","Gadgets","Education","Automotive","Travel","Finance","Real Estate","Pets","Home Living","Sports","Gaming","Event Organizer","Agency/B2B","Agriculture","Logistics"];
-const ANGLES = ["FOMO","Aspirational","Social Proof","Authority","Scarcity","Convenience","Transformation"];
-const HOOKS  = ["Pattern Interrupt","Curiosity Gap","Bold Claim","Shock Visual","Unexpected Result","Emotional Trigger"];
-const GRAD_THEMES = [
-  {id:"cyber",label:"Cyber Neon",from:"#0f0c29",to:"#302b63",text:"#00f5ff",accent:"#a855f7"},
-  {id:"vapor",label:"Vaporwave",from:"#1a0533",to:"#2d1b69",text:"#ff71ce",accent:"#01cdfe"},
-  {id:"emerald",label:"Emerald Gold",from:"#0d1b2a",to:"#1b4332",text:"#fbbf24",accent:"#10b981"},
-  {id:"dark",label:"Minimal Dark",from:"#0a0a0a",to:"#1a1a2e",text:"#e2e8f0",accent:"#06b6d4"},
-  {id:"corp",label:"Corporate",from:"#1e3a5f",to:"#0f172a",text:"#ffffff",accent:"#60a5fa"},
-  {id:"rose",label:"Rose Petal",from:"#1a0010",to:"#3d0024",text:"#fda4af",accent:"#f43f5e"},
+/* ── CONSTANTS ── */
+const INDUSTRIES=["Food (Culinary & Food)","Beverage","Fashion","Beauty","Healthcare","SaaS/Tech","Local UMKM","Mother/Baby","Gadgets","Education","Automotive","Travel","Finance","Real Estate","Pets","Home Living","Sports","Gaming","Event Organizer","Agency/B2B","Agriculture","Logistics"];
+const ANGLES=["FOMO","Aspirational","Social Proof","Authority","Scarcity","Convenience","Transformation"];
+const HOOKS=["Pattern Interrupt","Curiosity Gap","Bold Claim","Shock Visual","Unexpected Result","Emotional Trigger"];
+const LOADING_MSGS={
+  planner:["Konsultan Bisnis merumuskan brand...","Menganalisis pasar Indonesia...","Menyusun roadmap 12 bulan...","Menghitung proyeksi finansial...","Memvalidasi strategi kompetitor..."],
+  calendar:["Content Strategist merancang konten...","Scriptwriter menyusun Five Scene Framework...","Copywriter memoles caption viral...","Memetakan funnel konversi..."],
+  caption:["Copywriter meracik formula persuasi...","Menyesuaikan tone tiap platform...","Mengoptimalkan CTA konversi..."],
+  generator:["Creative Director merancang UGC script...","Menyusun Five Scene Framework...","Membuat Imagen Prompt sinematik...","Menyempurnakan arahan kamera..."],
+};
+const SCENE_META=[
+  {label:"Hook",color:"#ef4444",icon:"🎯",cam:"CLOSE-UP / MACRO",grad:"linear-gradient(135deg,#450a0a,#7f1d1d)"},
+  {label:"Build Up",color:"#f59e0b",icon:"📈",cam:"MEDIUM SHOT / TRACKING",grad:"linear-gradient(135deg,#451a03,#78350f)"},
+  {label:"Development",color:"#06b6d4",icon:"🎬",cam:"WIDE / ESTABLISHING",grad:"linear-gradient(135deg,#083344,#164e63)"},
+  {label:"Peak",color:"#a855f7",icon:"✨",cam:"SLOW-MO / DOLLY",grad:"linear-gradient(135deg,#2e1065,#4a1d96)"},
+  {label:"Resolution",color:"#10b981",icon:"🎯",cam:"CLOSE-UP / CTA LOCK",grad:"linear-gradient(135deg,#052e16,#14532d)"},
 ];
-const LOADING_MSGS = {
-  planner:   ["Konsultan Bisnis merumuskan brand...","Menganalisis pasar Indonesia...","Menyusun roadmap 12 bulan...","Menghitung proyeksi finansial...","Memvalidasi strategi kompetitor..."],
-  calendar:  ["Content Strategist merancang konten...","Scriptwriter menyusun Five Scene Framework...","Copywriter memoles caption viral...","Memetakan funnel awareness ke konversi..."],
-  caption:   ["Copywriter meracik formula persuasi...","Menyesuaikan tone untuk tiap platform...","Mengoptimalkan CTA untuk konversi..."],
-  generator: ["Creative Director merancang UGC script...","Scriptwriter menulis Five Scene Framework...","Menyiapkan Imagen Prompt sinematik...","Menyempurnakan arahan visual kamera..."],
-};
 
-// ─── UTILS ───────────────────────────────────────────────────
-function safeGet(key, def=""){
-  try{ return localStorage.getItem(key) ?? def }catch{ return def }
-}
-function safeSet(key, val){
-  try{ localStorage.setItem(key, val) }catch{}
-}
+/* ── UTILS ── */
+function safeGet(k,d=""){try{return localStorage.getItem(k)??d}catch{return d}}
+function safeSet(k,v){try{localStorage.setItem(k,v)}catch{}}
 
-function calculateSanityScore(capital, price, targetOmzet){
-  const cap = parseFloat(capital)||0, prc = parseFloat(price)||1, tgt = parseFloat(targetOmzet)||1;
-  const ratio = cap/tgt;
-  const neededQty = tgt/prc;
-  const traffic = neededQty/0.025;
-  let score, label, cls;
-  if(ratio < 0.05){ score=40; label="Risiko Tinggi — Modal Terlalu Minim"; cls="badge-red" }
-  else if(ratio < 0.15){ score=75; label="Cukup Menantang — Perlu Efisiensi Organik Tinggi"; cls="badge-yellow" }
-  else { score=95; label="Sangat Sehat — Modal Cukup untuk Target Ini"; cls="badge-green" }
-  return {score, label, cls, neededQty: Math.ceil(neededQty), traffic: Math.ceil(traffic), ratio:(ratio*100).toFixed(1)};
+function calcSanity(cap,price,tgt){
+  const c=parseFloat(cap)||0,p=parseFloat(price)||1,t=parseFloat(tgt)||1;
+  const ratio=c/t,qty=t/p,traffic=qty/0.025;
+  let score,label,cls;
+  if(ratio<0.05){score=40;label="Risiko Tinggi — Modal Minim";cls="b-r"}
+  else if(ratio<0.15){score=75;label="Menantang — Perlu Efisiensi Organik";cls="b-y"}
+  else{score=95;label="Sehat — Modal Cukup";cls="b-g"}
+  return{score,label,cls,qty:Math.ceil(qty),traffic:Math.ceil(traffic),ratio:(ratio*100).toFixed(1)};
 }
 
-// ─── MARKDOWN PARSER ─────────────────────────────────────────
-function parseMarkdownToReact(text){
+/* ── MARKDOWN PARSER ── */
+function MdRender({text,onCopyPrompt}){
   if(!text) return null;
-  const lines = text.split('\n');
-  const result = [];
-  let tableRows = [], inTable = false;
-  let i = 0;
+  const lines=text.split('\n');
+  const out=[];
+  let trows=[],inT=false,i=0;
 
-  function flushTable(){
-    if(!tableRows.length) return;
-    const headers = tableRows[0];
-    const body = tableRows.slice(1);
-    result.push(
-      <div key={`t${i}`} style={{overflowX:'auto',marginBottom:16}}>
-        <table className="md-table">
-          <thead><tr>{headers.map((h,hi)=><th key={hi}>{h.trim()}</th>)}</tr></thead>
+  function flushT(){
+    if(!trows.length)return;
+    const hds=trows[0],body=trows.slice(1);
+    out.push(
+      <div key={`tw${i}`} className="mdwrap">
+        <table className="mdt">
+          <thead><tr>{hds.map((h,hi)=><th key={hi}>{h.trim()}</th>)}</tr></thead>
           <tbody>{body.map((row,ri)=>(
-            <tr key={ri}>{row.map((cell,ci)=><td key={ci}><span dangerouslySetInnerHTML={{__html:cell.trim().replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>').replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:.8em">$1</code>')}}/></td>)}</tr>
+            <tr key={ri}>{row.map((cell,ci)=>{
+              const html=cell.trim()
+                .replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>')
+                .replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:.75em">$1</code>');
+              return <td key={ci}><span dangerouslySetInnerHTML={{__html:html}}/></td>;
+            })}</tr>
           ))}</tbody>
         </table>
       </div>
     );
-    tableRows = [];
+    trows=[];
   }
 
-  while(i < lines.length){
-    const line = lines[i];
-    const trimmed = line.trim();
+  while(i<lines.length){
+    const line=lines[i],tr=line.trim();
+    if(tr.startsWith('|')){
+      const cols=tr.split('|').filter((_,idx,a)=>idx>0&&idx<a.length-1);
+      if(cols.every(c=>/^[-:\s]+$/.test(c))){i++;continue;}
+      if(!inT)inT=true;
+      trows.push(cols);i++;continue;
+    }else if(inT){inT=false;flushT();}
 
-    if(trimmed.startsWith('|')){
-      const cols = trimmed.split('|').filter((_,idx,a)=>idx>0&&idx<a.length-1);
-      if(cols.every(c=>/^[-:\s]+$/.test(c))){ i++; continue; }
-      if(!inTable){ inTable=true }
-      tableRows.push(cols);
-      i++; continue;
-    } else if(inTable){
-      inTable=false; flushTable();
-    }
+    // detect prompt blocks for copy
+    const isPrompt=tr.toLowerCase().includes('prompt')&&tr.length>30&&!tr.startsWith('#')&&!tr.startsWith('|');
 
-    if(/^### /.test(trimmed)){
-      result.push(<h3 key={i} className="grotesk grad-text" style={{fontSize:'1rem',fontWeight:700,marginTop:20,marginBottom:8}}>{trimmed.slice(4)}</h3>);
-    } else if(/^## /.test(trimmed)){
-      result.push(<h2 key={i} className="grotesk" style={{fontSize:'1.15rem',fontWeight:700,marginTop:24,marginBottom:10,color:'var(--cyan)',borderBottom:'1px solid rgba(6,182,212,.2)',paddingBottom:6}}>{trimmed.slice(3)}</h2>);
-    } else if(/^# /.test(trimmed)){
-      result.push(<h1 key={i} className="grotesk grad-text" style={{fontSize:'1.4rem',fontWeight:800,marginTop:28,marginBottom:12}}>{trimmed.slice(2)}</h1>);
-    } else if(/^[-*] /.test(trimmed)){
-      result.push(<div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:8}}><span style={{color:'var(--cyan)',marginTop:2,flexShrink:0}}>▸</span><span style={{color:'var(--text-secondary)',fontSize:'.85rem'}} dangerouslySetInnerHTML={{__html:trimmed.slice(2).replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text-primary)">$1</strong>')}}/></div>);
-    } else if(/^\d+\. /.test(trimmed)){
-      result.push(<div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:8}}><span style={{color:'var(--purple)',minWidth:20,fontSize:'.8rem',fontWeight:700}}>{trimmed.match(/^\d+/)[0]}.</span><span style={{color:'var(--text-secondary)',fontSize:'.85rem'}} dangerouslySetInnerHTML={{__html:trimmed.replace(/^\d+\. /,'').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text-primary)">$1</strong>')}}/></div>);
-    } else if(trimmed === '' || trimmed === '---'){
-      if(trimmed==='---') result.push(<hr key={i} style={{border:'none',borderTop:'1px solid var(--border)',margin:'16px 0'}}/>);
-      else result.push(<div key={i} style={{height:6}}/>);
-    } else if(trimmed){
-      result.push(<p key={i} style={{color:'var(--text-secondary)',fontSize:'.85rem',lineHeight:1.7,marginBottom:6}} dangerouslySetInnerHTML={{__html:trimmed.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text-primary)">$1</strong>').replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:.8em">$1</code>')}}/>);
+    if(/^### /.test(tr)){
+      out.push(<h3 key={i} className="gsk grad" style={{fontSize:'.95rem',fontWeight:700,marginTop:18,marginBottom:7}}>{tr.slice(4)}</h3>);
+    }else if(/^## /.test(tr)){
+      out.push(<h2 key={i} className="gsk" style={{fontSize:'1.08rem',fontWeight:700,marginTop:22,marginBottom:9,color:'var(--cyan)',borderBottom:'1px solid rgba(6,182,212,.2)',paddingBottom:5}}>{tr.slice(3)}</h2>);
+    }else if(/^# /.test(tr)){
+      out.push(<h1 key={i} className="gsk grad" style={{fontSize:'1.3rem',fontWeight:800,marginTop:24,marginBottom:10}}>{tr.slice(2)}</h1>);
+    }else if(/^[-*] /.test(tr)){
+      const content=tr.slice(2);
+      const hasPromptKw=content.toLowerCase().includes('prompt')&&content.length>40;
+      out.push(
+        <div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:6}}>
+          <span style={{color:'var(--cyan)',marginTop:2,flexShrink:0}}>▸</span>
+          <div style={{flex:1}}>
+            <span style={{color:'var(--txt2)',fontSize:'.82rem'}} dangerouslySetInnerHTML={{__html:content.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>')}}/>
+            {hasPromptKw&&onCopyPrompt&&<CopyBtn text={content} onCopy={onCopyPrompt}/>}
+          </div>
+        </div>
+      );
+    }else if(/^\d+\. /.test(tr)){
+      out.push(<div key={i} style={{display:'flex',gap:8,marginBottom:4,paddingLeft:6}}><span style={{color:'var(--purple)',minWidth:18,fontSize:'.78rem',fontWeight:700}}>{tr.match(/^\d+/)[0]}.</span><span style={{color:'var(--txt2)',fontSize:'.82rem'}} dangerouslySetInnerHTML={{__html:tr.replace(/^\d+\. /,'').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>')}}/></div>);
+    }else if(tr==='---'){
+      out.push(<hr key={i} style={{border:'none',borderTop:'1px solid var(--border)',margin:'14px 0'}}/>);
+    }else if(tr===''){
+      out.push(<div key={i} style={{height:5}}/>);
+    }else if(tr){
+      out.push(
+        <div key={i} style={{marginBottom:5}}>
+          <p style={{color:'var(--txt2)',fontSize:'.82rem',lineHeight:1.7}} dangerouslySetInnerHTML={{__html:tr.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--txt)">$1</strong>').replace(/`(.*?)`/g,'<code style="background:rgba(6,182,212,.1);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:.75em">$1</code>')}}/>
+          {isPrompt&&onCopyPrompt&&<CopyBtn text={tr} onCopy={onCopyPrompt}/>}
+        </div>
+      );
     }
     i++;
   }
-  if(inTable) flushTable();
-  return result;
+  if(inT)flushT();
+  return <>{out}</>;
 }
 
-// ─── FIVE SCENE STORYBOARD ───────────────────────────────────
-const SCENE_META = [
-  {label:"Hook",color:"#ef4444",icon:"🎯",cam:"CLOSE-UP / MACRO"},
-  {label:"Build Up",color:"#f59e0b",icon:"📈",cam:"MEDIUM SHOT / TRACKING"},
-  {label:"Development",color:"#06b6d4",icon:"🎬",cam:"WIDE / ESTABLISHING"},
-  {label:"Peak",color:"#a855f7",icon:"✨",cam:"SLOW-MO / DOLLY"},
-  {label:"Resolution",color:"#10b981",icon:"🎯",cam:"CLOSE-UP / CTA LOCK"},
+function CopyBtn({text,onCopy,label="Copy Prompt"}){
+  return(
+    <button onClick={()=>onCopy(text)} className="btn btn-g btn-sm" style={{marginTop:5,display:'inline-flex'}}>
+      {I.copy}<span>{label}</span>
+    </button>
+  );
+}
+
+/* ── GEMINI IMAGE GENERATOR ── */
+async function generateImageFromGemini(apiKey,prompt){
+  // Use Imagen via Gemini multimodal
+  // Gemini 2.0 Flash image generation endpoint
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{responseModalities:["IMAGE","TEXT"],responseMimeType:"text/plain"},
+    }),
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    throw new Error(e?.error?.message||`HTTP ${res.status}`);
+  }
+  const data=await res.json();
+  const parts=data?.candidates?.[0]?.content?.parts||[];
+  for(const part of parts){
+    if(part.inlineData?.data){
+      return `data:${part.inlineData.mimeType||'image/png'};base64,${part.inlineData.data}`;
+    }
+  }
+  throw new Error('Tidak ada gambar dihasilkan. Coba refresh atau ganti prompt.');
+}
+
+/* ── SCENE IMAGE CARD ── */
+function SceneImageCard({scene,idx,apiKey,productName,onCopyPrompt,onToast}){
+  const meta=SCENE_META[idx]||SCENE_META[0];
+  const [imgSrc,setImgSrc]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [err,setErr]=useState('');
+
+  const buildPrompt=()=>{
+    const base=scene.imagenPrompt||scene.visual||`${meta.label} scene for ${productName} product commercial video`;
+    return `${base}, cinematic commercial photography, professional studio lighting, ultra-detailed, 4K quality, photorealistic`;
+  };
+
+  const generate=async()=>{
+    if(!apiKey){onToast('API Key diperlukan');return;}
+    setLoading(true);setErr('');
+    try{
+      const src=await generateImageFromGemini(apiKey,buildPrompt());
+      setImgSrc(src);
+    }catch(e){
+      setErr(e.message);
+    }finally{setLoading(false);}
+  };
+
+  const download=()=>{
+    if(!imgSrc)return;
+    const a=document.createElement('a');
+    a.href=imgSrc;a.download=`scene_${idx+1}_${meta.label.toLowerCase()}.png`;a.click();
+  };
+
+  return(
+    <div className="scard">
+      <div style={{padding:'12px 14px',borderBottom:'1px solid var(--border)',background:meta.grad}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <CamSVG idx={idx}/>
+            <div>
+              <div className="gsk" style={{color:meta.color,fontWeight:700,fontSize:'.82rem'}}>{meta.icon} Scene {idx+1}: {meta.label}</div>
+              <div style={{fontSize:'.62rem',color:'rgba(255,255,255,.5)',fontFamily:'JetBrains Mono,monospace'}}>{meta.cam}</div>
+            </div>
+          </div>
+          <span style={{fontSize:'.62rem',color:meta.color,background:`${meta.color}22`,padding:'2px 8px',borderRadius:999,border:`1px solid ${meta.color}44`}}>{scene.scene||`Scene ${idx+1}`}</span>
+        </div>
+      </div>
+
+      <div style={{padding:12}}>
+        {/* Image area */}
+        <div style={{marginBottom:10}}>
+          {loading?(
+            <div className="img-placeholder">
+              <div className="spin" style={{color:'var(--cyan)'}}>{I.load}</div>
+              <div>Generating image...</div>
+            </div>
+          ):imgSrc?(
+            <img src={imgSrc} alt={`scene ${idx+1}`} className="ai-img"/>
+          ):(
+            <div className="img-placeholder">
+              <div style={{fontSize:28}}>{meta.icon}</div>
+              <div>Klik Generate Image</div>
+              {err&&<div style={{color:'var(--red)',fontSize:'.68rem',marginTop:4}}>{err}</div>}
+            </div>
+          )}
+        </div>
+
+        {/* Action buttons */}
+        <div style={{display:'flex',gap:6,marginBottom:10,flexWrap:'wrap'}}>
+          <button onClick={generate} disabled={loading||!apiKey} className="btn btn-c btn-sm" style={{flex:1}}>
+            {loading?<span className="spin">{I.load}</span>:I.img2}
+            {loading?'Generating...':'Generate Image'}
+          </button>
+          {imgSrc&&(
+            <button onClick={download} className="btn btn-g btn-sm">{I.dl}</button>
+          )}
+        </div>
+
+        {/* Scene details */}
+        {[
+          {label:'📷 Visual',content:scene.visual},
+          {label:'🎙 Audio',content:scene.audio},
+          {label:'📝 Subtitle',content:scene.subtitle},
+        ].map(s=>s.content&&(
+          <div key={s.label} style={{marginBottom:8}}>
+            <div style={{fontSize:'.65rem',color:'var(--txm)',marginBottom:2}}>{s.label}</div>
+            <div style={{fontSize:'.78rem',color:'var(--txt2)',background:'rgba(0,0,0,.2)',padding:'7px 9px',borderRadius:7,lineHeight:1.5}}>{s.content}</div>
+          </div>
+        ))}
+
+        {/* Imagen Prompt with copy */}
+        {scene.imagenPrompt&&(
+          <div className="prompt-box">
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:5}}>
+              <span style={{fontSize:'.65rem',color:'var(--cyan)',fontWeight:600}}>🖼 Imagen Prompt</span>
+              <button onClick={()=>{onCopyPrompt(scene.imagenPrompt);onToast('Prompt disalin!');}} className="btn btn-g btn-sm">{I.copy} Copy</button>
+            </div>
+            <div className="prompt-text">{scene.imagenPrompt}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── CAROUSEL IMAGE EXPORTER ── */
+const GRAD_THEMES=[
+  {id:"cyber",label:"Cyber",cls:"gt-cyber",accent:"#00f5ff"},
+  {id:"vapor",label:"Vapor",cls:"gt-vapor",accent:"#ff71ce"},
+  {id:"emerald",label:"Emerald",cls:"gt-emerald",accent:"#34d399"},
+  {id:"dark",label:"Dark",cls:"gt-dark",accent:"#06b6d4"},
+  {id:"corp",label:"Corp",cls:"gt-corp",accent:"#60a5fa"},
+  {id:"rose",label:"Rose",cls:"gt-rose",accent:"#f43f5e"},
 ];
 
-function extractScenes(text){
-  if(!text) return [];
-  const scenes = [];
-  const rows = text.split('\n').filter(l=>l.includes('|'));
-  const dataRows = rows.filter(r=>{
-    const cols=r.split('|').filter((_,i,a)=>i>0&&i<a.length-1);
-    return cols.length>=2 && !/^[-:\s|]+$/.test(r) && !/Scene.*Durasi/.test(r);
-  });
-  dataRows.slice(0,5).forEach((row,idx)=>{
-    const cols = row.split('|').filter((_,i,a)=>i>0&&i<a.length-1).map(c=>c.trim());
-    scenes.push({
-      scene: cols[0]||`Scene ${idx+1}`,
-      visual: cols[1]||"",
-      audio: cols[2]||"",
-      subtitle: cols[3]||"",
-      imagenPrompt: cols[4]||"",
-    });
-  });
-  return scenes.length ? scenes : [];
+function CarouselExporter({scenes,apiKey,productName,onToast}){
+  const [theme,setTheme]=useState('cyber');
+  const [slideImgs,setSlideImgs]=useState({});
+  const [loadingIdx,setLoadingIdx]=useState(null);
+  const gt=GRAD_THEMES.find(g=>g.id===theme)||GRAD_THEMES[0];
+
+  const genSlideImage=async(idx)=>{
+    if(!apiKey){onToast('API Key diperlukan');return;}
+    const scene=scenes[idx];
+    if(!scene)return;
+    setLoadingIdx(idx);
+    const prompt=`Instagram carousel slide ${idx+1} of 5, ${SCENE_META[idx]?.label||''} scene, product: ${productName}, ${scene.visual||''}, ${scene.imagenPrompt||''}, clean graphic design, bold typography overlay, social media commercial style, square format, vibrant colors, professional brand content`;
+    try{
+      const src=await generateImageFromGemini(apiKey,prompt);
+      setSlideImgs(prev=>({...prev,[idx]:src}));
+    }catch(e){
+      onToast(e.message);
+    }finally{setLoadingIdx(null);}
+  };
+
+  const genAll=async()=>{
+    for(let i=0;i<Math.min(scenes.length,5);i++){
+      await genSlideImage(i);
+    }
+  };
+
+  const downloadSlide=(idx)=>{
+    const src=slideImgs[idx];if(!src)return;
+    const a=document.createElement('a');
+    a.href=src;a.download=`carousel_${idx+1}_${productName}.png`;a.click();
+  };
+
+  if(!scenes.length)return null;
+  return(
+    <div style={{marginTop:28}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12,flexWrap:'wrap',gap:8}}>
+        <div className="gsk" style={{color:'var(--cyan)',fontSize:'.9rem',fontWeight:700}}>🎨 Carousel Image Generator</div>
+        <div style={{display:'flex',gap:5,flexWrap:'wrap',alignItems:'center'}}>
+          {GRAD_THEMES.map(g=>(
+            <button key={g.id} onClick={()=>setTheme(g.id)} className={`btn btn-sm ${theme===g.id?'btn-c':'btn-g'}`}>{g.label}</button>
+          ))}
+          <button onClick={genAll} disabled={loadingIdx!==null||!apiKey} className="btn btn-c btn-sm">
+            {loadingIdx!==null?<span className="spin">{I.load}</span>:I.img2} Generate Semua
+          </button>
+        </div>
+      </div>
+      <div className="carousel-wrap">
+        {scenes.slice(0,5).map((scene,idx)=>{
+          const meta=SCENE_META[idx]||SCENE_META[0];
+          const src=slideImgs[idx];
+          const isLoading=loadingIdx===idx;
+          return(
+            <div key={idx} className="cslide">
+              <div style={{width:'100%',aspectRatio:'1',position:'relative',overflow:'hidden'}}>
+                {src?(
+                  <img src={src} alt={`slide ${idx+1}`} className="cslide-img"/>
+                ):(
+                  <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:6,background:meta.grad,cursor:'pointer'}} onClick={()=>genSlideImage(idx)}>
+                    {isLoading?(
+                      <><div className="spin" style={{color:'#fff'}}>{I.load}</div><div style={{color:'rgba(255,255,255,.7)',fontSize:'.7rem'}}>Generating...</div></>
+                    ):(
+                      <><div style={{fontSize:24}}>{meta.icon}</div><div style={{color:'rgba(255,255,255,.7)',fontSize:'.65rem',textAlign:'center',padding:'0 8px'}}>Klik generate<br/>Scene {idx+1}</div></>
+                    )}
+                  </div>
+                )}
+                {/* Scene number overlay */}
+                <div style={{position:'absolute',top:6,left:6,background:'rgba(0,0,0,.6)',borderRadius:6,padding:'2px 7px',fontSize:'.65rem',fontWeight:700,color:'#fff',fontFamily:'JetBrains Mono,monospace'}}>0{idx+1}</div>
+              </div>
+              <div className="cslide-info">
+                <div className="gsk" style={{color:meta.color,fontSize:'.75rem',fontWeight:700,marginBottom:4}}>{meta.icon} {meta.label}</div>
+                <div style={{fontSize:'.65rem',color:'var(--txm)',marginBottom:7,lineHeight:1.4}}>{(scene.subtitle||scene.audio||'').slice(0,60)}{(scene.subtitle||'').length>60?'...':''}</div>
+                <div style={{display:'flex',gap:5}}>
+                  <button onClick={()=>genSlideImage(idx)} disabled={isLoading||!apiKey} className="btn btn-c btn-sm" style={{flex:1,fontSize:'.65rem'}}>
+                    {isLoading?<span className="spin">{I.load}</span>:I.refresh}
+                  </button>
+                  {src&&<button onClick={()=>downloadSlide(idx)} className="btn btn-g btn-sm">{I.dl}</button>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
-function CamSVG({sceneIdx}){
-  const colors=["#ef4444","#f59e0b","#06b6d4","#a855f7","#10b981"];
-  const c=colors[sceneIdx%5];
-  return (
-    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-      <circle cx="30" cy="30" r="28" stroke={c} strokeWidth="1" strokeDasharray="4 3" opacity=".5"/>
-      <circle cx="30" cy="30" r="18" stroke={c} strokeWidth="1.5" opacity=".7"/>
-      <circle cx="30" cy="30" r="6" stroke={c} strokeWidth="2" fill={c} fillOpacity=".2"/>
-      {sceneIdx===0&&<><line x1="10" y1="30" x2="24" y2="30" stroke={c} strokeWidth="1.5"/><line x1="36" y1="30" x2="50" y2="30" stroke={c} strokeWidth="1.5"/><line x1="30" y1="10" x2="30" y2="24" stroke={c} strokeWidth="1.5"/><line x1="30" y1="36" x2="30" y2="50" stroke={c} strokeWidth="1.5"/></>}
-      {sceneIdx===1&&<><path d="M15 45 Q30 15 45 45" stroke={c} strokeWidth="1.5" fill="none"/><polyline points="42,38 45,45 38,42" stroke={c} strokeWidth="1.5" fill="none"/></>}
-      {sceneIdx===2&&<><rect x="12" y="22" width="36" height="16" stroke={c} strokeWidth="1.5" rx="2" fill="none"/><line x1="12" y1="30" x2="48" y2="30" stroke={c} strokeWidth=".8" strokeDasharray="3 2"/></>}
-      {sceneIdx===3&&<><circle cx="30" cy="30" r="12" stroke={c} strokeWidth="1.5" fill={c} fillOpacity=".05"/><path d="M22 22 L38 38M38 22 L22 38" stroke={c} strokeWidth="1" opacity=".5"/></>}
-      {sceneIdx===4&&<><path d="M20 30 L30 20 L40 30 L30 40 Z" stroke={c} strokeWidth="1.5" fill={c} fillOpacity=".1"/><circle cx="30" cy="30" r="4" fill={c}/></>}
+/* ── CAMERA SVG ── */
+function CamSVG({idx}){
+  const cs=["#ef4444","#f59e0b","#06b6d4","#a855f7","#10b981"];
+  const c=cs[idx%5];
+  return(
+    <svg width="36" height="36" viewBox="0 0 60 60" fill="none">
+      <circle cx="30" cy="30" r="28" stroke={c} strokeWidth="1" strokeDasharray="4 3" opacity=".4"/>
+      <circle cx="30" cy="30" r="16" stroke={c} strokeWidth="1.2" opacity=".6"/>
+      <circle cx="30" cy="30" r="5" fill={c} opacity=".3"/>
+      {idx===0&&<><line x1="10" y1="30" x2="22" y2="30" stroke={c} strokeWidth="1.5"/><line x1="38" y1="30" x2="50" y2="30" stroke={c} strokeWidth="1.5"/><line x1="30" y1="10" x2="30" y2="22" stroke={c} strokeWidth="1.5"/><line x1="30" y1="38" x2="30" y2="50" stroke={c} strokeWidth="1.5"/></>}
+      {idx===1&&<path d="M15 42 Q30 18 45 42" stroke={c} strokeWidth="1.5" fill="none"/>}
+      {idx===2&&<rect x="14" y="22" width="32" height="16" stroke={c} strokeWidth="1.2" rx="2" fill="none"/>}
+      {idx===3&&<><circle cx="30" cy="30" r="10" stroke={c} strokeWidth="1.2" fill="none"/><path d="M23 23 L37 37" stroke={c} strokeWidth="1"/></>}
+      {idx===4&&<path d="M22 30 L30 22 L38 30 L30 38 Z" stroke={c} strokeWidth="1.2" fill={c} fillOpacity=".1"/>}
     </svg>
   );
 }
 
-// ─── CANVAS TYPOGRAPHY EXPORTER ──────────────────────────────
-function roundRectManual(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);
-  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);
-  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);
-  ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath();
-}
-
-function wrapText(ctx,text,x,y,maxW,lineH){
-  const words=text.split(' ');
-  let line='',lines=[];
-  for(let w of words){
-    const test=line?line+' '+w:w;
-    if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=w;}
-    else line=test;
-  }
-  lines.push(line);
-  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineH));
-  return lines.length*lineH;
-}
-
-function renderSlide(canvas, theme, scene, sceneIdx, productName){
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W=1080,H=1080;
-  canvas.width=W; canvas.height=H;
-  const t = GRAD_THEMES.find(g=>g.id===theme)||GRAD_THEMES[0];
-  // BG gradient
-  const grad = ctx.createLinearGradient(0,0,W,H);
-  grad.addColorStop(0,t.from); grad.addColorStop(1,t.to);
-  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
-  // Grid dots
-  ctx.fillStyle='rgba(255,255,255,.04)';
-  for(let x=0;x<W;x+=40) for(let y=0;y<H;y+=40) {ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();}
-  // Corner brackets
-  const bc=t.accent; const bs=4; const bl=60;
-  [[0,0],[W,0],[0,H],[W,H]].forEach(([cx,cy])=>{
-    ctx.strokeStyle=bc; ctx.lineWidth=bs;
-    ctx.beginPath();ctx.moveTo(cx+(cx?-bl:bl),cy);ctx.lineTo(cx,cy);ctx.lineTo(cx,cy+(cy?-bl:bl));ctx.stroke();
-  });
-  // Scene number
-  ctx.font='bold 140px JetBrains Mono,monospace';
-  ctx.fillStyle='rgba(255,255,255,.04)';
-  ctx.fillText(`0${sceneIdx+1}`,40,220);
-  // Scene label
-  ctx.font='bold 28px Space Grotesk,sans-serif';
-  ctx.fillStyle=bc;
-  ctx.fillText(`SCENE ${sceneIdx+1} — ${(SCENE_META[sceneIdx]||{label:''}).label.toUpperCase()}`,48,78);
-  // Duration tag
-  ctx.font='16px JetBrains Mono,monospace';
-  ctx.fillStyle='rgba(255,255,255,.5)';
-  ctx.fillText(`${6+(sceneIdx*3)}s — ${9+(sceneIdx*3)}s`,48,108);
-  // Product watermark top right
-  ctx.font='bold 14px Space Grotesk,sans-serif';
-  ctx.fillStyle='rgba(255,255,255,.35)';
-  ctx.textAlign='right';
-  ctx.fillText('VEO 3 PRO STUDIO',W-48,50);
-  ctx.fillText(productName||'Product',W-48,72);
-  ctx.textAlign='left';
-  // Visual box
-  const vt=scene?.visual||'Visual direction goes here';
-  ctx.strokeStyle=bc; ctx.lineWidth=1.5;
-  roundRectManual(ctx,48,240,W-96,200,12);
-  ctx.stroke();
-  const vg2=ctx.createLinearGradient(48,240,48,440);
-  vg2.addColorStop(0,'rgba(255,255,255,.06)');vg2.addColorStop(1,'rgba(255,255,255,.02)');
-  ctx.fillStyle=vg2; ctx.fill();
-  ctx.font='bold 15px Space Grotesk,sans-serif'; ctx.fillStyle=bc;
-  ctx.fillText('📷  VISUAL & CAMERA',64,274);
-  ctx.font='18px Inter,sans-serif'; ctx.fillStyle='rgba(255,255,255,.85)';
-  wrapText(ctx,vt,64,306,W-128,28);
-  // Audio box
-  const at=scene?.audio||'Voiceover / dialog goes here';
-  roundRectManual(ctx,48,460,W-96,200,12);
-  ctx.strokeStyle=t.accent; ctx.lineWidth=1.5; ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,.03)'; ctx.fill();
-  ctx.font='bold 15px Space Grotesk,sans-serif'; ctx.fillStyle=t.text||'#fff';
-  ctx.fillText('🎙  AUDIO & VOICEOVER',64,494);
-  ctx.font='italic 20px Inter,sans-serif'; ctx.fillStyle='rgba(255,255,255,.8)';
-  ctx.fillText('"',64,534);
-  wrapText(ctx,at,88,534,W-150,30);
-  // Footer subtitle
-  const sub=scene?.subtitle||'On-screen text';
-  const fg=ctx.createLinearGradient(0,H-140,0,H);
-  fg.addColorStop(0,t.accent+'55'); fg.addColorStop(1,t.accent+'cc');
-  ctx.fillStyle=fg; roundRectManual(ctx,0,H-130,W,130,0); ctx.fill();
-  ctx.font='bold 36px Space Grotesk,sans-serif'; ctx.fillStyle='#fff';
-  ctx.textAlign='center';
-  wrapText(ctx,sub,W/2,H-85,W-80,44);
-  ctx.textAlign='left';
-}
-
-function CanvasExporter({scenes, productName}){
-  const [theme,setTheme]=useState('cyber');
-  const canvasRefs=useRef([null,null,null,null,null]);
-  const [rendered,setRendered]=useState(false);
-  const [toast,setToast]=useState('');
-
-  const renderAll=useCallback(()=>{
-    scenes.slice(0,5).forEach((scene,idx)=>{
-      const canvas=canvasRefs.current[idx];
-      if(canvas) renderSlide(canvas,theme,scene,idx,productName);
-    });
-    setRendered(true);
-  },[scenes,theme,productName]);
-
-  useEffect(()=>{ if(scenes.length) renderAll(); },[scenes,theme]);
-
-  const download=(idx)=>{
-    const c=canvasRefs.current[idx];
-    if(!c) return;
-    const link=document.createElement('a');
-    link.download=`scene_${idx+1}_${theme}.png`;
-    link.href=c.toDataURL('image/png');
-    link.click();
-    setToast(`Scene ${idx+1} diunduh!`);
-    setTimeout(()=>setToast(''),2500);
+/* ── IMAGE UPLOADER ── */
+function ImgUploader({label,value,onChange}){
+  const ref=useRef();
+  const handle=(e)=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>onChange({data:ev.target.result.split(',')[1],mime:f.type,preview:ev.target.result});
+    r.readAsDataURL(f);
   };
-
-  if(!scenes.length) return null;
-  return (
-    <div style={{marginTop:32}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10}}>
-        <h3 className="grotesk" style={{color:'var(--cyan)',fontSize:'1rem',fontWeight:700}}>🎨 Typography Carousel Exporter</h3>
-        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-          {GRAD_THEMES.map(g=>(
-            <button key={g.id} onClick={()=>setTheme(g.id)} className="btn" style={{
-              padding:'5px 12px',fontSize:'.75rem',
-              background:theme===g.id?`linear-gradient(135deg,${g.from},${g.to})`:'rgba(255,255,255,.05)',
-              border:theme===g.id?`1px solid ${g.accent}`:'1px solid var(--border)',
-              color:theme===g.id?g.text:'var(--text-secondary)',
-            }}>{g.label}</button>
-          ))}
-        </div>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:12}}>
-        {scenes.slice(0,5).map((_,idx)=>(
-          <div key={idx} className="card2" style={{padding:10}}>
-            <p style={{fontSize:'.75rem',color:'var(--cyan)',marginBottom:8,fontWeight:600}}>Scene {idx+1} — {(SCENE_META[idx]||{label:''}).label}</p>
-            <canvas ref={el=>canvasRefs.current[idx]=el} style={{width:'100%',borderRadius:8,border:'1px solid var(--border)'}}/>
-            <button onClick={()=>download(idx)} className="btn btn-ghost" style={{width:'100%',marginTop:8,fontSize:'.75rem'}}>
-              {icons.download} Unduh PNG
-            </button>
-          </div>
-        ))}
-      </div>
-      {toast&&<div className="copy-toast">{icons.check} {toast}</div>}
-    </div>
-  );
-}
-
-// ─── IMAGE UPLOADER ──────────────────────────────────────────
-function ImageUploader({label,value,onChange}){
-  const fileRef=useRef();
-  const handleFile=(e)=>{
-    const file=e.target.files[0];
-    if(!file) return;
-    const reader=new FileReader();
-    reader.onload=ev=>onChange({data:ev.target.result.split(',')[1],mime:file.type,preview:ev.target.result});
-    reader.readAsDataURL(file);
-  };
-  return (
+  return(
     <div>
-      <p style={{fontSize:'.78rem',color:'var(--text-muted)',marginBottom:8}}>{label}</p>
-      {value?.preview ? (
+      <p style={{fontSize:'.72rem',color:'var(--txm)',marginBottom:6}}>{label}</p>
+      {value?.preview?(
         <div style={{position:'relative',display:'inline-block'}}>
-          <img src={value.preview} alt="preview" style={{width:120,height:120,objectFit:'cover',borderRadius:10,border:'2px solid var(--cyan)'}}/>
-          <button onClick={()=>onChange(null)} className="btn btn-red" style={{position:'absolute',top:-8,right:-8,padding:'2px 6px',fontSize:'.7rem'}}>{icons.trash}</button>
+          <img src={value.preview} style={{width:90,height:90,objectFit:'cover',borderRadius:8,border:'2px solid var(--cyan)'}}/>
+          <button onClick={()=>onChange(null)} className="btn btn-r" style={{position:'absolute',top:-6,right:-6,padding:'2px 5px',fontSize:'.65rem'}}>{I.trash}</button>
         </div>
-      ) : (
-        <div className="img-upload-box" onClick={()=>fileRef.current.click()}>
-          <div style={{color:'var(--text-muted)',fontSize:'.8rem'}}>{icons.img} <br/>Klik untuk upload gambar</div>
+      ):(
+        <div className="upbox" onClick={()=>ref.current.click()}>
+          <div style={{color:'var(--txm)',fontSize:'.75rem'}}>{I.img}<br/>Klik upload</div>
         </div>
       )}
-      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{display:'none'}}/>
+      <input ref={ref} type="file" accept="image/*" onChange={handle} style={{display:'none'}}/>
     </div>
   );
 }
 
-// ─── SIDEBAR ─────────────────────────────────────────────────
-function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setActiveTab}){
+/* ── EXTRACT SCENES ── */
+function extractScenes(text){
+  if(!text)return[];
+  const rows=text.split('\n').filter(l=>l.includes('|'));
+  const dataRows=rows.filter(r=>{
+    const cols=r.split('|').filter((_,i,a)=>i>0&&i<a.length-1);
+    return cols.length>=2&&!/^[-:\s|]+$/.test(r)&&!/Scene.*Durasi|Scene.*Visual|Durasi.*Visual/i.test(r);
+  });
+  return dataRows.slice(0,5).map((row,idx)=>{
+    const cols=row.split('|').filter((_,i,a)=>i>0&&i<a.length-1).map(c=>c.trim());
+    return{scene:cols[0]||`Scene ${idx+1}`,visual:cols[1]||"",audio:cols[2]||"",subtitle:cols[3]||"",imagenPrompt:cols[4]||""};
+  });
+}
+
+/* ── SYSTEM PROMPTS ── */
+const SYS={
+  planner:`Bertindaklah sebagai tim konsultan bisnis elite. Bedah data produk secara brutal dan objektif menggunakan pola pikir investor nyata. Hasilkan output dalam format tabel Markdown masif untuk:
+
+BAGIAN 1: ANALISIS BISNIS & DETEKSI INDUSTRI (Auto Category Detection, Industry Trope, Tabel Analisis Faktor, Tabel SWOT dengan Matriks Skor 1-10).
+BAGIAN 2: BRANDING METRIC & POSITIONING (Tabel 10 nama brand komersial, handle sosmed, Slogan, Story Brand, Positioning, USP).
+BAGIAN 3: ARSITEKTUR DESAIN & PROMPT GENERATOR AI (Tabel Elemen Visual. Lalu PROMPT LOGO AI, PROMPT BANNER AI, PROMPT FOTO PROFIL AI dalam bahasa Inggris siap pakai).
+BAGIAN 4: DEEP BUYER PERSONA DATABASES (Tabel 5 Buyer Persona: Nama, Umur, Profesi, Penghasilan, Masalah, Ketakutan, Tujuan, Trigger, Platform).
+BAGIAN 5: ESTIMASI TARGET FINANSIAL & LEADS BREAKDOWN (Tabel omzet tahunan/bulanan/mingguan/harian, transaksi harian, leads, closing, Conversion Rate minimum).
+BAGIAN 6: ROADMAP 12 BULAN (Tabel 5 Fase: Validasi, Audiens, Monetisasi, Scale Up, Dominasi — kolom Target, KPI, Aktivitas, Risiko, Solusi).
+BAGIAN 7: KRITIK KERAS & REALITA PAHIT (Tabel kesalahan fatal, kebiasaan buruk, penyebab gagal, realita pasar Indonesia, aktivitas wajib harian).
+
+FORMAT PENUTUP: KESIMPULAN INVESTOR — penilaian realistis target omzet, bagian bisnis paling lemah, peluang & ancaman terbesar, 3 aktivitas ROI tertinggi, rencana aksi 7 hari pertama.`,
+
+  calendar:`Hasilkan KALENDER KONTEN VIRAL MINGGU PERTAMA (14 KONTEN UTUH & SIAP PAKAI). Buat tabel Markdown lengkap 14 konten (2/hari Senin-Minggu):
+| Hari | Platform | Ide Konten & Funnel | Marketing Angle | Jenis Hook | Script Singkat (Five Scene: Hook→Build Up→Development→Peak→Resolution + arahan kamera Veo 3.1) | Caption Copywriting SIAP PAKAI | CTA Spesifik | Hashtag Strategis |
+Tulis Caption secara lengkap, persuasif, emosional, memicu konversi, siap pakai untuk jualan di pasar Indonesia. Tambahkan Tabel Target KPI Minggu Pertama dan 10 Hook Viral Tambahan.`,
+
+  caption:`Hasilkan variasi caption copywriting tingkat dewa untuk TikTok, Instagram Reels, Facebook Pro, YouTube Shorts. Output wajib: hook tebal baris pertama, bodi emosional/scarcity, CTA tajam, hashtag strategis. Sajikan dalam tabel perbandingan Markdown per platform. Gunakan bahasa kasual, persuasif, relatable pasar Indonesia.`,
+
+  generator:`Bertindaklah sebagai Creative Director & Scriptwriter UGC Premium. Hasilkan skrip video komersial 30-60 detik dalam format tabel Five Scene Framework WAJIB:
+| Scene & Durasi | Visual & Camera Direction | Audio & Voiceover | On-Screen Text / Subtitle | Imagen Prompt |
+Scene 1: Hook (0-8s) | Scene 2: Build Up (8-18s) | Scene 3: Development (18-30s) | Scene 4: Peak (30-45s) | Scene 5: Resolution (45-60s)
+Imagen Prompt: deskripsi visual bahasa Inggris sinematik lengkap, detail produk dan model, lighting, camera angle. Tambahkan panduan properti syuting.`,
+};
+
+/* ── SIDEBAR ── */
+function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setActiveTab,onClose}){
   const [showKey,setShowKey]=useState(false);
-  const sanity=useMemo(()=>calculateSanityScore(form.capital,form.price,form.targetOmzet),[form.capital,form.price,form.targetOmzet]);
-
+  const sanity=useMemo(()=>calcSanity(form.capital,form.price,form.targetOmzet),[form.capital,form.price,form.targetOmzet]);
   const tabs=[
-    {id:'planner',label:'Business Architect',icon:icons.chart},
-    {id:'calendar',label:'Kalender Konten',icon:icons.calendar},
-    {id:'caption',label:'Caption Lab',icon:icons.pen},
-    {id:'generator',label:'UGC Generator',icon:icons.video},
+    {id:'planner',label:'Business Architect',icon:I.chart},
+    {id:'calendar',label:'Kalender Konten',icon:I.cal},
+    {id:'caption',label:'Caption Lab',icon:I.pen},
+    {id:'generator',label:'UGC Generator',icon:I.vid},
   ];
-
-  return (
-    <div style={{width:'var(--sidebar-w)',flexShrink:0,background:'var(--bg-secondary)',borderRight:'1px solid var(--border)',display:'flex',flexDirection:'column'}} className="sidebar-scroll">
-      {/* Logo */}
-      <div style={{padding:'20px 16px 12px',borderBottom:'1px solid var(--border)'}}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
+  const fields=[
+    {k:'name',l:'Nama Produk',ph:'Basreng Kaffir Jeruk Purut'},
+    {k:'desc',l:'Deskripsi',ph:'Camilan super renyah...',a:true},
+    {k:'characteristics',l:'Karakteristik',ph:'Renyah, wangi...',a:true},
+    {k:'price',l:'Harga Jual (Rp)',ph:'20000',t:'number'},
+    {k:'capital',l:'Modal Awal (Rp)',ph:'3000000',t:'number'},
+    {k:'targetOmzet',l:'Target Omzet/Bln (Rp)',ph:'45000000',t:'number'},
+    {k:'location',l:'Lokasi',ph:'Bandung, Jawa Barat'},
+    {k:'initialMarket',l:'Target Pasar',ph:'Pecinta jajanan pedas...',a:true},
+  ];
+  return(
+    <div className="sidebar">
+      {/* Logo + close */}
+      <div style={{padding:'16px 14px 10px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <div>
-            <div className="grotesk grad-text" style={{fontSize:'1.05rem',fontWeight:800}}>VEO 3 PRO</div>
-            <div style={{fontSize:'.68rem',color:'var(--text-muted)',fontFamily:'JetBrains Mono,monospace'}}>UGC AI Suite v3.5</div>
+            <div className="gsk grad" style={{fontSize:'1rem',fontWeight:800}}>VEO 3 PRO</div>
+            <div style={{fontSize:'.6rem',color:'var(--txm)',fontFamily:'JetBrains Mono,monospace'}}>UGC AI Suite v3.5</div>
           </div>
           <div style={{display:'flex',gap:6}}>
-            <button onClick={toggleTheme} className="btn btn-ghost" style={{padding:'6px 8px'}}>{theme==='dark'?icons.sun:icons.moon}</button>
+            <button onClick={toggleTheme} className="btn btn-g" style={{padding:'5px 7px'}}>{theme==='dark'?I.sun:I.moon}</button>
+            <button onClick={onClose} className="btn btn-g hamburger" style={{padding:'5px 7px'}}>{I.x}</button>
           </div>
         </div>
       </div>
-
       {/* API Key */}
-      <div style={{padding:'14px 16px',borderBottom:'1px solid var(--border)'}}>
-        <div style={{fontSize:'.75rem',color:'var(--text-muted)',marginBottom:6,display:'flex',alignItems:'center',gap:5}}>{icons.key} API KEY GEMINI</div>
-        <div style={{display:'flex',gap:6}}>
-          <input type={showKey?'text':'password'} className="inp" value={apiKey} onChange={e=>{setApiKey(e.target.value);safeSet('veo_studio_apikey',e.target.value);}} placeholder="AIza..." style={{fontSize:'.78rem',flex:1}}/>
-          <button onClick={()=>setShowKey(v=>!v)} className="btn btn-ghost" style={{padding:'6px 8px',flexShrink:0}}>{showKey?icons.eyeOff:icons.eye}</button>
+      <div style={{padding:'12px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <div style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:5,display:'flex',gap:4,alignItems:'center'}}>{I.key} GEMINI API KEY</div>
+        <div style={{display:'flex',gap:5}}>
+          <input type={showKey?'text':'password'} className="inp" value={apiKey} onChange={e=>{setApiKey(e.target.value);safeSet('veo_studio_apikey',e.target.value);}} placeholder="AIza..." style={{fontSize:'.75rem',flex:1}}/>
+          <button onClick={()=>setShowKey(v=>!v)} className="btn btn-g" style={{padding:'5px 7px',flexShrink:0}}>{showKey?I.eyeOff:I.eye}</button>
         </div>
-        {!apiKey&&<div style={{marginTop:8,padding:'7px 10px',borderRadius:8,background:'rgba(245,158,11,.1)',border:'1px solid rgba(245,158,11,.25)',fontSize:'.72rem',color:'#fbbf24',display:'flex',gap:5,alignItems:'center'}}>{icons.warn} Masukkan API Key Gemini untuk mengaktifkan AI</div>}
+        {!apiKey&&<div style={{marginTop:7,padding:'6px 9px',borderRadius:7,background:'rgba(245,158,11,.08)',border:'1px solid rgba(245,158,11,.2)',fontSize:'.68rem',color:'#fbbf24',display:'flex',gap:4,alignItems:'flex-start'}}>{I.warn} Masukkan API Key Gemini</div>}
       </div>
-
-      {/* Navigation */}
-      <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)'}}>
-        <p style={{fontSize:'.68rem',color:'var(--text-muted)',marginBottom:8,textTransform:'uppercase',letterSpacing:1}}>Menu Utama</p>
+      {/* Nav */}
+      <div style={{padding:'10px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <p style={{fontSize:'.62rem',color:'var(--txm)',marginBottom:6,textTransform:'uppercase',letterSpacing:.8}}>Menu</p>
         {tabs.map(t=>(
-          <div key={t.id} className={`sidebar-link${activeTab===t.id?' active':''}`} onClick={()=>setActiveTab(t.id)}>
+          <div key={t.id} className={`slink${activeTab===t.id?' active':''}`} onClick={()=>{setActiveTab(t.id);onClose&&onClose();}}>
             {t.icon}<span>{t.label}</span>
           </div>
         ))}
       </div>
-
       {/* Form */}
-      <div style={{padding:'12px 16px',flex:1}}>
-        <p style={{fontSize:'.68rem',color:'var(--text-muted)',marginBottom:10,textTransform:'uppercase',letterSpacing:1}}>Data Produk Global</p>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-          {[
-            {key:'name',label:'Nama Produk',ph:'Basreng Kaffir Jeruk Purut'},
-            {key:'desc',label:'Deskripsi',ph:'Camilan super renyah...',area:true},
-            {key:'characteristics',label:'Karakteristik',ph:'Renyah, wangi jeruk...',area:true},
-            {key:'price',label:'Harga Jual (Rp)',ph:'20000',type:'number'},
-            {key:'capital',label:'Modal Awal (Rp)',ph:'3000000',type:'number'},
-            {key:'targetOmzet',label:'Target Omzet/Bln (Rp)',ph:'45000000',type:'number'},
-            {key:'location',label:'Lokasi',ph:'Bandung, Jawa Barat'},
-            {key:'initialMarket',label:'Target Pasar',ph:'Pecinta jajanan pedas...',area:true},
-          ].map(f=>(
-            <div key={f.key}>
-              <label style={{fontSize:'.7rem',color:'var(--text-muted)',marginBottom:3,display:'block'}}>{f.label}</label>
-              {f.area
-                ? <textarea className="inp" value={form[f.key]} onChange={e=>setForm(prev=>({...prev,[f.key]:e.target.value}))} placeholder={f.ph} style={{minHeight:60,fontSize:'.78rem'}}/>
-                : <input className="inp" type={f.type||'text'} value={form[f.key]} onChange={e=>setForm(prev=>({...prev,[f.key]:e.target.value}))} placeholder={f.ph} style={{fontSize:'.78rem'}}/>
+      <div style={{padding:'10px 14px',flex:1,overflow:'auto'}}>
+        <p style={{fontSize:'.62rem',color:'var(--txm)',marginBottom:8,textTransform:'uppercase',letterSpacing:.8}}>Data Produk Global</p>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {fields.map(f=>(
+            <div key={f.k}>
+              <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>{f.l}</label>
+              {f.a
+                ?<textarea className="inp" value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{minHeight:60,fontSize:'.75rem'}}/>
+                :<input className="inp" type={f.t||'text'} value={form[f.k]||''} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={{fontSize:'.75rem'}}/>
               }
             </div>
           ))}
-
-          {/* Dropdowns */}
           {[
-            {key:'industry',label:'Kategori Industri',opts:INDUSTRIES},
-            {key:'angle',label:'Marketing Angle',opts:ANGLES},
-            {key:'hook',label:'Viral Hook Style',opts:HOOKS},
+            {k:'industry',l:'Kategori Industri',opts:INDUSTRIES},
+            {k:'angle',l:'Marketing Angle',opts:ANGLES},
+            {k:'hook',l:'Viral Hook Style',opts:HOOKS},
           ].map(f=>(
-            <div key={f.key}>
-              <label style={{fontSize:'.7rem',color:'var(--text-muted)',marginBottom:3,display:'block'}}>{f.label}</label>
-              <select className="inp" value={form[f.key]||f.opts[0]} onChange={e=>setForm(prev=>({...prev,[f.key]:e.target.value}))} style={{fontSize:'.78rem'}}>
+            <div key={f.k}>
+              <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>{f.l}</label>
+              <select className="inp" value={form[f.k]||f.opts[0]} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} style={{fontSize:'.75rem'}}>
                 {f.opts.map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
           ))}
-
           {/* Sanity Score */}
           <div className="card2" style={{marginTop:4}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-              <span style={{fontSize:'.72rem',color:'var(--text-muted)'}}>Sanity Check Finansial</span>
-              <span className={`badge ${sanity.cls}`} style={{fontSize:'.68rem'}}>{sanity.score}/100</span>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+              <span style={{fontSize:'.68rem',color:'var(--txm)'}}>Sanity Check Finansial</span>
+              <span className={`badge ${sanity.cls}`}>{sanity.score}/100</span>
             </div>
-            <div className="progress-bar-wrap" style={{marginBottom:6}}>
-              <div className="progress-bar-fill" style={{width:`${sanity.score}%`}}/>
-            </div>
-            <p style={{fontSize:'.68rem',color:'var(--text-muted)',lineHeight:1.5}}>{sanity.label}</p>
-            <div style={{marginTop:6,fontSize:'.68rem',color:'var(--text-muted)'}}>
-              <div>Qty/bln: <span style={{color:'var(--text-primary)'}}>{sanity.neededQty.toLocaleString()}</span></div>
-              <div>Traffic min: <span style={{color:'var(--text-primary)'}}>{sanity.traffic.toLocaleString()}</span> klik</div>
-              <div>Rasio modal: <span style={{color:'var(--text-primary)'}}>{sanity.ratio}%</span></div>
+            <div className="pbar" style={{marginBottom:5}}><div className="pfill" style={{width:`${sanity.score}%`}}/></div>
+            <p style={{fontSize:'.65rem',color:'var(--txm)',lineHeight:1.5}}>{sanity.label}</p>
+            <div style={{marginTop:5,fontSize:'.65rem',color:'var(--txm)'}}>
+              Qty/bln: <b style={{color:'var(--txt)'}}>{sanity.qty.toLocaleString()}</b> · Traffic: <b style={{color:'var(--txt)'}}>{sanity.traffic.toLocaleString()}</b>
             </div>
           </div>
         </div>
@@ -559,157 +776,113 @@ function Sidebar({form,setForm,apiKey,setApiKey,theme,toggleTheme,activeTab,setA
   );
 }
 
-// ─── OUTPUT AREA ─────────────────────────────────────────────
-function OutputArea({tab, aiResult, loading, loadingMsg, scenes, ugcForm, form}){
-  const [toast,setToast]=useState('');
-  const copyText=(t)=>{
-    navigator.clipboard.writeText(t).then(()=>{setToast('Disalin!');setTimeout(()=>setToast(''),2000);});
-  };
-  const copyPrompt=(p)=>{
-    navigator.clipboard.writeText(p).then(()=>{setToast('Prompt disalin!');setTimeout(()=>setToast(''),2000);});
-  };
-
-  if(loading){
-    return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'60vh',gap:20}}>
-        <div className="spin" style={{color:'var(--cyan)',fontSize:40}}>{icons.loader}</div>
-        <p className="grotesk" style={{color:'var(--cyan)',fontSize:'1rem',fontWeight:600}}>{loadingMsg}</p>
-        <div style={{display:'flex',gap:6}}>
-          {[0,1,2].map(i=><div key={i} className="pulse" style={{width:8,height:8,borderRadius:'50%',background:'var(--purple)',animationDelay:`${i*.3}s`}}/>)}
-        </div>
-      </div>
-    );
-  }
-
-  if(!aiResult){
-    return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'60vh',gap:16,color:'var(--text-muted)'}}>
-        <div style={{fontSize:60}}>🚀</div>
-        <p className="grotesk" style={{fontSize:'1.1rem'}}>Siap untuk Generate</p>
-        <p style={{fontSize:'.85rem',textAlign:'center',maxWidth:400}}>Isi data di sidebar kiri, pastikan API Key Gemini sudah diisi, lalu klik tombol Generate di tab yang aktif.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      {/* Copy button */}
-      <div style={{display:'flex',justifyContent:'flex-end',marginBottom:16,gap:8}}>
-        <button onClick={()=>copyText(aiResult)} className="btn btn-ghost" style={{fontSize:'.8rem'}}>{icons.copy} Salin Semua</button>
-      </div>
-      {/* Rendered markdown */}
-      <div style={{lineHeight:1.7}}>
-        {parseMarkdownToReact(aiResult)}
-      </div>
-      {/* Five Scene Storyboard for generator tab */}
-      {tab==='generator' && scenes.length>0 && (
-        <div style={{marginTop:32}}>
-          <h3 className="grotesk" style={{color:'var(--cyan)',fontSize:'1rem',fontWeight:700,marginBottom:16}}>🎬 Five Scene Storyboard</h3>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}}>
-            {scenes.map((scene,idx)=>{
-              const meta=SCENE_META[idx]||{label:'',color:'#06b6d4',icon:'🎬',cam:'SHOT'};
-              return (
-                <div key={idx} className="scene-card">
-                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
-                    <div style={{display:'flex',alignItems:'center',gap:10}}>
-                      <CamSVG sceneIdx={idx}/>
-                      <div>
-                        <div style={{color:meta.color,fontWeight:700,fontSize:'.85rem'}} className="grotesk">{meta.icon} Scene {idx+1}: {meta.label}</div>
-                        <div style={{fontSize:'.68rem',color:'var(--text-muted)',fontFamily:'JetBrains Mono,monospace'}}>{meta.cam}</div>
-                      </div>
-                    </div>
-                    <span style={{fontSize:'.68rem',color:meta.color,background:`${meta.color}18`,padding:'2px 8px',borderRadius:999,border:`1px solid ${meta.color}44`}}>{scene.scene}</span>
-                  </div>
-                  {[
-                    {label:'📷 Visual',content:scene.visual},
-                    {label:'🎙 Audio',content:scene.audio},
-                    {label:'📝 Subtitle',content:scene.subtitle},
-                  ].map(s=>s.content&&(
-                    <div key={s.label} style={{marginBottom:10}}>
-                      <div style={{fontSize:'.68rem',color:'var(--text-muted)',marginBottom:3}}>{s.label}</div>
-                      <div style={{fontSize:'.8rem',color:'var(--text-secondary)',background:'rgba(0,0,0,.2)',padding:'8px 10px',borderRadius:8,lineHeight:1.5}}>{s.content}</div>
-                    </div>
-                  ))}
-                  {scene.imagenPrompt&&(
-                    <div style={{background:'rgba(6,182,212,.05)',border:'1px solid rgba(6,182,212,.2)',borderRadius:10,padding:'10px 12px'}}>
-                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
-                        <span style={{fontSize:'.68rem',color:'var(--cyan)',fontWeight:600}}>🖼 Imagen Prompt</span>
-                        <button onClick={()=>copyPrompt(scene.imagenPrompt)} className="btn btn-ghost" style={{padding:'3px 8px',fontSize:'.68rem'}}>{icons.copy}</button>
-                      </div>
-                      <p style={{fontSize:'.75rem',color:'var(--text-secondary)',fontFamily:'JetBrains Mono,monospace',lineHeight:1.6}}>{scene.imagenPrompt}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <CanvasExporter scenes={scenes} productName={form.name||'Product'}/>
-        </div>
-      )}
-      {toast&&<div className="copy-toast">{icons.check} {toast}</div>}
-    </div>
-  );
-}
-
-// ─── TAB CONTENT: GENERATE BUTTON AREA ───────────────────────
-function TabHeader({tab, form, apiKey, ugcForm, imgProduct, imgModel, onGenerate, loading}){
+/* ── MAIN CONTENT ── */
+function MainContent({tab,form,apiKey,ugcForm,setUgcForm,imgProduct,setImgProduct,imgModel,setImgModel,aiResult,loading,loadingMsg,scenes,onGenerate,onToast}){
   const tabInfo={
-    planner:   {title:'Business Architect',desc:'Analisis bisnis komprehensif dengan roadmap 12 bulan',icon:'🏗️',color:'var(--cyan)'},
-    calendar:  {title:'Kalender Konten',desc:'14 konten viral siap pakai + Five Scene Framework',icon:'📅',color:'var(--purple)'},
-    caption:   {title:'Viral Caption Lab',desc:'Caption optimized untuk TikTok, Reels, Shorts, Facebook',icon:'✍️',color:'var(--pink)'},
-    generator: {title:'UGC Generator',desc:'Skrip video komersial multimodal + storyboard visual',icon:'🎬',color:'var(--green)'},
+    planner:{title:'Business Architect',desc:'Analisis bisnis + roadmap 12 bulan',icon:'🏗️',color:'var(--cyan)'},
+    calendar:{title:'Kalender Konten',desc:'14 konten viral + Five Scene Framework',icon:'📅',color:'var(--purple)'},
+    caption:{title:'Viral Caption Lab',desc:'Caption TikTok · Reels · Shorts · Facebook',icon:'✍️',color:'var(--pink)'},
+    generator:{title:'UGC Generator',desc:'Skrip video + storyboard + gambar AI',icon:'🎬',color:'var(--green)'},
   };
   const info=tabInfo[tab]||tabInfo.planner;
-  return (
-    <div className="card" style={{marginBottom:20,borderColor:`${info.color}33`}}>
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
-        <div>
-          <div className="grotesk" style={{fontSize:'1.25rem',fontWeight:800,marginBottom:4}}>{info.icon} {info.title}</div>
-          <div style={{fontSize:'.83rem',color:'var(--text-muted)'}}>{info.desc}</div>
-          {!apiKey&&<div style={{marginTop:10,padding:'7px 12px',borderRadius:8,background:'rgba(239,68,68,.1)',border:'1px solid rgba(239,68,68,.25)',fontSize:'.78rem',color:'#f87171',display:'flex',gap:6,alignItems:'center'}}>{icons.warn} API Key Gemini diperlukan — isi di panel kiri</div>}
-        </div>
-        <button onClick={onGenerate} disabled={!apiKey||loading} className="btn btn-cyan" style={{flexShrink:0,padding:'11px 24px',fontSize:'.9rem'}}>
-          {loading?<><span className="spin">{icons.loader}</span> Generating...</>:<>{icons.sparkles} Generate AI</>}
-        </button>
-      </div>
-    </div>
-  );
-}
 
-// ─── UGC EXTRA FORM ──────────────────────────────────────────
-function UGCExtraForm({ugcForm,setUgcForm,imgProduct,setImgProduct,imgModel,setImgModel}){
-  return (
-    <div className="card" style={{marginBottom:20}}>
-      <h4 className="grotesk" style={{color:'var(--cyan)',fontSize:'.9rem',fontWeight:700,marginBottom:14}}>⚙️ Pengaturan UGC Lanjutan</h4>
-      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
-        <input type="checkbox" id="autonom" checked={ugcForm.useAutonomous} onChange={e=>setUgcForm(p=>({...p,useAutonomous:e.target.checked}))} style={{accentColor:'var(--cyan)',width:16,height:16}}/>
-        <label htmlFor="autonom" style={{fontSize:'.83rem',color:'var(--text-secondary)',cursor:'pointer'}}>Gunakan Data Produk Khusus UGC (override data sidebar)</label>
+  const copyAll=()=>{
+    if(!aiResult)return;
+    navigator.clipboard.writeText(aiResult).then(()=>onToast('Semua output disalin!'));
+  };
+  const copyPromptCb=(t)=>{
+    navigator.clipboard.writeText(t).then(()=>onToast('Prompt disalin!'));
+  };
+
+  return(
+    <div style={{flex:1,display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
+      {/* Topbar (desktop) */}
+      <div style={{padding:'16px 24px 0',flexShrink:0,display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
+        <div>
+          <div className="gsk" style={{fontSize:'1.15rem',fontWeight:800}}>{info.icon} {info.title}</div>
+          <div style={{fontSize:'.8rem',color:'var(--txm)',marginTop:2}}>{info.desc}</div>
+        </div>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
+          {aiResult&&<button onClick={copyAll} className="btn btn-g btn-sm">{I.copy} Salin Semua</button>}
+          <button onClick={onGenerate} disabled={!apiKey||loading} className="btn btn-c" style={{padding:'10px 20px'}}>
+            {loading?<><span className="spin">{I.load}</span>Generating...</>:<>{I.spark} Generate AI</>}
+          </button>
+        </div>
+        {!apiKey&&<div style={{width:'100%',padding:'6px 10px',borderRadius:7,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.2)',fontSize:'.75rem',color:'#f87171',display:'flex',gap:5,alignItems:'center'}}>{I.warn} Isi API Key Gemini di panel kiri terlebih dahulu</div>}
       </div>
-      {ugcForm.useAutonomous&&(
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
-          <div>
-            <label style={{fontSize:'.75rem',color:'var(--text-muted)',marginBottom:4,display:'block'}}>Nama Produk UGC</label>
-            <input className="inp" value={ugcForm.name} onChange={e=>setUgcForm(p=>({...p,name:e.target.value}))} placeholder="Nama produk spesifik UGC..."/>
-          </div>
-          <div>
-            <label style={{fontSize:'.75rem',color:'var(--text-muted)',marginBottom:4,display:'block'}}>Deskripsi UGC</label>
-            <input className="inp" value={ugcForm.desc} onChange={e=>setUgcForm(p=>({...p,desc:e.target.value}))} placeholder="Deskripsi khusus UGC..."/>
+
+      {/* UGC Extra */}
+      {tab==='generator'&&(
+        <div style={{padding:'12px 24px 0',flexShrink:0}}>
+          <div className="card2">
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+              <input type="checkbox" id="ugcauto" checked={ugcForm.useAutonomous} onChange={e=>setUgcForm(p=>({...p,useAutonomous:e.target.checked}))} style={{accentColor:'var(--cyan)',width:14,height:14}}/>
+              <label htmlFor="ugcauto" style={{fontSize:'.8rem',color:'var(--txt2)',cursor:'pointer'}}>Gunakan Data Produk Khusus UGC</label>
+            </div>
+            {ugcForm.useAutonomous&&(
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:12}}>
+                <div>
+                  <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Nama UGC</label>
+                  <input className="inp" value={ugcForm.name} onChange={e=>setUgcForm(p=>({...p,name:e.target.value}))} placeholder="Nama produk UGC..." style={{fontSize:'.78rem'}}/>
+                </div>
+                <div>
+                  <label style={{fontSize:'.68rem',color:'var(--txm)',marginBottom:3,display:'block'}}>Deskripsi UGC</label>
+                  <input className="inp" value={ugcForm.desc} onChange={e=>setUgcForm(p=>({...p,desc:e.target.value}))} placeholder="Deskripsi UGC..." style={{fontSize:'.78rem'}}/>
+                </div>
+              </div>
+            )}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+              <ImgUploader label="📦 Foto Produk" value={imgProduct} onChange={setImgProduct}/>
+              <ImgUploader label="👤 Foto Model" value={imgModel} onChange={setImgModel}/>
+            </div>
           </div>
         </div>
       )}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <ImageUploader label="📦 Foto Produk (opsional)" value={imgProduct} onChange={setImgProduct}/>
-        <ImageUploader label="👤 Foto Model/Talent (opsional)" value={imgModel} onChange={setImgModel}/>
+
+      {/* Main output scroll area */}
+      <div className="main-body" style={{flex:1,overflow:'auto',padding:'16px 24px'}}>
+        {loading?(
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'50vh',gap:16}}>
+            <div className="spin" style={{color:'var(--cyan)'}}><Ic d={I.load.props.d} s={40}/></div>
+            <p className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:600}}>{loadingMsg}</p>
+            <div style={{display:'flex',gap:5}}>{[0,1,2].map(i=><div key={i} className="pulse" style={{width:7,height:7,borderRadius:'50%',background:'var(--purple)',animationDelay:`${i*.3}s`}}/>)}</div>
+          </div>
+        ):!aiResult?(
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'50vh',gap:12,color:'var(--txm)'}}>
+            <div style={{fontSize:52}}>🚀</div>
+            <p className="gsk" style={{fontSize:'1rem',color:'var(--txt2)'}}>Siap untuk Generate</p>
+            <p style={{fontSize:'.8rem',textAlign:'center',maxWidth:380,lineHeight:1.6}}>Isi data produk di sidebar, pastikan API Key Gemini terisi, lalu klik tombol <b style={{color:'var(--cyan)'}}>Generate AI</b>.</p>
+          </div>
+        ):(
+          <div>
+            <MdRender text={aiResult} onCopyPrompt={copyPromptCb}/>
+            {/* Five Scene Storyboard */}
+            {tab==='generator'&&scenes.length>0&&(
+              <div style={{marginTop:28}}>
+                <div className="gsk" style={{color:'var(--cyan)',fontSize:'.95rem',fontWeight:700,marginBottom:14}}>🎬 Five Scene Storyboard — Generate Image per Scene</div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12}}>
+                  {scenes.map((scene,idx)=>(
+                    <SceneImageCard key={idx} scene={scene} idx={idx} apiKey={apiKey} productName={form.name||'Product'} onCopyPrompt={copyPromptCb} onToast={onToast}/>
+                  ))}
+                </div>
+                {/* Carousel */}
+                <CarouselExporter scenes={scenes} apiKey={apiKey} productName={form.name||'Product'} onToast={onToast}/>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ─── MAIN APP CONTENT ─────────────────────────────────────────
+/* ── APP ── */
 function AppContent(){
   const [theme,setTheme]=useState(()=>safeGet('veo_theme','dark'));
   const [apiKey,setApiKey]=useState(()=>safeGet('veo_studio_apikey',''));
   const [activeTab,setActiveTab]=useState('planner');
+  const [sidebarOpen,setSidebarOpen]=useState(false);
+  const [toast,setToast]=useState('');
   const [form,setForm]=useState({
     name:"Basreng Kaffir Jeruk Purut",
     desc:"Camilan bakso goreng super renyah beraroma irisan daun jeruk purut segar dengan limpahan cabai asli dan gurih umami tinggi.",
@@ -726,142 +899,143 @@ function AppContent(){
   const [loading,setLoading]=useState(false);
   const [loadingMsg,setLoadingMsg]=useState('');
   const [scenes,setScenes]=useState([]);
+  const msgRef=useRef(null);
 
-  useEffect(()=>{
-    document.documentElement.setAttribute('data-theme',theme);
-    safeSet('veo_theme',theme);
-  },[theme]);
-
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);safeSet('veo_theme',theme);},[theme]);
   const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark');
 
-  const SYSTEM_PROMPTS={
-    planner:`Bertindaklah sebagai tim konsultan bisnis, periklanan, dan pertumbuhan elite (Business Strategist, Startup Advisor, Brand Consultant, Digital Marketing Expert, Content Strategist, Growth Hacker, Copywriter Viral, Sales Funnel Specialist, Product Launch Expert, Investor Mindset Coach). Bedah data produk yang dikirimkan user secara brutal, objektif, menggunakan pola pikir investor nyata, bukan motivator. Jika target omzet tidak realistis dengan modal awal atau harga jual, kritik dengan keras di bagian output. Anda WAJIB mematuhi aturan output: hasilkan data dalam format tabel Markdown secara masif untuk bagian-bagian berikut:
+  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(''),2500);};
 
-BAGIAN 1: ANALISIS BISNIS & DETEKSI INDUSTRI (Auto Category Detection berdasarkan 22 makro & 80 subkategori, penentuan Industry Trope dominan, Tabel Analisis Faktor, dan Tabel SWOT lengkap dengan Matriks Skor 1-10).
-BAGIAN 2: BRANDING METRIC & POSITIONING (Tabel minimal 10 nama brand komersial beserta alasannya, penentuan nama terbaik, handle sosmed, Slogan, Story Brand emosional, Positioning, USP).
-BAGIAN 3: ARSITEKTUR DESAIN & PROMPT GENERATOR AI (Tabel Elemen Visual: konsep, bentuk, warna, font. Diikuti Prompt AI bahasa Inggris siap pakai untuk PROMPT LOGO AI, PROMPT BANNER AI, PROMPT FOTO PROFIL AI).
-BAGIAN 4: DEEP BUYER PERSONA DATABASES (Tabel komparatif minimal 5 Buyer Persona mendetail di Indonesia mencakup: Nama, Umur, Profesi, Penghasilan, Masalah Utama, Ketakutan, Tujuan, Alasan Beli, Trigger, Platform Favorit).
-BAGIAN 5: ESTIMASI TARGET FINANSIAL & LEADS BREAKDOWN (Tabel perhitungan matematis omzet tahunan, bulanan, mingguan, harian, jumlah transaksi harian, leads masuk, closing, dan Conversion Rate minimum agar tidak rugi).
-BAGIAN 6: ROADMAP INTERAKTIF 12 BULAN (Tabel komprehensif 5 Fase: Validasi, Audiens, Monetisasi, Scale Up, Dominasi dengan kolom Target, KPI, Aktivitas Harian, Risiko, Solusi).
-BAGIAN 7: KRITIK KERAS & REALITA PAHIT (Tabel kesalahan fatal, kebiasaan buruk yang harus stop, penyebab gagal, realita pahit pasar Indonesia, dan aktivitas wajib harian non-negosiasi).
-
-FORMAT PENUTUP: KESIMPULAN INVESTOR berupa ringkasan objektif maksimal 1 halaman yang merangkum penilaian realistis apakah target omzet masuk akal, bagian bisnis paling rentan, peluang & ancaman terbesar di pasar Indonesia saat ini, tiga aktivitas dengan ROI tertinggi, dan rencana aksi 7 hari pertama.`,
-
-    calendar:`Hasilkan KALENDER KONTEN VIRAL MINGGU PERTAMA (14 KONTEN UTUH & SIAP PAKAI). Buat tabel Markdown lengkap berisi minimal 14 konten (2 konten per hari, Senin s.d Minggu) dengan kolom: [Hari] | [Platform (TikTok/Reels/Shorts/FB Pro)] | [Ide Konten & Kategori Funnel] | [Marketing Angle] | [Jenis Hook] | [Script Singkat (Five Scene Framework: Hook -> Build Up -> Development -> Peak -> Resolution dengan arahan visual pergerakan kamera logis standar Veo 3.1)] | [Caption Copywriting Tingkat Dewa Siap Pakai] | [CTA Spesifik] | [Hashtag Strategis]. Tulis isi Caption secara lengkap, persuasif, emosional, memicu konversi, langsung siap pakai untuk jualan di pasar Indonesia. Tambahkan Tabel Target KPI Minggu Pertama dan daftar 10 Hook Viral Tambahan siap pakai.`,
-
-    caption:`Hasilkan variasi caption copywriting tingkat dewa siap pakai yang disesuaikan untuk platform TikTok, Instagram Reels, Facebook Pro, dan YouTube Shorts berdasarkan data produk, kategori industri, marketing angle, dan hook style yang dipilih user. Struktur output wajib menyertakan: Baris pertama hook tebal (Pattern Interrupt/Curiosity Gap), bodi penawaran berbasis emosional/kelangkaan (Scarcity), CTA tajam langsung transfer/klik link, dan klaster hashtag strategis. Gunakan bahasa kasual, persuasif, dan sangat relatable dengan target pasar Indonesia. Sajikan perbandingan antar platform dalam format tabel Markdown yang rapi dan mudah dicopy.`,
-
-    generator:`Bertindaklah sebagai Creative Director & Scriptwriter UGC Premium. Hasilkan skrip video komersial terstruktur untuk iklan berdurasi 30-60 detik berdasarkan data produk dan foto yang dikirimkan. Skrip wajib ditulis ke dalam format tabel Five Scene Framework (Scene 1 s.d 5: Hook, Build Up, Development, Peak, Resolution). Kolom tabel harus memisahkan secara ketat:
-| Scene & Durasi | Visual & Camera Direction | Audio & Voiceover | On-Screen Text / Subtitle | Imagen Prompt |
-
-PENTING UNTUK PROMPT VISUAL AI (Imagen Prompt): Buat deskripsi visual bahasa Inggris yang kaya dan sangat sinematik yang menunjukkan detail produk dan model (jika ada) memegang atau berinteraksi dengan produk. Tambahkan panduan eksekusi properti syuting di akhir output.`,
-  };
-
-  const buildUserPrompt=()=>{
+  const buildPrompt=()=>{
     const ctx=ugcForm.useAutonomous&&ugcForm.name
-      ? `Nama Produk: ${ugcForm.name}\nDeskripsi: ${ugcForm.desc}`
-      : `Nama Produk: ${form.name}\nDeskripsi: ${form.desc}\nKarakteristik: ${form.characteristics}\nHarga: Rp ${parseInt(form.price).toLocaleString('id')}\nModal: Rp ${parseInt(form.capital).toLocaleString('id')}\nTarget Omzet/Bulan: Rp ${parseInt(form.targetOmzet).toLocaleString('id')}\nLokasi: ${form.location}\nTarget Pasar: ${form.initialMarket}\nKategori Industri: ${form.industry}\nMarketing Angle: ${form.angle}\nHook Style: ${form.hook}`;
+      ?`Nama Produk: ${ugcForm.name}\nDeskripsi: ${ugcForm.desc}`
+      :`Nama Produk: ${form.name}\nDeskripsi: ${form.desc}\nKarakteristik: ${form.characteristics}\nHarga Jual: Rp ${parseInt(form.price||0).toLocaleString('id')}\nModal Awal: Rp ${parseInt(form.capital||0).toLocaleString('id')}\nTarget Omzet/Bulan: Rp ${parseInt(form.targetOmzet||0).toLocaleString('id')}\nLokasi: ${form.location}\nTarget Pasar: ${form.initialMarket}\nKategori Industri: ${form.industry}\nMarketing Angle: ${form.angle}\nHook Style: ${form.hook}`;
     return ctx;
   };
 
   const buildMessages=()=>{
-    const userText=buildUserPrompt();
     const parts=[];
     if(activeTab==='generator'){
-      if(imgProduct?.data) parts.push({inlineData:{mimeType:imgProduct.mime,data:imgProduct.data}});
-      if(imgModel?.data)   parts.push({inlineData:{mimeType:imgModel.mime,data:imgModel.data}});
+      if(imgProduct?.data)parts.push({inlineData:{mimeType:imgProduct.mime,data:imgProduct.data}});
+      if(imgModel?.data)parts.push({inlineData:{mimeType:imgModel.mime,data:imgModel.data}});
     }
-    parts.push({text:userText});
-    return [{role:'user',parts}];
+    parts.push({text:buildPrompt()});
+    return[{role:'user',parts}];
   };
 
-  const msgInterval=useRef(null);
-  const startMsgLoop=(tab)=>{
+  const startLoader=(tab)=>{
     const msgs=LOADING_MSGS[tab]||LOADING_MSGS.planner;
-    let idx=0;
-    setLoadingMsg(msgs[0]);
-    msgInterval.current=setInterval(()=>{
-      idx=(idx+1)%msgs.length;
-      setLoadingMsg(msgs[idx]);
-    },2200);
+    let idx=0;setLoadingMsg(msgs[0]);
+    msgRef.current=setInterval(()=>{idx=(idx+1)%msgs.length;setLoadingMsg(msgs[idx]);},2200);
   };
 
   const generate=async()=>{
-    if(!apiKey) return;
-    setLoading(true);
-    setAiResult('');
-    setScenes([]);
-    startMsgLoop(activeTab);
+    if(!apiKey)return;
+    setLoading(true);setAiResult('');setScenes([]);
+    startLoader(activeTab);
     try{
       const payload={
-        system_instruction:{parts:[{text:SYSTEM_PROMPTS[activeTab]||SYSTEM_PROMPTS.planner}]},
+        system_instruction:{parts:[{text:SYS[activeTab]||SYS.planner}]},
         contents:buildMessages(),
         generationConfig:{temperature:0.9,maxOutputTokens:8192},
       };
       const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload),
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),
       });
-      if(!res.ok){
-        const err=await res.json().catch(()=>({}));
-        throw new Error(err?.error?.message||`HTTP ${res.status}`);
-      }
+      if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e?.error?.message||`HTTP ${res.status}`);}
       const data=await res.json();
       const text=data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
-      if(!text) throw new Error('Respons AI kosong. Coba lagi.');
+      if(!text)throw new Error('Respons AI kosong. Coba lagi.');
       setAiResult(text);
-      if(activeTab==='generator') setScenes(extractScenes(text));
+      if(activeTab==='generator')setScenes(extractScenes(text));
     }catch(err){
-      setAiResult(`## ❌ Error\n\n${err.message}\n\n**Pastikan:**\n- API Key Gemini valid dan aktif\n- Koneksi internet stabil\n- Model gemini-2.5-flash tersedia di akun Anda`);
+      setAiResult(`## ❌ Error\n\n**${err.message}**\n\n- Pastikan API Key Gemini valid\n- Periksa koneksi internet\n- Model gemini-2.5-flash harus tersedia di akun Anda`);
     }finally{
-      clearInterval(msgInterval.current);
-      setLoading(false);
+      clearInterval(msgRef.current);setLoading(false);
     }
   };
 
-  return (
-    <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
-      <Sidebar form={form} setForm={setForm} apiKey={apiKey} setApiKey={setApiKey} theme={theme} toggleTheme={toggleTheme} activeTab={activeTab} setActiveTab={setActiveTab}/>
-      <div className="main-scroll" style={{flex:1,padding:'24px 28px'}}>
-        <TabHeader tab={activeTab} form={form} apiKey={apiKey} ugcForm={ugcForm} imgProduct={imgProduct} imgModel={imgModel} onGenerate={generate} loading={loading}/>
-        {activeTab==='generator'&&<UGCExtraForm ugcForm={ugcForm} setUgcForm={setUgcForm} imgProduct={imgProduct} setImgProduct={setImgProduct} imgModel={imgModel} setImgModel={setImgModel}/>}
-        <OutputArea tab={activeTab} aiResult={aiResult} loading={loading} loadingMsg={loadingMsg} scenes={scenes} ugcForm={ugcForm} form={form}/>
+  const TABS_NAV=[
+    {id:'planner',label:'Bisnis',icon:I.chart},
+    {id:'calendar',label:'Kalender',icon:I.cal},
+    {id:'caption',label:'Caption',icon:I.pen},
+    {id:'generator',label:'UGC',icon:I.vid},
+  ];
+
+  return(
+    <div className="layout">
+      {/* Sidebar overlay (mobile) */}
+      <div className={`sidebar-overlay${sidebarOpen?' show':''}`} onClick={()=>setSidebarOpen(false)}/>
+      {/* Sidebar */}
+      <Sidebar
+        form={form} setForm={setForm}
+        apiKey={apiKey} setApiKey={setApiKey}
+        theme={theme} toggleTheme={toggleTheme}
+        activeTab={activeTab} setActiveTab={setActiveTab}
+        onClose={()=>setSidebarOpen(false)}
+        className={sidebarOpen?'open':''}
+      />
+      {/* override sidebar class for mobile open */}
+      <style>{`.sidebar{${sidebarOpen?'transform:translateX(0)!important;box-shadow:4px 0 30px rgba(0,0,0,.5)':''}}`}</style>
+
+      {/* Main */}
+      <div className="main">
+        {/* Mobile topbar */}
+        <div className="desk-topbar">
+          <button onClick={()=>setSidebarOpen(v=>!v)} className="btn btn-g" style={{padding:'7px 9px'}}>{I.menu}</button>
+          <div className="gsk grad" style={{fontSize:'.9rem',fontWeight:800,flex:1}}>VEO 3 PRO</div>
+          <button onClick={toggleTheme} className="btn btn-g" style={{padding:'7px 9px'}}>{theme==='dark'?I.sun:I.moon}</button>
+        </div>
+
+        <MainContent
+          tab={activeTab} form={form} apiKey={apiKey}
+          ugcForm={ugcForm} setUgcForm={setUgcForm}
+          imgProduct={imgProduct} setImgProduct={setImgProduct}
+          imgModel={imgModel} setImgModel={setImgModel}
+          aiResult={aiResult} loading={loading} loadingMsg={loadingMsg}
+          scenes={scenes} onGenerate={generate} onToast={showToast}
+        />
       </div>
+
+      {/* Bottom Nav (mobile) */}
+      <nav className="bottom-nav">
+        {TABS_NAV.map(t=>(
+          <button key={t.id} className={`bnav-item${activeTab===t.id?' active':''}`} onClick={()=>setActiveTab(t.id)}>
+            {t.icon}<span>{t.label}</span>
+          </button>
+        ))}
+        <button className="bnav-item" onClick={()=>setSidebarOpen(v=>!v)}>
+          {I.menu}<span>Menu</span>
+        </button>
+      </nav>
+
+      {/* Toast */}
+      {toast&&<div className="toast">{I.chk} {toast}</div>}
     </div>
   );
 }
 
-// ─── ERROR BOUNDARY ───────────────────────────────────────────
 class ErrorBoundary extends React.Component{
-  constructor(p){super(p);this.state={hasError:false,error:null}}
-  static getDerivedStateFromError(e){return{hasError:true,error:e}}
-  componentDidCatch(e,i){console.error(e,i)}
-  handleReset(){
-    try{localStorage.clear();}catch{}
-    window.location.reload();
-  }
+  constructor(p){super(p);this.state={err:null}}
+  static getDerivedStateFromError(e){return{err:e}}
+  handleReset(){try{localStorage.clear();}catch{}window.location.reload();}
   render(){
-    if(!this.state.hasError) return this.props.children;
-    return (
-      <div style={{minHeight:'100vh',background:'#030712',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
-        <div style={{maxWidth:560,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.3)',borderRadius:20,padding:32,textAlign:'center'}}>
-          <div style={{fontSize:48,marginBottom:16}}>⚠️</div>
-          <h2 className="grotesk" style={{color:'#f87171',fontSize:'1.3rem',marginBottom:12}}>Aplikasi Mengalami Error</h2>
-          <p style={{color:'#94a3b8',fontSize:'.85rem',marginBottom:20,fontFamily:'JetBrains Mono,monospace',background:'rgba(0,0,0,.3)',padding:12,borderRadius:8,textAlign:'left',whiteSpace:'pre-wrap'}}>{this.state.error?.toString()}</p>
-          <button onClick={()=>this.handleReset()} className="btn btn-cyan" style={{margin:'0 auto'}}>🔄 Reset & Muat Ulang</button>
+    if(!this.state.err)return this.props.children;
+    return(
+      <div style={{minHeight:'100vh',background:'#030712',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+        <div style={{maxWidth:500,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.25)',borderRadius:16,padding:28,textAlign:'center'}}>
+          <div style={{fontSize:44,marginBottom:12}}>⚠️</div>
+          <h2 style={{color:'#f87171',fontSize:'1.2rem',marginBottom:10,fontFamily:"'Space Grotesk',sans-serif"}}>Error Aplikasi</h2>
+          <p style={{color:'#94a3b8',fontSize:'.78rem',marginBottom:18,fontFamily:'monospace',background:'rgba(0,0,0,.3)',padding:10,borderRadius:7,textAlign:'left',whiteSpace:'pre-wrap'}}>{this.state.err?.toString()}</p>
+          <button onClick={()=>this.handleReset()} style={{background:'linear-gradient(135deg,#0891b2,#6d28d9)',color:'#fff',border:'none',padding:'10px 22px',borderRadius:9,cursor:'pointer',fontWeight:600}}>🔄 Reset & Muat Ulang</button>
         </div>
       </div>
     );
   }
 }
 
-// ─── MOUNT ────────────────────────────────────────────────────
-const root=ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <ErrorBoundary>
-    <AppContent/>
-  </ErrorBoundary>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ErrorBoundary><AppContent/></ErrorBoundary>
 );
 </script>
 </body>
